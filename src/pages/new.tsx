@@ -49,7 +49,7 @@ const CreatePostWizard = () => {
                 <label htmlFor="content">ひとこと</label>
                 <input
                     id="content"
-                    className="form-input mt-1 block w-full rounded-md border-transparent bg-gray-100 focus:border-gray-500 focus:bg-white focus:ring-0"
+                    className="finput w-full max-w-xs"
                     {...register("content")}
                 />
                 <div className="text-red-600">{errors.content?.message}</div>

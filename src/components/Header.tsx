@@ -1,6 +1,7 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { SITE } from "~/config";
+import { ThemeButton } from "./ThemeButton";
 
 export const Header = () => {
     const { user } = useUser();
@@ -13,11 +14,14 @@ export const Header = () => {
                 </Link>
                 {user && <Link href={`/new`}>new post</Link>}
             </div>
-            {user ? (
-                <UserButton afterSignOutUrl={`localhost:300`} />
-            ) : (
-                <SignInButton />
-            )}
+            <div className="flex gap-4">
+                <ThemeButton />
+                {user ? (
+                    <UserButton afterSignOutUrl={`localhost:300`} />
+                ) : (
+                    <SignInButton />
+                )}
+            </div>
         </header>
     );
 };
