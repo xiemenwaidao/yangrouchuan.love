@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type PostSchema, postSchema } from "~/utils/schema";
 import { toHalfWidth } from "~/utils/helpers";
 import { api } from "~/utils/api";
+import { toast } from "react-hot-toast";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -23,6 +24,13 @@ const CreatePostWizard = () => {
     const { mutate } = api.post.create.useMutation({
         onSuccess: () => {
             console.log("success");
+            // 投稿ページに遷移させる
+        },
+        onError: (error) => {
+            toast.error(
+                error.message ??
+                    "更新に失敗しました。時間をおいて再度お試しください。"
+            );
         },
     });
 
