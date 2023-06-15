@@ -3,16 +3,49 @@
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
+    // previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// model Example {
+//     id        String   @id @default(cuid())
+//     createdAt DateTime @default(now())
+//     updatedAt DateTime @updatedAt
+// }
+
+model Post {
+    id        String      @id @default(cuid())
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    // published Boolean  @default(false)
+    // title     String
+    content   String
+    price     Int?
+    placeId   String?
+    authorId  String
+    images    PostImage[]
+
+    @@index([authorId], name: "authorId")
+}
+
+model Image {
+    id    String      @id @default(cuid())
+    url   String
+    posts PostImage[]
+}
+
+model PostImage {
+    post    Post   @relation(fields: [postId], references: [id])
+    postId  String
+    image   Image  @relation(fields: [imageId], references: [id])
+    imageId String
+
+    @@id([postId, imageId])
+    @@index([postId])
+    @@index([imageId])
 }
