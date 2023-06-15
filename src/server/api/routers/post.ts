@@ -1,15 +1,9 @@
-import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import { postSchema } from "~/utils/schema";
 
 export const postRouter = createTRPCRouter({
     create: privateProcedure
-        .input(
-            z.object({
-                content: z.string(),
-                price: z.number().min(0).max(100000).optional(),
-                placeId: z.string(),
-            })
-        )
+        .input(postSchema)
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
 
