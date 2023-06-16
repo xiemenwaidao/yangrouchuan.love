@@ -1,12 +1,11 @@
 "use client";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 export const ThemeButton = () => {
     const { theme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState<boolean>(false);
+    // const [mounted, setMounted] = useState<boolean>(false);
 
-    useEffect(() => setMounted(true), []);
+    // useEffect(() => setMounted(true), []);
 
     return (
         <label className="swap swap-rotate">

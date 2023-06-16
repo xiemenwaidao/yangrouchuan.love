@@ -8,7 +8,7 @@ export default {
     },
     plugins: [require("daisyui")],
     daisyui: {
-        themes: ["light", "synthwave", "lofi"],
+        themes: ["light", "synthwave"],
         darkTheme: "synthwave",
     },
 } satisfies Config;

@@ -12,7 +12,7 @@ export const Header = () => {
                 <Link href={`/`}>
                     <h1 className="font-bold">{SITE.title}</h1>
                 </Link>
-                {user && <Link href={`/new`}>new post</Link>}
+                {user && <Link href={`/post/new`}>new post</Link>}
             </div>
             <div className="flex gap-4">
                 <ThemeButton />
