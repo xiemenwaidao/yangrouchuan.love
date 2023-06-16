@@ -45,34 +45,57 @@ const CreatePostWizard = () => {
                 })
             )}
         >
-            <div className="mb-6">
-                <label htmlFor="content">ひとこと</label>
+            <div className="form-control mb-6 w-full">
+                <label htmlFor="content" className="label">
+                    <span>ひとこと</span>
+                </label>
                 <input
                     id="content"
-                    className="finput w-full max-w-xs"
+                    className="input-bordered input w-full "
                     {...register("content")}
                 />
-                <div className="text-red-600">{errors.content?.message}</div>
+                {/* error message */}
+                {errors.content?.message && (
+                    <div className="text-red-500">{errors.content.message}</div>
+                )}
             </div>
-            <div className="mb-6">
-                <label htmlFor="price">価格／串</label>
+            <div className="form-control mb-6 w-full">
+                <label htmlFor="price" className="label">
+                    <span>価格／串</span>
+                </label>
                 <input
                     id="price"
-                    className="form-input mt-1 block w-full rounded-md border-transparent bg-gray-100 focus:border-gray-500 focus:bg-white focus:ring-0"
-                    {...register("price")}
+                    className="input-bordered input w-full "
+                    {...register("price", {
+                        // valueAsNumber: true,
+                        // setValueAs: (v: unknown) => {
+                        //     if (v === "") return undefined;
+                        //     if (typeof v === "string") {
+                        //         console.log(Number(toHalfWidth(v)));
+                        //         return Number(toHalfWidth(v));
+                        //     }
+                        //     return v;
+                        // },
+                    })}
                     onBlur={(e) => {
                         const currentValue = e.target.value;
                         const newValue = toHalfWidth(currentValue);
+
                         // 数値にキャスト可能時のみ値を更新
-                        if (!isNaN(Number(newValue))) {
+                        // ""の場合は0になっってしまうので除外
+                        if (newValue !== "" && !isNaN(Number(newValue))) {
                             setValue("price", Number(newValue));
                         }
                     }}
                 />
-                <div className="text-red-600">{errors.price?.message}</div>
+                {errors.price?.message && (
+                    <div className="text-red-500">{errors.price.message}</div>
+                )}
             </div>
             <div>
-                <button type="submit">submit</button>
+                <button className="btn-primary btn-outline btn" type="submit">
+                    submit
+                </button>
             </div>
         </form>
     );
