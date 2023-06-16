@@ -2,6 +2,7 @@ import { z } from "zod";
 import { toHalfWidth } from "./helpers";
 
 export const postSchema = z.object({
+    rating: z.coerce.number().int().min(0).max(10),
     content: z
         .string({ required_error: "必須項目です" })
         .min(1, { message: "1文字以上の文章を入力してください" }),

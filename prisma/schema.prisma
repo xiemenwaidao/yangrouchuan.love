@@ -24,6 +24,7 @@ model Post {
     updatedAt DateTime    @updatedAt
     // published Boolean  @default(false)
     // title     String
+    rating    Int
     content   String
     price     Int?
     placeId   String?

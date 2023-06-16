@@ -10,6 +10,9 @@ import { toHalfWidth } from "~/utils/helpers";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 
+const RATING_LENGTH = 10;
+const DEFAULT_RATING_CHECHED = 5;
+
 const CreatePostWizard = () => {
     const { user } = useUser();
     const {
@@ -39,12 +42,45 @@ const CreatePostWizard = () => {
     return (
         <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={handleSubmit((data) =>
+            onSubmit={handleSubmit((data) => {
                 mutate({
                     ...data,
-                })
-            )}
+                    rating: data.rating,
+                });
+                console.log(data);
+            })}
         >
+            <div className="form-control mb-6 w-full">
+                <label htmlFor="rating" className="label">
+                    <span>総合評価</span>
+                </label>
+                <div className="rating rating-half rating-lg">
+                    <input
+                        type="radio"
+                        className="rating-hidden"
+                        name="rating"
+                        value={0}
+                    />
+                    {Array.from({ length: RATING_LENGTH }).map((_, i) => (
+                        <input
+                            type="radio"
+                            className={`mask mask-star-2 bg-amber-500 ${
+                                (i + 1) % 2 === 0
+                                    ? "mask-half-2"
+                                    : "mask-half-1"
+                            }`}
+                            key={i}
+                            value={i + 1}
+                            {...register("rating")}
+                            name="rating"
+                            defaultChecked={i + 1 === DEFAULT_RATING_CHECHED}
+                        />
+                    ))}
+                </div>
+                {errors.rating?.message && (
+                    <div className="text-red-500">{errors.rating.message}</div>
+                )}
+            </div>
             <div className="form-control mb-6 w-full">
                 <label htmlFor="content" className="label">
                     <span>ひとこと</span>
