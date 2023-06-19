@@ -12,7 +12,7 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import { env } from "~/env.mjs";
 import { Combobox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 interface PlacesAutocompleteProps {
     setSelected: Dispatch<SetStateAction<SelectedAddressProps | null>>;
@@ -35,9 +35,10 @@ const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
         const { lat, lng } = getLatLng(results[0]);
         props.setSelected({ lat, lng });
 
-        console.log(lat, lng);
+        // console.log(lat, lng);
     };
 
+    // エラー回避
     const handleChange = (address: string) => {
         handleSelect(address).catch((error) => console.error(error));
     };
@@ -47,7 +48,6 @@ const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
             <div className="relative mt-1">
                 <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                     <Combobox.Input
-                        // value={value}
                         onChange={(event) => setValue(event.target.value)}
                         className="input w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
                     />
@@ -73,47 +73,60 @@ const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
                             </div>
                         )}
                         <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                            {data.map((item) => (
-                                <Combobox.Option
-                                    key={item.place_id}
-                                    value={item.description}
-                                    className={({ active }) =>
-                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                            active
-                                                ? "bg-teal-600 text-white"
-                                                : "text-gray-900"
-                                        }`
-                                    }
-                                >
-                                    {({ selected, active }) => (
-                                        <>
-                                            <span
-                                                className={`block truncate ${
-                                                    selected
-                                                        ? "font-medium"
-                                                        : "font-normal"
-                                                }`}
-                                            >
-                                                {item.description}
-                                            </span>
-                                            {selected ? (
+                            {data.map((suggestion) => {
+                                const {
+                                    place_id,
+                                    structured_formatting: {
+                                        main_text,
+                                        secondary_text,
+                                    },
+                                } = suggestion;
+
+                                return (
+                                    <Combobox.Option
+                                        key={place_id}
+                                        value={secondary_text}
+                                        className={({ active }) =>
+                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                active
+                                                    ? "bg-teal-600 text-white"
+                                                    : "text-gray-900"
+                                            }`
+                                        }
+                                    >
+                                        {({ selected }) => (
+                                            <>
                                                 <span
-                                                    className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                                        active
-                                                            ? "text-white"
-                                                            : "text-teal-600"
+                                                    className={`block truncate ${
+                                                        selected
+                                                            ? "font-medium"
+                                                            : "font-normal"
                                                     }`}
                                                 >
-                                                    <CheckIcon
-                                                        className="h-5 w-5"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <strong>{main_text}</strong>
+                                                    <span>
+                                                        {secondary_text}
+                                                    </span>
                                                 </span>
-                                            ) : null}
-                                        </>
-                                    )}
-                                </Combobox.Option>
-                            ))}
+                                                {/* {selected ? (
+                                                    <span
+                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                            active
+                                                                ? "text-white"
+                                                                : "text-teal-600"
+                                                        }`}
+                                                    >
+                                                        <CheckIcon
+                                                            className="h-5 w-5"
+                                                            aria-hidden="true"
+                                                        />
+                                                    </span>
+                                                ) : null} */}
+                                            </>
+                                        )}
+                                    </Combobox.Option>
+                                );
+                            })}
                         </Combobox.Options>
                     </Transition>
                 )}
@@ -135,9 +148,7 @@ const Map = () => {
     const [selected, setSelected] = useState<SelectedAddressProps | null>(null);
 
     return (
-        <div className="flex gap-4">
-            <PlacesAutocomplete setSelected={setSelected} />
-
+        <div className="grid gap-4">
             <GoogleMap
                 zoom={10}
                 center={center}
@@ -145,6 +156,9 @@ const Map = () => {
             >
                 {selected && <Marker position={selected} />}
             </GoogleMap>
+            <div>
+                <PlacesAutocomplete setSelected={setSelected} />
+            </div>
         </div>
     );
 };

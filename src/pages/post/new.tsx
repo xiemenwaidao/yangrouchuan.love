@@ -52,7 +52,12 @@ const CreatePostWizard = () => {
             })}
         >
             {/* google map */}
-            <SearchMap />
+            <div className="form-control mb-6 w-full">
+                <label htmlFor="map" className="label">
+                    <span>住所</span>
+                </label>
+                <SearchMap />
+            </div>
             {/* rating */}
             <div className="form-control mb-6 w-full">
                 <label htmlFor="rating" className="label">

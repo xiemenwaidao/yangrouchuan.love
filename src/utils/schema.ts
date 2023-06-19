@@ -20,6 +20,6 @@ export const postSchema = z.object({
             .max(100000, { message: "0以上100000以下の値を入力してください。" })
             .optional()
     ),
-    placeId: z.string().optional(),
+    placeId: z.string(),
 });
 export type PostSchema = z.infer<typeof postSchema>;
