@@ -9,6 +9,7 @@ import { type PostSchema, postSchema } from "~/utils/schema";
 import { toHalfWidth } from "~/utils/helpers";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
+import { SearchMap } from "~/components/form/SearchMap";
 
 const RATING_LENGTH = 10;
 const DEFAULT_RATING_CHECHED = 5;
@@ -50,6 +51,9 @@ const CreatePostWizard = () => {
                 console.log(data);
             })}
         >
+            {/* google map */}
+            <SearchMap />
+            {/* rating */}
             <div className="form-control mb-6 w-full">
                 <label htmlFor="rating" className="label">
                     <span>総合評価</span>
@@ -81,6 +85,7 @@ const CreatePostWizard = () => {
                     <div className="text-red-500">{errors.rating.message}</div>
                 )}
             </div>
+            {/* content */}
             <div className="form-control mb-6 w-full">
                 <label htmlFor="content" className="label">
                     <span>ひとこと</span>
@@ -95,6 +100,7 @@ const CreatePostWizard = () => {
                     <div className="text-red-500">{errors.content.message}</div>
                 )}
             </div>
+            {/* price */}
             <div className="form-control mb-6 w-full">
                 <label htmlFor="price" className="label">
                     <span>価格／串</span>
@@ -128,6 +134,7 @@ const CreatePostWizard = () => {
                     <div className="text-red-500">{errors.price.message}</div>
                 )}
             </div>
+            {/* submit */}
             <div>
                 <button className="btn-primary btn-outline btn" type="submit">
                     submit

@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* tailwind config で設定したい */
+.google-map {
+    height: 400px;
+    width: 100%;
+}
