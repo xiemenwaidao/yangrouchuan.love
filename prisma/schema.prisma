@@ -12,12 +12,6 @@ datasource db {
     relationMode = "prisma"
 }
 
-// model Example {
-//     id        String   @id @default(cuid())
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-// }
-
 model Post {
     id        String      @id @default(cuid())
     createdAt DateTime    @default(now())
@@ -27,11 +21,14 @@ model Post {
     rating    Int
     content   String
     price     Int?
-    placeId   String?
+    place     Place       @relation(fields: [placeId], references: [id])
+    placeId   String
     authorId  String
     images    PostImage[]
+    bookmarks Bookmark[]
 
     @@index([authorId], name: "authorId")
+    @@index([placeId])
 }
 
 model Image {
@@ -49,4 +46,19 @@ model PostImage {
     @@id([postId, imageId])
     @@index([postId])
     @@index([imageId])
+}
+
+model Bookmark {
+    userId String
+    post   Post   @relation(fields: [postId], references: [id])
+    postId String
+
+    @@id([userId, postId])
+    @@index([postId])
+}
+
+model Place {
+    id    String @id
+    name  String
+    posts Post[]
 }
