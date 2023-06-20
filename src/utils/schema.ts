@@ -18,8 +18,8 @@ export const postSchema = z.object({
             })
             .min(0, { message: "0以上100000以下の値を入力してください。" })
             .max(100000, { message: "0以上100000以下の値を入力してください。" })
-            .optional()
     ),
+    // price: z.number().min(0).max(100000),
     placeId: z.string(),
 });
 export type PostSchema = z.infer<typeof postSchema>;

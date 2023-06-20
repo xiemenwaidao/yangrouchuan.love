@@ -1,24 +1,25 @@
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import { type Control, Controller } from "react-hook-form";
-import { type PostSchemaKeys, type PostSchema } from "~/utils/schema";
+import type { PostSchema, PostSchemaKeys } from "~/utils/schema";
 
 interface Props {
     controle: Control<PostSchema>;
     name: PostSchemaKeys;
 }
 
-export const TextInpupt = (props: Props) => {
+export const NumberInput = (props: Props) => {
     return (
         <Controller
             name={props.name}
             control={props.controle}
-            defaultValue={""}
+            defaultValue={0}
             render={({ field, fieldState }) => (
                 <TextField
                     {...field}
                     id="outlined-required"
-                    label="ひとこと"
-                    placeholder="味・見た目・コスパ・本数など"
+                    label="値段（¥）"
+                    type="number"
+                    placeholder="500"
                     error={fieldState.invalid}
                     helperText={fieldState.error?.message}
                 />

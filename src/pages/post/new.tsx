@@ -11,9 +11,10 @@ import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { SearchMap } from "~/components/form/SearchMap";
 import { Rating } from "~/components/form/Rating";
-
-const RATING_LENGTH = 10;
-const DEFAULT_RATING_CHECHED = 5;
+import { TextInpupt } from "~/components/form/TextInput";
+import { NumberInput } from "~/components/form/NumberInput";
+import Button from "@mui/material/Button";
+import { SearchPlaceMap } from "~/components/form/SearchPlace";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -54,6 +55,7 @@ const CreatePostWizard = () => {
             })}
         >
             {/* google map */}
+            <SearchPlaceMap />
             {/* <div className="form-control mb-6 w-full">
                 <label htmlFor="map" className="label">
                     <span>住所</span>
@@ -63,90 +65,20 @@ const CreatePostWizard = () => {
             {/* rating */}
             <div className="">
                 <Rating controle={control} />
-                {/* <label htmlFor="rating" className="label">
-                    <span>総合評価</span>
-                </label>
-                <div className="rating rating-half rating-lg">
-                    <input
-                        type="radio"
-                        className="rating-hidden"
-                        name="rating"
-                        value={0}
-                    />
-                    {Array.from({ length: RATING_LENGTH }).map((_, i) => (
-                        <input
-                            type="radio"
-                            className={`mask mask-star-2 bg-amber-500 ${
-                                (i + 1) % 2 === 0
-                                    ? "mask-half-2"
-                                    : "mask-half-1"
-                            }`}
-                            key={i}
-                            value={i + 1}
-                            {...register("rating")}
-                            name="rating"
-                            defaultChecked={i + 1 === DEFAULT_RATING_CHECHED}
-                        />
-                    ))}
-                </div>
-                {errors.rating?.message && (
-                    <div className="text-red-500">{errors.rating.message}</div>
-                )} */}
             </div>
             {/* content */}
             <div className="form-control mb-6 w-full">
-                <label htmlFor="content" className="label">
-                    <span>ひとこと</span>
-                </label>
-                <input
-                    id="content"
-                    className="input-bordered input w-full "
-                    {...register("content")}
-                />
-                {/* error message */}
-                {errors.content?.message && (
-                    <div className="text-red-500">{errors.content.message}</div>
-                )}
+                <TextInpupt controle={control} name="content" />
             </div>
             {/* price */}
             <div className="form-control mb-6 w-full">
-                <label htmlFor="price" className="label">
-                    <span>価格／串</span>
-                </label>
-                <input
-                    id="price"
-                    className="input-bordered input w-full "
-                    {...register("price", {
-                        // valueAsNumber: true,
-                        // setValueAs: (v: unknown) => {
-                        //     if (v === "") return undefined;
-                        //     if (typeof v === "string") {
-                        //         console.log(Number(toHalfWidth(v)));
-                        //         return Number(toHalfWidth(v));
-                        //     }
-                        //     return v;
-                        // },
-                    })}
-                    onBlur={(e) => {
-                        const currentValue = e.target.value;
-                        const newValue = toHalfWidth(currentValue);
-
-                        // 数値にキャスト可能時のみ値を更新
-                        // ""の場合は0になっってしまうので除外
-                        if (newValue !== "" && !isNaN(Number(newValue))) {
-                            setValue("price", Number(newValue));
-                        }
-                    }}
-                />
-                {errors.price?.message && (
-                    <div className="text-red-500">{errors.price.message}</div>
-                )}
+                <NumberInput controle={control} name="price" />
             </div>
             {/* submit */}
             <div>
-                <button className="btn-primary btn-outline btn" type="submit">
-                    submit
-                </button>
+                <Button variant="contained" type="submit">
+                    Contained
+                </Button>
             </div>
         </form>
     );
