@@ -2,7 +2,7 @@ import { z } from "zod";
 import { toHalfWidth } from "./helpers";
 
 export const postSchema = z.object({
-    rating: z.coerce.number().int().min(0).max(10),
+    rating: z.number().min(0).max(5).step(0.5),
     content: z
         .string({ required_error: "必須項目です" })
         .min(1, { message: "1文字以上の文章を入力してください" }),
@@ -23,3 +23,12 @@ export const postSchema = z.object({
     placeId: z.string(),
 });
 export type PostSchema = z.infer<typeof postSchema>;
+
+export type PostSchemaKeys = keyof PostSchema;
+
+export type PostShemaRecords = {
+    rating: number;
+    content: string;
+    price: number | undefined;
+    placeId: string;
+};

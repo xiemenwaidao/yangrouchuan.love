@@ -18,7 +18,7 @@ model Post {
     updatedAt DateTime    @updatedAt
     // published Boolean  @default(false)
     // title     String
-    rating    Int
+    rating    Float
     content   String
     price     Int?
     place     Place       @relation(fields: [placeId], references: [id])

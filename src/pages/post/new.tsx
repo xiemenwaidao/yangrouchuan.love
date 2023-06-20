@@ -10,6 +10,7 @@ import { toHalfWidth } from "~/utils/helpers";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { SearchMap } from "~/components/form/SearchMap";
+import { Rating } from "~/components/form/Rating";
 
 const RATING_LENGTH = 10;
 const DEFAULT_RATING_CHECHED = 5;
@@ -21,6 +22,7 @@ const CreatePostWizard = () => {
         handleSubmit,
         setValue,
         formState: { errors },
+        control,
     } = useForm<PostSchema>({
         resolver: zodResolver(postSchema),
     });
@@ -52,15 +54,16 @@ const CreatePostWizard = () => {
             })}
         >
             {/* google map */}
-            <div className="form-control mb-6 w-full">
+            {/* <div className="form-control mb-6 w-full">
                 <label htmlFor="map" className="label">
                     <span>住所</span>
                 </label>
                 <SearchMap />
-            </div>
+            </div> */}
             {/* rating */}
-            <div className="form-control mb-6 w-full">
-                <label htmlFor="rating" className="label">
+            <div className="">
+                <Rating controle={control} />
+                {/* <label htmlFor="rating" className="label">
                     <span>総合評価</span>
                 </label>
                 <div className="rating rating-half rating-lg">
@@ -88,7 +91,7 @@ const CreatePostWizard = () => {
                 </div>
                 {errors.rating?.message && (
                     <div className="text-red-500">{errors.rating.message}</div>
-                )}
+                )} */}
             </div>
             {/* content */}
             <div className="form-control mb-6 w-full">
