@@ -59,42 +59,48 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
         value,
         suggestions: { data },
         setValue,
+        clearSuggestions,
     } = usePlacesAutocomplete({
         debounce: 300,
     });
 
+    // store
     const setPlaceDetails = useGoogleMapStore((state) => state.setPlaceDetails);
     const removePlaceDetails = useGoogleMapStore(
         (state) => state.removePlaceDetails
     );
-
-    const handleInput = (
-        e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-    ) => {
-        console.log("handleInput", e.target.value);
-        setValue(e.target.value);
-
-        if (e.target.value === "") {
-            props.resetField("address");
-        }
-    };
 
     const handleInputChange = (
         _: SyntheticEvent<Element, Event>,
         value: string,
         reason: AutocompleteInputChangeReason
     ) => {
-        if (reason === "clear") {
-            removePlaceDetails();
-            props.resetField("address");
+        console.log(reason, { value });
+
+        // setValueが先！！順番大事！！
+        setValue(value);
+
+        if (reason === "clear" || (reason === "reset" && value === "")) {
+            removePlaceDetails(); // store初期化
+            props.resetField("address"); // react-hook-formのaddress初期化
+            clearSuggestions(); // サジェスト削除
+            props.setSelected(null); // marker削除
         }
     };
 
     const handleSelect = (
         _: SyntheticEvent<Element, Event>,
-        value: google.maps.places.AutocompletePrediction | null
+        value: string | google.maps.places.AutocompletePrediction | null
     ) => {
+        console.log("handleSelect");
+
         if (!value) return;
+
+        if (typeof value === "string") {
+            console.log("handleSelect 「string」");
+
+            return;
+        }
 
         const { description, place_id, structured_formatting } = value;
 
@@ -137,93 +143,91 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
             name="address"
             control={props.controle}
             render={({ field, fieldState }) => (
-                <ClickAwayListener
-                    onClickAway={() => {
-                        // clearSuggestions()
-                    }}
-                >
-                    <Autocomplete
-                        style={{ width: 300 }}
-                        getOptionLabel={(option) =>
-                            typeof option === "string"
-                                ? option
-                                : option.description
-                        }
-                        filterOptions={(x) => x}
-                        onChange={handleSelect}
-                        onInputChange={handleInputChange}
-                        options={data}
-                        autoComplete
-                        includeInputInList
-                        filterSelectedOptions
-                        noOptionsText="検索結果がありません"
-                        // value={data.find((x) => x.description === value) ?? null}
-                        value={data.find((x) => x.description === value)}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                size="small"
-                                label="店舗検索"
-                                variant="outlined"
-                                fullWidth
-                                onChange={(e) => handleInput(e)}
-                                error={fieldState.invalid}
-                                helperText={fieldState.error?.message}
-                            />
-                        )}
-                        renderOption={(props, option) => {
-                            const matches =
-                                option.structured_formatting
-                                    .main_text_matched_substrings;
-                            const parts = parse(
-                                option.structured_formatting.main_text,
-                                matches.map((match) => [
-                                    match.offset,
-                                    match.offset + match.length,
-                                ])
-                            );
+                // <ClickAwayListener
+                //     onClickAway={() => {
+                //         // clearSuggestions()
+                //     }}
+                // >
+                <Autocomplete
+                    {...field}
+                    // freeSolo
+                    style={{ width: 300 }}
+                    getOptionLabel={(option) =>
+                        typeof option === "string" ? option : option.description
+                    }
+                    filterOptions={(x) => x}
+                    options={data}
+                    autoComplete
+                    includeInputInList
+                    filterSelectedOptions
+                    noOptionsText="検索結果がありません"
+                    value={data.find((x) => x.description === value) ?? null}
+                    onChange={handleSelect}
+                    onInputChange={handleInputChange}
+                    onClose={(_, reason) => console.log("onClose", reason)}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            size="small"
+                            label="店舗検索"
+                            variant="outlined"
+                            fullWidth
+                            error={fieldState.invalid}
+                            helperText={fieldState.error?.message}
+                        />
+                    )}
+                    renderOption={(props, option) => {
+                        const matches =
+                            option.structured_formatting
+                                .main_text_matched_substrings;
+                        const parts = parse(
+                            option.structured_formatting.main_text,
+                            matches.map((match) => [
+                                match.offset,
+                                match.offset + match.length,
+                            ])
+                        );
 
-                            return (
-                                <li {...props} key={option.place_id}>
-                                    <Grid
-                                        container
-                                        alignItems="center"
-                                        // onClick={handleSelect(option)}
-                                    >
-                                        <Grid item>
-                                            <LocationOnIcon />
-                                        </Grid>
-                                        <Grid item xs>
-                                            {parts.map((part, index) => (
-                                                <span
-                                                    key={index}
-                                                    style={{
-                                                        fontWeight:
-                                                            part.highlight
-                                                                ? 700
-                                                                : 400,
-                                                    }}
-                                                >
-                                                    {part.text}
-                                                </span>
-                                            ))}
-
-                                            <Typography
-                                                variant="body2"
-                                                color="textSecondary"
-                                            >
-                                                {
-                                                    option.structured_formatting
-                                                        .secondary_text
-                                                }
-                                            </Typography>
-                                        </Grid>
+                        return (
+                            <li {...props} key={option.place_id}>
+                                <Grid
+                                    container
+                                    alignItems="center"
+                                    // onClick={handleSelect(option)}
+                                >
+                                    <Grid item>
+                                        <LocationOnIcon />
                                     </Grid>
-                                </li>
-                            );
-                        }}
-                    />
-                </ClickAwayListener>
+                                    <Grid item xs>
+                                        {parts.map((part, index) => (
+                                            <span
+                                                key={index}
+                                                style={{
+                                                    fontWeight: part.highlight
+                                                        ? 700
+                                                        : 400,
+                                                }}
+                                            >
+                                                {part.text}
+                                            </span>
+                                        ))}
+
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                        >
+                                            {
+                                                option.structured_formatting
+                                                    .secondary_text
+                                            }
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </li>
+                        );
+                    }}
+                />
+                // </ClickAwayListener>
             )}
         />
     );
@@ -250,7 +254,7 @@ const Map = (props: SearchPlaceMapProps) => {
         pixelOffset: size,
     };
     const createOffsetSize = () => {
-        console.log("createOffsetSize");
+        // console.log("createOffsetSize");
         return setSize(new window.google.maps.Size(0, -45));
     };
 

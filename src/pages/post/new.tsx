@@ -23,7 +23,7 @@ const CreatePostWizard = () => {
         });
 
     useEffect(() => {
-        const un = watch((value) => console.log({ value }));
+        const un = watch((value) => console.log("watch", { value }));
 
         return () => un.unsubscribe();
     }, [watch]);
@@ -56,7 +56,7 @@ const CreatePostWizard = () => {
                 //         address: "",
                 //     },
                 // });
-                console.log(data);
+                console.log("onSubmit", data);
             })}
         >
             {/* google map */}
