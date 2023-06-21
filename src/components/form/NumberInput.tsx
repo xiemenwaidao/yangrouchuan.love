@@ -1,10 +1,11 @@
-import TextField from "@mui/material/TextField";
+import { TextField } from "@mui/material";
 import { type Control, Controller } from "react-hook-form";
-import type { PostSchema, PostSchemaKeys } from "~/utils/schema";
+import { toHalfWidth } from "~/utils/helpers";
+import { type FrontPostSchemaKeys, type FrontPostSchema } from "~/utils/schema";
 
 interface Props {
-    controle: Control<PostSchema>;
-    name: PostSchemaKeys;
+    controle: Control<FrontPostSchema>;
+    name: FrontPostSchemaKeys;
 }
 
 export const NumberInput = (props: Props) => {
@@ -12,14 +13,23 @@ export const NumberInput = (props: Props) => {
         <Controller
             name={props.name}
             control={props.controle}
-            defaultValue={0}
+            defaultValue={""}
             render={({ field, fieldState }) => (
                 <TextField
                     {...field}
                     id="outlined-required"
-                    label="値段（¥）"
-                    type="number"
-                    placeholder="500"
+                    label="値段"
+                    placeholder={`500`}
+                    onBlur={(e) => {
+                        const currentValue = e.target.value;
+                        const newValue = toHalfWidth(currentValue);
+
+                        // 数値にキャスト可能時のみ値を更新
+                        // ""の場合は0になっってしまうので除外
+                        if (newValue !== "" && !isNaN(Number(newValue))) {
+                            console.log("onBlur", Number(newValue));
+                        }
+                    }}
                     error={fieldState.invalid}
                     helperText={fieldState.error?.message}
                 />

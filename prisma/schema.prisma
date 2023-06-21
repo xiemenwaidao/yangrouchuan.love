@@ -20,7 +20,7 @@ model Post {
     // title     String
     rating    Float
     content   String
-    price     Int?
+    price     Int
     place     Place       @relation(fields: [placeId], references: [id])
     placeId   String
     authorId  String
@@ -58,7 +58,8 @@ model Bookmark {
 }
 
 model Place {
-    id    String @id
-    name  String
-    posts Post[]
+    id      String @id
+    title   String
+    address String
+    posts   Post[]
 }

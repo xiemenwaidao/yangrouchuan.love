@@ -1,10 +1,10 @@
 import { TextField } from "@mui/material";
 import { type Control, Controller } from "react-hook-form";
-import { type PostSchemaKeys, type PostSchema } from "~/utils/schema";
+import { type FrontPostSchemaKeys, type FrontPostSchema } from "~/utils/schema";
 
 interface Props {
-    controle: Control<PostSchema>;
-    name: PostSchemaKeys;
+    controle: Control<FrontPostSchema>;
+    name: FrontPostSchemaKeys;
 }
 
 export const TextInpupt = (props: Props) => {

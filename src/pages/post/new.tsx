@@ -5,28 +5,29 @@ import { Layout } from "~/components/Layout";
 import { SITE } from "~/config";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type PostSchema, postSchema } from "~/utils/schema";
-import { toHalfWidth } from "~/utils/helpers";
+import { type FrontPostSchema, frontPostSchema } from "~/utils/schema";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import { SearchMap } from "~/components/form/SearchMap";
 import { Rating } from "~/components/form/Rating";
 import { TextInpupt } from "~/components/form/TextInput";
 import { NumberInput } from "~/components/form/NumberInput";
 import Button from "@mui/material/Button";
 import { SearchPlaceMap } from "~/components/form/SearchPlace";
+import { useEffect } from "react";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors },
-        control,
-    } = useForm<PostSchema>({
-        resolver: zodResolver(postSchema),
-    });
+    const { handleSubmit, control, setValue, watch } = useForm<FrontPostSchema>(
+        {
+            resolver: zodResolver(frontPostSchema),
+        }
+    );
+
+    useEffect(() => {
+        const un = watch((value) => console.log({ value }));
+
+        return () => un.unsubscribe();
+    }, [watch]);
 
     const { mutate } = api.post.create.useMutation({
         onSuccess: () => {
@@ -47,15 +48,20 @@ const CreatePostWizard = () => {
         <form
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit((data) => {
-                mutate({
-                    ...data,
-                    rating: data.rating,
-                });
+                // mutate({
+                //     ...data,
+                //     rating: data.rating,
+                //     place: {
+                //         place_id: "",
+                //         title: "",
+                //         address: "",
+                //     },
+                // });
                 console.log(data);
             })}
         >
             {/* google map */}
-            <SearchPlaceMap />
+            <SearchPlaceMap controle={control} setValue={setValue} />
             {/* <div className="form-control mb-6 w-full">
                 <label htmlFor="map" className="label">
                     <span>住所</span>
