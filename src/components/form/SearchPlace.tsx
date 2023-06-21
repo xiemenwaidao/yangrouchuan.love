@@ -1,4 +1,6 @@
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, {
+    type AutocompleteInputChangeReason,
+} from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Box from "@mui/material/Box";
@@ -32,8 +34,10 @@ import {
     Controller,
     type Control,
     type UseFormSetValue,
+    type UseFormResetField,
 } from "react-hook-form";
 import type { FrontPostSchema } from "~/utils/schema";
+import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 
 interface SelectedAddressProps {
     lat: number;
@@ -47,6 +51,7 @@ interface PlacesAutocompleteProps {
     setSelected: Dispatch<SetStateAction<SelectedAddressProps | null>>;
     controle: Control<FrontPostSchema>;
     setValue: UseFormSetValue<FrontPostSchema>;
+    resetField: UseFormResetField<FrontPostSchema>;
 }
 
 const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
@@ -58,10 +63,31 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
         debounce: 300,
     });
 
+    const setPlaceDetails = useGoogleMapStore((state) => state.setPlaceDetails);
+    const removePlaceDetails = useGoogleMapStore(
+        (state) => state.removePlaceDetails
+    );
+
     const handleInput = (
         e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
     ) => {
+        console.log("handleInput", e.target.value);
         setValue(e.target.value);
+
+        if (e.target.value === "") {
+            props.resetField("address");
+        }
+    };
+
+    const handleInputChange = (
+        _: SyntheticEvent<Element, Event>,
+        value: string,
+        reason: AutocompleteInputChangeReason
+    ) => {
+        if (reason === "clear") {
+            removePlaceDetails();
+            props.resetField("address");
+        }
     };
 
     const handleSelect = (
@@ -70,7 +96,7 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
     ) => {
         if (!value) return;
 
-        const { description } = value;
+        const { description, place_id, structured_formatting } = value;
 
         // console.log(value.structured_formatting.main_text);
 
@@ -89,11 +115,19 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
                 props.setSelected({
                     lat,
                     lng,
-                    place_id: value.place_id,
-                    title: value.structured_formatting.main_text,
+                    place_id: place_id,
+                    title: structured_formatting.main_text,
                     address: description,
                 });
+
                 props.setValue("address", description);
+
+                //
+                setPlaceDetails({
+                    placeId: place_id,
+                    title: structured_formatting.main_text,
+                    address: description,
+                });
             })
             .catch((error) => console.error("😱 Error: ", error));
     };
@@ -117,18 +151,19 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
                         }
                         filterOptions={(x) => x}
                         onChange={handleSelect}
+                        onInputChange={handleInputChange}
                         options={data}
                         autoComplete
                         includeInputInList
                         filterSelectedOptions
-                        noOptionsText="該当なし"
+                        noOptionsText="検索結果がありません"
                         // value={data.find((x) => x.description === value) ?? null}
                         value={data.find((x) => x.description === value)}
                         renderInput={(params) => (
                             <TextField
                                 {...params}
                                 size="small"
-                                label="店舗住所"
+                                label="店舗検索"
                                 variant="outlined"
                                 fullWidth
                                 onChange={(e) => handleInput(e)}
@@ -194,11 +229,12 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
     );
 };
 
-const MAP_DEFAULT_ZOOM = 10;
+const MAP_DEFAULT_ZOOM = 14;
 
 interface SearchPlaceMapProps {
     controle: Control<FrontPostSchema>;
     setValue: UseFormSetValue<FrontPostSchema>;
+    resetField: UseFormResetField<FrontPostSchema>;
 }
 
 const Map = (props: SearchPlaceMapProps) => {
@@ -260,6 +296,7 @@ const Map = (props: SearchPlaceMapProps) => {
                     setSelected={setSelected}
                     controle={props.controle}
                     setValue={props.setValue}
+                    resetField={props.resetField}
                 />
             </div>
         </div>
@@ -287,5 +324,11 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
             </Box>
         );
 
-    return <Map controle={props.controle} setValue={props.setValue} />;
+    return (
+        <Map
+            controle={props.controle}
+            setValue={props.setValue}
+            resetField={props.resetField}
+        />
+    );
 };

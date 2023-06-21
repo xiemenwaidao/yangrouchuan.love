@@ -17,11 +17,10 @@ import { useEffect } from "react";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
-    const { handleSubmit, control, setValue, watch } = useForm<FrontPostSchema>(
-        {
+    const { handleSubmit, control, setValue, resetField, watch } =
+        useForm<FrontPostSchema>({
             resolver: zodResolver(frontPostSchema),
-        }
-    );
+        });
 
     useEffect(() => {
         const un = watch((value) => console.log({ value }));
@@ -61,7 +60,11 @@ const CreatePostWizard = () => {
             })}
         >
             {/* google map */}
-            <SearchPlaceMap controle={control} setValue={setValue} />
+            <SearchPlaceMap
+                controle={control}
+                setValue={setValue}
+                resetField={resetField}
+            />
             {/* <div className="form-control mb-6 w-full">
                 <label htmlFor="map" className="label">
                     <span>住所</span>

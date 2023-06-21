@@ -24,7 +24,9 @@ const commonSchema = {
 
 export const frontPostSchema = z.object({
     ...commonSchema,
-    address: z.string(),
+    address: z.string({
+        required_error: "必須項目です",
+    }),
 });
 
 export type FrontPostSchema = z.infer<typeof frontPostSchema>;
