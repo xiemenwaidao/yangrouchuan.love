@@ -11,7 +11,6 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 import TextField from "@mui/material/TextField";
 import parse from "autosuggest-highlight/parse";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
 import {
     useMemo,
     useState,
@@ -24,8 +23,8 @@ import {
 } from "react";
 import {
     GoogleMap,
-    InfoWindow,
-    Marker,
+    InfoWindowF,
+    MarkerF,
     useLoadScript,
 } from "@react-google-maps/api";
 import { env } from "~/env.mjs";
@@ -70,84 +69,85 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
         (state) => state.removePlaceDetails
     );
 
-    const handleInputChange = (
-        _: SyntheticEvent<Element, Event>,
-        value: string,
-        reason: AutocompleteInputChangeReason
-    ) => {
-        console.log(reason, { value });
+    const handleInputChange = useCallback(
+        (
+            _: SyntheticEvent<Element, Event>,
+            value: string,
+            reason: AutocompleteInputChangeReason
+        ) => {
+            console.log("inputChange", reason, { value });
 
-        // setValueが先！！順番大事！！
-        setValue(value);
+            // setValueが先！！順番大事！！
+            setValue(value);
 
-        if (reason === "clear" || (reason === "reset" && value === "")) {
-            removePlaceDetails(); // store初期化
-            props.resetField("address"); // react-hook-formのaddress初期化
-            clearSuggestions(); // サジェスト削除
-            props.setSelected(null); // marker削除
-        }
-    };
+            if (reason === "clear" || (reason === "reset" && value === "")) {
+                removePlaceDetails(); // store初期化
+                props.resetField("address"); // react-hook-formのaddress初期化
+                clearSuggestions(); // サジェスト削除
+                props.setSelected(null); // marker削除
+            }
+        },
+        [clearSuggestions, props, removePlaceDetails, setValue]
+    );
 
-    const handleSelect = (
-        _: SyntheticEvent<Element, Event>,
-        value: string | google.maps.places.AutocompletePrediction | null
-    ) => {
-        console.log("handleSelect");
+    const handleSelect = useCallback(
+        (
+            _: SyntheticEvent<Element, Event>,
+            value: string | google.maps.places.AutocompletePrediction | null
+        ) => {
+            console.log("handleSelect");
 
-        if (!value) return;
+            if (!value) return;
 
-        if (typeof value === "string") {
-            console.log("handleSelect 「string」");
+            if (typeof value === "string") {
+                console.log("handleSelect 「string」");
 
-            return;
-        }
+                return;
+            }
 
-        const { description, place_id, structured_formatting } = value;
+            const { description, place_id, structured_formatting } = value;
 
-        // console.log(value.structured_formatting.main_text);
+            // console.log(value.structured_formatting.main_text);
 
-        // setValue(description, false);
-        // clearSuggestions();
+            // setValue(description, false);
+            // clearSuggestions();
 
-        // Get latitude and longitude via utility functions
-        getGeocode({ address: description })
-            .then((results) => {
-                if (!results[0]) throw new Error("No results found");
-                return {
-                    ...getLatLng(results[0]),
-                };
-            })
-            .then(({ lat, lng }) => {
-                props.setSelected({
-                    lat,
-                    lng,
-                    place_id: place_id,
-                    title: structured_formatting.main_text,
-                    address: description,
-                });
+            // Get latitude and longitude via utility functions
+            getGeocode({ address: description })
+                .then((results) => {
+                    if (!results[0]) throw new Error("No results found");
+                    return {
+                        ...getLatLng(results[0]),
+                    };
+                })
+                .then(({ lat, lng }) => {
+                    props.setSelected({
+                        lat,
+                        lng,
+                        place_id: place_id,
+                        title: structured_formatting.main_text,
+                        address: description,
+                    });
 
-                props.setValue("address", description);
+                    props.setValue("address", description);
 
-                //
-                setPlaceDetails({
-                    placeId: place_id,
-                    title: structured_formatting.main_text,
-                    address: description,
-                });
-            })
-            .catch((error) => console.error("😱 Error: ", error));
-    };
+                    //
+                    setPlaceDetails({
+                        placeId: place_id,
+                        title: structured_formatting.main_text,
+                        address: description,
+                    });
+                })
+                .catch((error) => console.error("😱 Error: ", error));
+        },
+        [props, setPlaceDetails]
+    );
 
     return (
         <Controller
             name="address"
             control={props.controle}
             render={({ field, fieldState }) => (
-                // <ClickAwayListener
-                //     onClickAway={() => {
-                //         // clearSuggestions()
-                //     }}
-                // >
                 <Autocomplete
                     {...field}
                     // freeSolo
@@ -227,7 +227,6 @@ const AutocompletePlaceInput: FC<PlacesAutocompleteProps> = (props) => {
                         );
                     }}
                 />
-                // </ClickAwayListener>
             )}
         />
     );
@@ -253,16 +252,24 @@ const Map = (props: SearchPlaceMapProps) => {
     const infoWindowOptions = {
         pixelOffset: size,
     };
-    const createOffsetSize = () => {
-        // console.log("createOffsetSize");
+    const createOffsetSize = useCallback(() => {
+        console.log("createOffsetSize");
         return setSize(new window.google.maps.Size(0, -45));
-    };
+    }, []);
 
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
-    const onLoad = useCallback((map: google.maps.Map) => {
-        createOffsetSize();
-        setMap(map);
+    const onLoad = useCallback(
+        (map: google.maps.Map) => {
+            createOffsetSize();
+            setMap(map);
+        },
+        [createOffsetSize]
+    );
+
+    const onUnmount = useCallback(() => {
+        console.log("onUnmount map");
+        setMap(null);
     }, []);
 
     // マーカーに合わせて中心を移動
@@ -282,16 +289,37 @@ const Map = (props: SearchPlaceMapProps) => {
                 center={center}
                 mapContainerClassName="google-map"
                 onLoad={onLoad}
+                onUnmount={onUnmount}
             >
                 {selected && (
                     <>
-                        <InfoWindow
+                        {/* <InfoWindow
                             position={selected}
                             options={infoWindowOptions}
+                            onLoad={() => console.log("onLoad infoWindow")}
+                            onUnmount={() =>
+                                console.log("onUnmount infoWindow")
+                            }
                         >
-                            <div>info</div>
+                            <div>
+                                <strong>{selected.title}</strong>
+                                <div>{selected.address}</div>
+                            </div>
                         </InfoWindow>
-                        <Marker position={selected}></Marker>
+                        <Marker position={selected}></Marker> */}
+
+                        <MarkerF position={selected}>
+                            <InfoWindowF
+                                position={selected}
+                                // options={infoWindowOptions}
+                                onLoad={() => console.log("onLoad infoWindow")}
+                            >
+                                <div>
+                                    <strong>{selected.title}</strong>
+                                    <div>{selected.address}</div>
+                                </div>
+                            </InfoWindowF>
+                        </MarkerF>
                     </>
                 )}
             </GoogleMap>
@@ -316,23 +344,22 @@ const libraries: (
 )[] = ["places"];
 
 export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
-    const { isLoaded } = useLoadScript({
+    const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         libraries: libraries,
     });
 
-    if (!isLoaded)
-        return (
-            <Box sx={{ display: "flex" }}>
-                <CircularProgress />
-            </Box>
-        );
+    if (loadError) return <div>エラーが発生しました。</div>;
 
-    return (
+    return isLoaded ? (
         <Map
             controle={props.controle}
             setValue={props.setValue}
             resetField={props.resetField}
         />
+    ) : (
+        <Box sx={{ display: "flex" }}>
+            <CircularProgress />
+        </Box>
     );
 };

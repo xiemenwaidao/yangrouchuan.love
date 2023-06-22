@@ -14,6 +14,7 @@ import { NumberInput } from "~/components/form/NumberInput";
 import Button from "@mui/material/Button";
 import { SearchPlaceMap } from "~/components/form/SearchPlace";
 import { useEffect } from "react";
+import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -22,11 +23,17 @@ const CreatePostWizard = () => {
             resolver: zodResolver(frontPostSchema),
         });
 
-    useEffect(() => {
-        const un = watch((value) => console.log("watch", { value }));
+    const [placeId, title, address] = useGoogleMapStore((state) => [
+        state.placeId,
+        state.title,
+        state.address,
+    ]);
 
-        return () => un.unsubscribe();
-    }, [watch]);
+    // useEffect(() => {
+    //     const un = watch((value) => console.log("watch", { value }));
+
+    //     return () => un.unsubscribe();
+    // }, [watch]);
 
     const { mutate } = api.post.create.useMutation({
         onSuccess: () => {
@@ -45,18 +52,19 @@ const CreatePostWizard = () => {
 
     return (
         <form
+            // handleSubmitはバリデーションが成功してないとと発火しない！！
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit((data) => {
-                // mutate({
-                //     ...data,
-                //     rating: data.rating,
-                //     place: {
-                //         place_id: "",
-                //         title: "",
-                //         address: "",
-                //     },
-                // });
                 console.log("onSubmit", data);
+                mutate({
+                    ...data,
+                    place: {
+                        place_id: placeId,
+                        title: title,
+                        address: address,
+                    },
+                });
+                console.log("onsubmit end");
             })}
         >
             {/* google map */}

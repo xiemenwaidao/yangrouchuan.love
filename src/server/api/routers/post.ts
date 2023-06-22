@@ -13,7 +13,18 @@ export const postRouter = createTRPCRouter({
                     rating: input.rating,
                     content: input.content,
                     price: input.price,
-                    place: {},
+                    place: {
+                        connectOrCreate: {
+                            create: {
+                                id: input.place.place_id,
+                                title: input.place.title,
+                                address: input.place.address,
+                            },
+                            where: {
+                                id: input.place.place_id,
+                            },
+                        },
+                    },
                 },
             });
 
