@@ -1,9 +1,9 @@
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
-import { postSchema } from "~/utils/schema";
+import { backPostSchema } from "~/utils/schema";
 
 export const postRouter = createTRPCRouter({
     create: privateProcedure
-        .input(postSchema)
+        .input(backPostSchema)
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
 
@@ -13,7 +13,18 @@ export const postRouter = createTRPCRouter({
                     rating: input.rating,
                     content: input.content,
                     price: input.price,
-                    placeId: input.placeId,
+                    place: {
+                        connectOrCreate: {
+                            create: {
+                                id: input.place.place_id,
+                                title: input.place.title,
+                                address: input.place.address,
+                            },
+                            where: {
+                                id: input.place.place_id,
+                            },
+                        },
+                    },
                 },
             });
 
