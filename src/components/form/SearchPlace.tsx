@@ -299,14 +299,26 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
         []
     );
 
+    const clearValues = useCallback(() => {
+        removePlaceDetails(); // store初期化
+        props.resetField("address"); // react-hook-formのaddress初期化
+        props.setSelected(null); // marker削除
+    }, [props, removePlaceDetails]);
+
     const handleChange = useCallback(
         (
             _e: SyntheticEvent<Element, Event>,
             newValue: google.maps.places.AutocompletePrediction | null,
-            _r: AutocompleteChangeReason
+            reason: AutocompleteChangeReason
         ) => {
+            console.log("handleChange", { newValue, reason });
             setOptions(newValue ? [newValue, ...options] : options);
             setValue(newValue);
+
+            //
+            if (reason === "clear") {
+                clearValues();
+            }
 
             if (newValue === null) return;
             const { description, place_id, structured_formatting } = newValue;
@@ -338,19 +350,24 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                 })
                 .catch((error) => console.error("😱 Error: ", error));
         },
-        [options, props, setPlaceDetails]
+        [clearValues, options, props, setPlaceDetails]
     );
 
     const handleInputChange = useCallback(
         (
             _: SyntheticEvent<Element, Event>,
             newInputValue: string,
-            _reason: AutocompleteInputChangeReason
+            reason: AutocompleteInputChangeReason
         ) => {
-            // console.log("inputChange", reason, { newInputValue });
+            console.log("inputChange", reason, { newInputValue });
+
             setInputValue(newInputValue);
+
+            if (reason === "clear") {
+                clearValues();
+            }
         },
-        []
+        [clearValues]
     );
 
     useEffect(() => {
@@ -368,9 +385,9 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
             console.log('inputValue === ""');
 
             setOptions(value ? [value] : []);
-            removePlaceDetails(); // store初期化
-            props.resetField("address"); // react-hook-formのaddress初期化
-            props.setSelected(null); // marker削除
+            // removePlaceDetails(); // store初期化
+            // props.resetField("address"); // react-hook-formのaddress初期化
+            // props.setSelected(null); // marker削除
             return undefined;
         }
 
@@ -400,7 +417,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
         return () => {
             active = false;
         };
-    }, [value, inputValue, fetch, removePlaceDetails, props]);
+    }, [value, inputValue, fetch]);
 
     return (
         <Controller
