@@ -2,9 +2,10 @@ import { z } from "zod";
 import { toHalfWidth } from "./helpers";
 
 const commonSchema = {
-    rating: z
+    rating: z.coerce
         .number({
             required_error: "必須項目です",
+            invalid_type_error: "半角数字を入力してください",
         })
         .min(0)
         .max(5)
@@ -26,6 +27,7 @@ const commonSchema = {
             .min(0, { message: "0以上100000以下の値を入力してください" })
             .max(100000, { message: "0以上100000以下の値を入力してください" })
     ),
+    // images:
 };
 
 export const frontPostSchema = z.object({

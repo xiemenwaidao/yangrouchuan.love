@@ -3,7 +3,7 @@ import MUIRating from "@mui/material/Rating";
 import { useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import { type Control, Controller } from "react-hook-form";
-import { type PostSchema } from "~/utils/schema";
+import { type FrontPostSchema } from "~/utils/schema";
 
 const labels: { [index: string]: string } = {
     0.5: "Useless",
@@ -25,7 +25,7 @@ function getLabelText(value: number) {
 }
 
 interface Props {
-    controle: Control<PostSchema>;
+    controle: Control<FrontPostSchema>;
 }
 
 export const Rating = (props: Props) => {
@@ -33,37 +33,46 @@ export const Rating = (props: Props) => {
 
     return (
         <Box
-            sx={{
-                width: 200,
-                display: "flex",
-                alignItems: "center",
-            }}
+            sx={
+                {
+                    // width: 200,
+                    // display: "flex",
+                    // alignItems: "center",
+                }
+            }
         >
             <Controller
                 name="rating"
                 control={props.controle}
                 defaultValue={2.5}
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                     <>
-                        <MUIRating
-                            {...field}
-                            name="hover-feedback"
-                            precision={0.5}
-                            value={Number(field.value)}
-                            getLabelText={getLabelText}
-                            onChangeActive={(event, newHover) => {
-                                setHover(newHover);
-                            }}
-                            emptyIcon={
-                                <StarIcon
-                                    style={{ opacity: 0.55 }}
-                                    fontSize="inherit"
-                                />
-                            }
-                        />
-                        {field.value !== null && (
-                            <Box sx={{ ml: 2 }}>
-                                {labels[hover !== -1 ? hover : field.value]}
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <MUIRating
+                                {...field}
+                                name="hover-feedback"
+                                precision={0.5}
+                                value={Number(field.value)}
+                                getLabelText={getLabelText}
+                                onChangeActive={(event, newHover) => {
+                                    setHover(newHover);
+                                }}
+                                emptyIcon={
+                                    <StarIcon
+                                        style={{ opacity: 0.55 }}
+                                        fontSize="inherit"
+                                    />
+                                }
+                            />
+                            {field.value !== null && (
+                                <Box sx={{ ml: 2 }}>
+                                    {labels[hover !== -1 ? hover : field.value]}
+                                </Box>
+                            )}
+                        </Box>
+                        {fieldState.invalid && (
+                            <Box sx={{ color: "error.main" }}>
+                                {fieldState.error?.message}
                             </Box>
                         )}
                     </>
