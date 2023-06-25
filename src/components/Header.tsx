@@ -15,7 +15,7 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { useState } from "react";
 import Link from "@mui/material/Link";
 
-const pages = [{ title: "Post" }];
+const pages = [{ title: "Create", href: "/post/create" }];
 
 function Header() {
     const { user } = useUser();
@@ -96,7 +96,7 @@ function Header() {
                                 >
                                     <Typography textAlign="center">
                                         <Link
-                                            href={`/post/new`}
+                                            href={page.href}
                                             underline="hover"
                                         >
                                             {page.title}
@@ -140,7 +140,7 @@ function Header() {
                                 sx={{ my: 2, color: "white", display: "block" }}
                             >
                                 <Link
-                                    href={`/post/new`}
+                                    href={page.href}
                                     underline="hover"
                                     color="white"
                                 >
