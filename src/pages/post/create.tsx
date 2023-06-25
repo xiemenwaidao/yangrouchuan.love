@@ -13,12 +13,12 @@ import { TextInpupt } from "~/components/form/TextInput";
 import { NumberInput } from "~/components/form/NumberInput";
 import Button from "@mui/material/Button";
 import { SearchPlaceMap } from "~/components/form/SearchPlace";
-import { useEffect } from "react";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
+import { ImagePostInput } from "~/components/form/ImagePostInput";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
-    const { handleSubmit, control, setValue, resetField, watch } =
+    const { handleSubmit, control, setValue, resetField, getValues } =
         useForm<FrontPostSchema>({
             resolver: zodResolver(frontPostSchema),
         });
@@ -35,10 +35,12 @@ const CreatePostWizard = () => {
     //     return () => un.unsubscribe();
     // }, [watch]);
 
-    const { mutate } = api.post.create.useMutation({
+    const { mutate: storeMutate } = api.post.store.useMutation({
         onSuccess: () => {
             console.log("success");
             // 投稿ページに遷移させる
+
+            toast.success("投稿に成功しました。");
         },
         onError: (error) => {
             toast.error(
@@ -48,15 +50,14 @@ const CreatePostWizard = () => {
         },
     });
 
-    if (!user) return null;
+    const { mutate: getUploadImageURLMutate } =
+        api.cloudflareImages.getUploadImageURL.useMutation({
+            onSuccess: (url) => {
+                console.log("success", { url });
 
-    return (
-        <form
-            // handleSubmitはバリデーションが成功してないとと発火しない！！
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={handleSubmit((data) => {
-                console.log("onSubmit", data);
-                mutate({
+                const data = getValues();
+
+                storeMutate({
                     ...data,
                     place: {
                         place_id: placeId,
@@ -64,7 +65,27 @@ const CreatePostWizard = () => {
                         address: address,
                     },
                 });
-                console.log("onsubmit end");
+            },
+            onError: (error) => {
+                toast.error(
+                    error.message ??
+                        "画像更新に失敗しました。時間をおいて再度お試しください。"
+                );
+            },
+        });
+
+    // const onSubmit = handleSubmit((data) => {
+
+    // })
+
+    if (!user) return null;
+
+    return (
+        <form
+            // handleSubmitはバリデーションが成功してないとと発火しない！！
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onSubmit={handleSubmit((data) => {
+                getUploadImageURLMutate();
             })}
         >
             {/* google map */}
@@ -73,14 +94,12 @@ const CreatePostWizard = () => {
                 setValue={setValue}
                 resetField={resetField}
             />
-            {/* <div className="form-control mb-6 w-full">
-                <label htmlFor="map" className="label">
-                    <span>住所</span>
-                </label>
-                <SearchMap />
-            </div> */}
+            {/* images */}
+            <div className="form-control mb-6 w-full">
+                <ImagePostInput />
+            </div>
             {/* rating */}
-            <div className="">
+            <div className="form-control mb-6 w-full">
                 <Rating controle={control} />
             </div>
             {/* content */}
@@ -101,7 +120,7 @@ const CreatePostWizard = () => {
     );
 };
 
-const New: NextPage = () => {
+const Create: NextPage = () => {
     return (
         <>
             <Head>
@@ -117,4 +136,4 @@ const New: NextPage = () => {
     );
 };
 
-export default New;
+export default Create;
