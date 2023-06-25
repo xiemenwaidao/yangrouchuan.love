@@ -14,9 +14,6 @@ datasource db {
 
 model Post {
     id        String      @id @default(cuid())
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-    // published Boolean  @default(false)
     // title     String
     rating    Float
     content   String
@@ -27,14 +24,20 @@ model Post {
     images    PostImage[]
     bookmarks Bookmark[]
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    // published Boolean  @default(false)
+
     @@index([authorId], name: "authorId")
     @@index([placeId])
 }
 
 model Image {
     id    String      @id @default(cuid())
-    url   String
     posts PostImage[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model PostImage {
@@ -42,6 +45,9 @@ model PostImage {
     postId  String
     image   Image  @relation(fields: [imageId], references: [id])
     imageId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@id([postId, imageId])
     @@index([postId])
@@ -53,6 +59,9 @@ model Bookmark {
     post   Post   @relation(fields: [postId], references: [id])
     postId String
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     @@id([userId, postId])
     @@index([postId])
 }
@@ -62,4 +71,7 @@ model Place {
     title   String
     address String
     posts   Post[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
