@@ -1,6 +1,6 @@
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useThemeStore } from "~/store/useThemeStore";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -52,14 +52,17 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 export const ThemeSwitch = () => {
+    const [isDarkMode, setIsDarkMode] = useState(false);
     const mode = useThemeStore((state) => state.theme);
     const setMode = useThemeStore((state) => state.setTheme);
+
+    useEffect(() => setIsDarkMode(mode === "dark"), [mode]);
 
     return (
         <MaterialUISwitch
             sx={{ m: 1 }}
-            checked={mode === "dark"}
-            onChange={() => setMode(mode === "dark" ? "light" : "dark")}
+            checked={isDarkMode}
+            onChange={() => setMode(isDarkMode ? "light" : "dark")}
         />
     );
 };

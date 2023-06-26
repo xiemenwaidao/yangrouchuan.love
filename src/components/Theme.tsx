@@ -1,19 +1,26 @@
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import { type ReactNode } from "react";
+import { useState, type ReactNode, useEffect } from "react";
 import { useThemeStore } from "~/store/useThemeStore";
 
 const Theme = ({ children }: { children: ReactNode }) => {
-    // システムのテーマモードを取得
-    // const prefersPaletteMode = useMediaQuery("(prefers-color-scheme: dark)")
-    //     ? "dark"
-    //     : "light";
+    const [mounted, setMounted] = useState(false);
 
     // localstorageからテーマモードを取得
     const paletteMode = useThemeStore((state) => state.theme);
 
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // まだクライアントサイドでレンダリングが行われていない場合は何もレンダリングしない
+    // if (!mounted) {
+    //     return null;
+    // }
+
     const theme = createTheme({
         palette: {
-            mode: paletteMode,
+            // mode: paletteMode,
+            mode: mounted ? paletteMode : "dark",
         },
     });
 
