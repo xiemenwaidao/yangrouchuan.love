@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useState } from "react";
 import Link from "@mui/material/Link";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 const pages = [{ title: "Create", href: "/post/create" }];
 
@@ -109,6 +110,8 @@ function Header() {
                     <AdbIcon
                         sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
                     />
+
+                    {/* mobile */}
                     <Typography
                         variant="h5"
                         noWrap
@@ -127,6 +130,8 @@ function Header() {
                     >
                         {SITE.title}
                     </Typography>
+
+                    {/* desktop */}
                     <Box
                         sx={{
                             flexGrow: 1,
@@ -149,6 +154,8 @@ function Header() {
                             </Button>
                         ))}
                     </Box>
+
+                    <ThemeSwitch />
 
                     <Box sx={{ flexGrow: 0 }}>
                         {user ? (
