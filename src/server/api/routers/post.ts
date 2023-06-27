@@ -26,6 +26,20 @@ export const postRouter = createTRPCRouter({
                             },
                         },
                     },
+                    images: {
+                        create: input.images.map((imageId) => ({
+                            image: {
+                                connectOrCreate: {
+                                    create: {
+                                        id: imageId,
+                                    },
+                                    where: {
+                                        id: imageId,
+                                    },
+                                },
+                            },
+                        })),
+                    },
                 },
             });
 

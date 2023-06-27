@@ -17,6 +17,10 @@ import { ImagePostInput } from "~/components/form/ImagePostInput";
 import { Box, Stack } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
+import { uploadImage } from "~/utils/cloudflareHelpers";
+
+const UPDATE_IMAGE_FAILED_MESSAGE =
+    "画像更新に失敗しました。時間をおいて再度お試しください。";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -31,6 +35,16 @@ const CreatePostWizard = () => {
         state.address,
     ]);
 
+    const { mutate: deleteImagesMutate } =
+        api.cloudflareImages.deleteImages.useMutation({
+            onSuccess: () => {
+                console.log("success delete images");
+            },
+            onError: (error) => {
+                toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
+            },
+        });
+
     const { mutate: storeMutate, isLoading: isPosting } =
         api.post.store.useMutation({
             onSuccess: () => {
@@ -40,34 +54,78 @@ const CreatePostWizard = () => {
                 toast.success("投稿に成功しました。");
             },
             onError: (error) => {
-                toast.error(
-                    error.message ??
-                        "更新に失敗しました。時間をおいて再度お試しください。"
-                );
+                // 画像を削除する
+
+                toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
             },
         });
 
     const { mutate: getManyUploadImageURLMutate, isLoading: isLoadingGetURL } =
         api.cloudflareImages.getManyUploadImageURL.useMutation({
-            onSuccess: (urls) => {
-                console.log("success", { urls });
+            onSuccess: (results) => {
+                console.log("success", { results });
 
-                // const data = getValues();
+                const data = getValues();
 
-                // storeMutate({
-                //     ...data,
-                //     place: {
-                //         place_id: placeId,
-                //         title: title,
-                //         address: address,
-                //     },
-                // });
+                if (data.images.length !== results.length) {
+                    throw new Error(UPDATE_IMAGE_FAILED_MESSAGE);
+                }
+
+                const uploadImagePromises = data.images.map(
+                    async (image, index) => {
+                        const id = results[index]?.id;
+                        const uploadURL = results[index]?.uploadURL;
+
+                        if (!id)
+                            throw new Error("id or uploadURL is undefined");
+                        if (!uploadURL)
+                            throw new Error("id or uploadURL is undefined");
+
+                        try {
+                            const json = await uploadImage(
+                                image,
+                                uploadURL,
+                                id
+                            );
+                            return json.result.id; // Return the id from the uploaded image
+                        } catch (error) {
+                            if (error instanceof Error) {
+                                throw new Error(error.message);
+                            } else if (typeof error === "string") {
+                                throw new Error(error);
+                            } else {
+                                throw new Error("unexpected error");
+                            }
+                        }
+                    }
+                );
+
+                Promise.all(uploadImagePromises)
+                    .then((ids) => {
+                        console.log({ ids });
+
+                        storeMutate({
+                            ...data,
+                            place: {
+                                place_id: placeId,
+                                title: title,
+                                address: address,
+                            },
+                            images: ids,
+                        });
+                    })
+                    .catch((error) => {
+                        if (error instanceof Error) {
+                            throw new Error(error.message);
+                        } else if (typeof error === "string") {
+                            throw new Error(error);
+                        } else {
+                            throw new Error("unexpected error");
+                        }
+                    });
             },
             onError: (error) => {
-                toast.error(
-                    error.message ??
-                        "画像更新に失敗しました。時間をおいて再度お試しください。"
-                );
+                toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
             },
         });
 
@@ -83,7 +141,9 @@ const CreatePostWizard = () => {
             component={`form`}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit((data) => {
-                // getUploadImageURLMutate();
+                getManyUploadImageURLMutate({
+                    count: data.images.length,
+                });
                 console.log({ data });
             })}
         >
