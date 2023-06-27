@@ -36,6 +36,91 @@ import {
 import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { debounce } from "@mui/material/utils";
+import { useThemeStore } from "~/store/useThemeStore";
+
+const styles: Record<string, google.maps.MapTypeStyle[]> = {
+    default: [],
+    night: [
+        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+        {
+            featureType: "administrative.locality",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+        },
+        {
+            featureType: "poi",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+        },
+        {
+            featureType: "poi.park",
+            elementType: "geometry",
+            stylers: [{ color: "#263c3f" }],
+        },
+        {
+            featureType: "poi.park",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#6b9a76" }],
+        },
+        {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: "#38414e" }],
+        },
+        {
+            featureType: "road",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#212a37" }],
+        },
+        {
+            featureType: "road",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#9ca5b3" }],
+        },
+        {
+            featureType: "road.highway",
+            elementType: "geometry",
+            stylers: [{ color: "#746855" }],
+        },
+        {
+            featureType: "road.highway",
+            elementType: "geometry.stroke",
+            stylers: [{ color: "#1f2835" }],
+        },
+        {
+            featureType: "road.highway",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#f3d19c" }],
+        },
+        {
+            featureType: "transit",
+            elementType: "geometry",
+            stylers: [{ color: "#2f3948" }],
+        },
+        {
+            featureType: "transit.station",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#d59563" }],
+        },
+        {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: "#17263c" }],
+        },
+        {
+            featureType: "water",
+            elementType: "labels.text.fill",
+            stylers: [{ color: "#515c6d" }],
+        },
+        {
+            featureType: "water",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#17263c" }],
+        },
+    ],
+};
 
 interface SelectedAddressProps {
     lat: number;
@@ -132,6 +217,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                         address: description,
                     });
 
+                    // TODO: アンチパターンっぽい？
                     props.setValue("address", description);
 
                     //
@@ -323,6 +409,8 @@ const Map = (props: SearchPlaceMapProps) => {
 
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
+    const theme = useThemeStore((state) => state.theme);
+
     const onLoad = useCallback((map: google.maps.Map) => {
         setMap(map);
     }, []);
@@ -350,6 +438,10 @@ const Map = (props: SearchPlaceMapProps) => {
                 mapContainerClassName="google-map"
                 onLoad={onLoad}
                 onUnmount={onUnmount}
+                options={{
+                    styles:
+                        theme === "dark" ? styles["night"] : styles["default"],
+                }}
             >
                 {selected && (
                     <MarkerF position={selected}>
@@ -358,22 +450,15 @@ const Map = (props: SearchPlaceMapProps) => {
                             // options={infoWindowOptions}
                             // onLoad={() => console.log("onLoad infoWindow")}
                         >
-                            <div>
+                            <Box sx={{ color: "black" }}>
                                 <strong>{selected.title}</strong>
                                 <div>{selected.address}</div>
-                            </div>
+                            </Box>
                         </InfoWindowF>
                     </MarkerF>
                 )}
             </GoogleMap>
             <div>
-                {/* <AutocompletePlaceInput
-                    setSelected={setSelected}
-                    controle={props.controle}
-                    setValue={props.setValue}
-                    resetField={props.resetField}
-                /> */}
-
                 <AutocompleteInput
                     setSelected={setSelected}
                     controle={props.controle}
