@@ -4,18 +4,19 @@ import { useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import { type Control, Controller } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
+import { FormControl, FormHelperText } from "@mui/material";
 
 const labels: { [index: string]: string } = {
-    0.5: "Useless",
-    1: "Useless+",
-    1.5: "Poor",
-    2: "Poor+",
-    2.5: "Ok",
-    3: "Ok+",
-    3.5: "Good",
-    4: "Good+",
-    4.5: "Excellent",
-    5: "Excellent+",
+    0.5: "🤮",
+    1: "🤢",
+    1.5: "😩",
+    2: "😕",
+    2.5: "😐",
+    3: "🙂",
+    3.5: "😃",
+    4: "😄",
+    4.5: "😆",
+    5: "😍",
 };
 
 function getLabelText(value: number) {
@@ -32,52 +33,39 @@ export const Rating = (props: Props) => {
     const [hover, setHover] = useState(-1);
 
     return (
-        <Box
-            sx={
-                {
-                    // width: 200,
-                    // display: "flex",
-                    // alignItems: "center",
-                }
-            }
-        >
-            <Controller
-                name="rating"
-                control={props.controle}
-                defaultValue={2.5}
-                render={({ field, fieldState }) => (
-                    <>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <MUIRating
-                                {...field}
-                                name="hover-feedback"
-                                precision={0.5}
-                                value={Number(field.value)}
-                                getLabelText={getLabelText}
-                                onChangeActive={(event, newHover) => {
-                                    setHover(newHover);
-                                }}
-                                emptyIcon={
-                                    <StarIcon
-                                        style={{ opacity: 0.55 }}
-                                        fontSize="inherit"
-                                    />
-                                }
-                            />
-                            {field.value !== null && (
-                                <Box sx={{ ml: 2 }}>
-                                    {labels[hover !== -1 ? hover : field.value]}
-                                </Box>
-                            )}
-                        </Box>
-                        {fieldState.invalid && (
-                            <Box sx={{ color: "error.main" }}>
-                                {fieldState.error?.message}
+        <Controller
+            name="rating"
+            control={props.controle}
+            defaultValue={2.5}
+            render={({ field, fieldState }) => (
+                <FormControl error={fieldState.invalid}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <MUIRating
+                            {...field}
+                            name="hover-feedback"
+                            precision={0.5}
+                            value={Number(field.value)}
+                            getLabelText={getLabelText}
+                            onChangeActive={(event, newHover) => {
+                                setHover(newHover);
+                            }}
+                            emptyIcon={
+                                <StarIcon
+                                    style={{ opacity: 0.55 }}
+                                    fontSize="inherit"
+                                />
+                            }
+                        />
+                        {field.value !== null && (
+                            <Box sx={{ ml: 2 }}>
+                                {labels[hover !== -1 ? hover : field.value]}
                             </Box>
                         )}
-                    </>
-                )}
-            />
-        </Box>
+                    </Box>
+
+                    <FormHelperText>{fieldState.error?.message}</FormHelperText>
+                </FormControl>
+            )}
+        />
     );
 };

@@ -27,7 +27,6 @@ const commonSchema = {
             .min(0, { message: "0以上100000以下の値を入力してください" })
             .max(100000, { message: "0以上100000以下の値を入力してください" })
     ),
-    // images:
 };
 
 export const frontPostSchema = z.object({
@@ -35,6 +34,12 @@ export const frontPostSchema = z.object({
     address: z.string({
         required_error: "必須項目です",
     }),
+    images: z
+        .custom<File[]>()
+        .refine((file) => file.length !== 0, { message: "必須項目です" })
+        .refine((file) => file.length <= 3, {
+            message: "3枚以下の画像を選択してください",
+        }),
 });
 
 export type FrontPostSchema = z.infer<typeof frontPostSchema>;
@@ -53,6 +58,7 @@ export const backPostSchema = z.object({
             required_error: "もう一度場所を指定してください（address）",
         }),
     }),
+    // images: z.array(z.string({ required_error: "必須項目です" })),
 });
 
 export type BackPostSchema = z.infer<typeof backPostSchema>;

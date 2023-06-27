@@ -11,10 +11,12 @@ import { toast } from "react-hot-toast";
 import { Rating } from "~/components/form/Rating";
 import { TextInpupt } from "~/components/form/TextInput";
 import { NumberInput } from "~/components/form/NumberInput";
-import Button from "@mui/material/Button";
 import { SearchPlaceMap } from "~/components/form/SearchPlace";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { ImagePostInput } from "~/components/form/ImagePostInput";
+import { Box, Stack } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SendIcon from "@mui/icons-material/Send";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
@@ -29,42 +31,37 @@ const CreatePostWizard = () => {
         state.address,
     ]);
 
-    // useEffect(() => {
-    //     const un = watch((value) => console.log("watch", { value }));
+    const { mutate: storeMutate, isLoading: isPosting } =
+        api.post.store.useMutation({
+            onSuccess: () => {
+                console.log("success");
+                // 投稿ページに遷移させる
 
-    //     return () => un.unsubscribe();
-    // }, [watch]);
+                toast.success("投稿に成功しました。");
+            },
+            onError: (error) => {
+                toast.error(
+                    error.message ??
+                        "更新に失敗しました。時間をおいて再度お試しください。"
+                );
+            },
+        });
 
-    const { mutate: storeMutate } = api.post.store.useMutation({
-        onSuccess: () => {
-            console.log("success");
-            // 投稿ページに遷移させる
+    const { mutate: getManyUploadImageURLMutate, isLoading: isLoadingGetURL } =
+        api.cloudflareImages.getManyUploadImageURL.useMutation({
+            onSuccess: (urls) => {
+                console.log("success", { urls });
 
-            toast.success("投稿に成功しました。");
-        },
-        onError: (error) => {
-            toast.error(
-                error.message ??
-                    "更新に失敗しました。時間をおいて再度お試しください。"
-            );
-        },
-    });
+                // const data = getValues();
 
-    const { mutate: getUploadImageURLMutate } =
-        api.cloudflareImages.getUploadImageURL.useMutation({
-            onSuccess: (url) => {
-                console.log("success", { url });
-
-                const data = getValues();
-
-                storeMutate({
-                    ...data,
-                    place: {
-                        place_id: placeId,
-                        title: title,
-                        address: address,
-                    },
-                });
+                // storeMutate({
+                //     ...data,
+                //     place: {
+                //         place_id: placeId,
+                //         title: title,
+                //         address: address,
+                //     },
+                // });
             },
             onError: (error) => {
                 toast.error(
@@ -81,11 +78,13 @@ const CreatePostWizard = () => {
     if (!user) return null;
 
     return (
-        <form
-            // handleSubmitはバリデーションが成功してないとと発火しない！！
+        <Stack
+            spacing={3}
+            component={`form`}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit((data) => {
-                getUploadImageURLMutate();
+                // getUploadImageURLMutate();
+                console.log({ data });
             })}
         >
             {/* google map */}
@@ -95,28 +94,27 @@ const CreatePostWizard = () => {
                 resetField={resetField}
             />
             {/* images */}
-            <div className="form-control mb-6 w-full">
-                <ImagePostInput />
-            </div>
+            <ImagePostInput controle={control} />
             {/* rating */}
-            <div className="form-control mb-6 w-full">
-                <Rating controle={control} />
-            </div>
+            <Rating controle={control} />
             {/* content */}
-            <div className="form-control mb-6 w-full">
-                <TextInpupt controle={control} name="content" />
-            </div>
+            <TextInpupt controle={control} name="content" />
             {/* price */}
-            <div className="form-control mb-6 w-full">
-                <NumberInput controle={control} name="price" />
-            </div>
+            <NumberInput controle={control} name="price" />
+
             {/* submit */}
-            <div>
-                <Button variant="contained" type="submit">
-                    Contained
-                </Button>
-            </div>
-        </form>
+            <Box>
+                <LoadingButton
+                    endIcon={<SendIcon />}
+                    loading={isLoadingGetURL || isPosting}
+                    loadingPosition="end"
+                    variant="contained"
+                    type="submit"
+                >
+                    <span>投稿</span>
+                </LoadingButton>
+            </Box>
+        </Stack>
     );
 };
 

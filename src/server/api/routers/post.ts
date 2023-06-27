@@ -1,8 +1,9 @@
+import { string, z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { backPostSchema } from "~/utils/schema";
 
 export const postRouter = createTRPCRouter({
-    create: privateProcedure
+    store: privateProcedure
         .input(backPostSchema)
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
@@ -30,4 +31,8 @@ export const postRouter = createTRPCRouter({
 
             return post;
         }),
+    // update: privateProcedure.input(backPostSchema).mutation(),
+    // delete: privateProcedure.input(z.object({
+    //     id: string()
+    // })).mutation(),
 });
