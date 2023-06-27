@@ -37,6 +37,7 @@ import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { debounce } from "@mui/material/utils";
 import { useThemeStore } from "~/store/useThemeStore";
+import { Stack } from "@mui/material";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
     default: [],
@@ -306,7 +307,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                 <Autocomplete
                     {...field}
                     id="google-map-demo"
-                    sx={{ width: 300 }}
+                    // sx={{ width: 300 }}
                     getOptionLabel={(option) =>
                         typeof option === "string" ? option : option.description
                     }
@@ -315,14 +316,15 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                     autoComplete
                     includeInputInList
                     filterSelectedOptions
+                    fullWidth
                     value={value}
-                    noOptionsText="No locations"
+                    noOptionsText="検索結果がありません"
                     onChange={handleChange}
                     onInputChange={handleInputChange}
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            label="Add a location"
+                            label="住所を入力してください（店名でも検索可）"
                             fullWidth
                             error={fieldState.invalid}
                             helperText={fieldState.error?.message}
@@ -431,7 +433,7 @@ const Map = (props: SearchPlaceMapProps) => {
     }, [map, selected]);
 
     return (
-        <div className="grid gap-4">
+        <Stack spacing={1}>
             <GoogleMap
                 zoom={MAP_DEFAULT_ZOOM}
                 center={center}
@@ -458,15 +460,13 @@ const Map = (props: SearchPlaceMapProps) => {
                     </MarkerF>
                 )}
             </GoogleMap>
-            <div>
-                <AutocompleteInput
-                    setSelected={setSelected}
-                    controle={props.controle}
-                    setValue={props.setValue}
-                    resetField={props.resetField}
-                />
-            </div>
-        </div>
+            <AutocompleteInput
+                setSelected={setSelected}
+                controle={props.controle}
+                setValue={props.setValue}
+                resetField={props.resetField}
+            />
+        </Stack>
     );
 };
 
