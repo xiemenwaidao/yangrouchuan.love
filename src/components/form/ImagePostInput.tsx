@@ -6,13 +6,11 @@ import {
     ImageList,
     ImageListItem,
 } from "@mui/material";
-import Box from "@mui/material/Box";
 import { useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
 import CancelIcon from "@mui/icons-material/Cancel";
-
-const MAX_IMAGE_COUNT = 3;
+import { FORM_MAX_IMAGE_COUNT } from "~/config";
 
 interface Props {
     controle: Control<FrontPostSchema>;
@@ -20,12 +18,6 @@ interface Props {
 
 export const ImagePostInput = (props: Props) => {
     const [images, setImages] = useState<File[]>([]);
-
-    const handleRemoveImage = (index: number) => {
-        const newImages = [...images];
-        newImages.splice(index, 1);
-        setImages(newImages);
-    };
 
     return (
         <Controller
@@ -42,7 +34,7 @@ export const ImagePostInput = (props: Props) => {
                             <Button
                                 variant="contained"
                                 component="span"
-                                disabled={images.length >= MAX_IMAGE_COUNT}
+                                disabled={images.length >= FORM_MAX_IMAGE_COUNT}
                             >
                                 画像追加（3枚まで）
                             </Button>
@@ -67,6 +59,7 @@ export const ImagePostInput = (props: Props) => {
                                 multiple
                                 placeholder="画像を選択"
                                 style={{ display: "none" }}
+                                accept="image/*"
                             />
                         </label>
                         <FormHelperText>
