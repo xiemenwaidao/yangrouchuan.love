@@ -6,10 +6,11 @@ import Head from "next/head";
 import { SITE } from "~/config";
 import { Toaster } from "react-hot-toast";
 import Theme from "~/components/Theme";
+import { jaJP } from "@clerk/localizations";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
     return (
-        <ClerkProvider {...pageProps}>
+        <ClerkProvider {...pageProps} localization={jaJP}>
             <Head>
                 <title>{`${SITE.title}`}</title>
                 <meta name="description" content="羊肉串爱你们" />

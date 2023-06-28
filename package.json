@@ -12,6 +12,7 @@
         "dbpush": "npx prisma db push"
     },
     "dependencies": {
+        "@clerk/localizations": "^1.22.0",
         "@clerk/nextjs": "^4.21.1",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
