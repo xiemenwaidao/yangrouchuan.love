@@ -18,17 +18,23 @@ import { Box, Stack } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
 import { uploadImage } from "~/utils/cloudflareHelpers";
+import { useRouter } from "next/router";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
 
 const CreatePostWizard = () => {
     const { user } = useUser();
+
+    const router = useRouter();
+
+    // form state
     const { handleSubmit, control, setValue, resetField, getValues } =
         useForm<FrontPostSchema>({
             resolver: zodResolver(frontPostSchema),
         });
 
+    // map state
     const [placeId, title, address] = useGoogleMapStore((state) => [
         state.placeId,
         state.title,
@@ -47,11 +53,13 @@ const CreatePostWizard = () => {
 
     const { mutate: storeMutate, isLoading: isPosting } =
         api.post.store.useMutation({
-            onSuccess: () => {
+            onSuccess: (res) => {
                 console.log("success");
-                // 投稿ページに遷移させる
 
                 toast.success("投稿に成功しました。");
+
+                // 投稿ページに遷移させる
+                void router.push(`/show/${res.id}/`);
             },
             onError: (error) => {
                 // 画像を削除する
@@ -129,10 +137,6 @@ const CreatePostWizard = () => {
             },
         });
 
-    // const onSubmit = handleSubmit((data) => {
-
-    // })
-
     if (!user) return null;
 
     return (
@@ -182,7 +186,7 @@ const Create: NextPage = () => {
     return (
         <>
             <Head>
-                <title>{`Post | ${SITE.title}`}</title>
+                <title>{`新規投稿 | ${SITE.title}`}</title>
             </Head>
             <Layout>
                 <h2>Create new post</h2>
