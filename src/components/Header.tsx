@@ -16,7 +16,36 @@ import { useState } from "react";
 import Link from "@mui/material/Link";
 import { ThemeSwitch } from "./ThemeSwitch";
 
-const pages = [{ title: "Create", href: "/post/create" }];
+const pages = [{ title: "投稿する", href: "/create", auth: true }];
+interface MenuItemProps {
+    onClick: () => void;
+    href: string;
+    title: string;
+}
+const MobileMenuItem = (props: MenuItemProps) => {
+    return (
+        <MenuItem onClick={props.onClick}>
+            <Typography textAlign="center">
+                <Link href={props.href} underline="hover">
+                    {props.title}
+                </Link>
+            </Typography>
+        </MenuItem>
+    );
+};
+
+const DesktopMenuItem = (props: MenuItemProps) => {
+    return (
+        <Button
+            onClick={props.onClick}
+            sx={{ my: 2, color: "white", display: "block" }}
+        >
+            <Link href={props.href} underline="hover" color="white">
+                {props.title}
+            </Link>
+        </Button>
+    );
+};
 
 function Header() {
     const { user } = useUser();
@@ -33,7 +62,7 @@ function Header() {
 
     return (
         <AppBar position="static">
-            <Container maxWidth="xl">
+            <Container maxWidth="md">
                 <Toolbar disableGutters>
                     <AdbIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
@@ -90,21 +119,18 @@ function Header() {
                                 display: { xs: "block", md: "none" },
                             }}
                         >
-                            {pages.map((page, index) => (
-                                <MenuItem
-                                    key={index}
-                                    onClick={handleCloseNavMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        <Link
-                                            href={page.href}
-                                            underline="hover"
-                                        >
-                                            {page.title}
-                                        </Link>
-                                    </Typography>
-                                </MenuItem>
-                            ))}
+                            {pages.map((page, index) => {
+                                if (page.auth && !user) return null;
+
+                                return (
+                                    <MobileMenuItem
+                                        key={index}
+                                        onClick={handleCloseNavMenu}
+                                        href={page.href}
+                                        title={page.title}
+                                    />
+                                );
+                            })}
                         </Menu>
                     </Box>
                     <AdbIcon
@@ -138,21 +164,18 @@ function Header() {
                             display: { xs: "none", md: "flex" },
                         }}
                     >
-                        {pages.map((page, index) => (
-                            <Button
-                                key={index}
-                                onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: "white", display: "block" }}
-                            >
-                                <Link
+                        {pages.map((page, index) => {
+                            if (page.auth && !user) return null;
+
+                            return (
+                                <DesktopMenuItem
+                                    key={index}
+                                    onClick={handleCloseNavMenu}
                                     href={page.href}
-                                    underline="hover"
-                                    color="white"
-                                >
-                                    {page.title}
-                                </Link>
-                            </Button>
-                        ))}
+                                    title={page.title}
+                                />
+                            );
+                        })}
                     </Box>
 
                     <ThemeSwitch />
