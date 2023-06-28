@@ -13,15 +13,15 @@ datasource db {
 }
 
 model Post {
-    id        String      @id @default(cuid())
+    id        String     @id @default(cuid())
     // title     String
     rating    Float
     content   String
-    price     Int
-    place     Place       @relation(fields: [placeId], references: [id])
+    price     Int?
+    place     Place      @relation(fields: [placeId], references: [id])
     placeId   String
     authorId  String
-    images    PostImage[]
+    images    Image[]
     bookmarks Bookmark[]
 
     createdAt DateTime @default(now())
@@ -33,25 +33,11 @@ model Post {
 }
 
 model Image {
-    id    String      @id @default(cuid())
-    posts PostImage[]
+    id     String @id
+    postId String
+    post   Post   @relation(fields: [postId], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
-model PostImage {
-    post    Post   @relation(fields: [postId], references: [id])
-    postId  String
-    image   Image  @relation(fields: [imageId], references: [id])
-    imageId String
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@id([postId, imageId])
     @@index([postId])
-    @@index([imageId])
 }
 
 model Bookmark {

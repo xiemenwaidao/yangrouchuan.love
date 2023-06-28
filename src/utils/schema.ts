@@ -21,20 +21,25 @@ const commonSchema = {
         .step(0.5),
     content: z
         .string({ required_error: REQUIRED_ERROR_TEXT })
-        .min(1, { message: "1文字以上の文章を入力してください。" }),
+        .min(1, { message: "入力は1文字以上25文字以内にしてください。" })
+        .max(25, { message: "入力は1文字以上25文字以内にしてください。" }),
     price: z.preprocess(
         (v) => {
             if (v === "") return undefined;
+            // 半角数字かNANが🐸
             if (typeof v === "string") return Number(toHalfWidth(v));
             return v;
         },
         z
             .number({
                 invalid_type_error: "半角数字を入力してください。",
-                required_error: REQUIRED_ERROR_TEXT,
+                // required_error: REQUIRED_ERROR_TEXT,
             })
             .min(0, { message: "0以上100000以下の値を入力してください。" })
-            .max(100000, { message: "0以上100000以下の値を入力してください。" })
+            .max(100000, {
+                message: "0以上100000以下の値を入力してください。",
+            })
+            .optional()
     ),
 };
 
