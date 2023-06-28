@@ -184,7 +184,11 @@ function Header() {
                         {user ? (
                             <UserButton afterSignOutUrl={`localhost:300`} />
                         ) : (
-                            <SignInButton />
+                            <SignInButton
+                            //  mode="modal"
+                            >
+                                <Button variant="contained">Sign in</Button>
+                            </SignInButton>
                         )}
                     </Box>
                 </Toolbar>

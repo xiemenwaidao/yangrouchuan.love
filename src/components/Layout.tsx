@@ -9,8 +9,8 @@ export const Layout = (props: PropsWithChildren) => {
             <Grid item xs="auto">
                 <Header />
             </Grid>
-            <Grid item xs>
-                <Container component={`main`} maxWidth="md">
+            <Grid item component={`main`} xs>
+                <Container maxWidth="md" sx={{ height: "100%" }}>
                     {props.children}
                 </Container>
             </Grid>
