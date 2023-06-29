@@ -13,8 +13,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <ClerkProvider {...pageProps} localization={jaJP}>
             <Head>
                 <title>{`${SITE.title}`}</title>
-                <meta name="description" content="羊肉串爱你们" />
-                <link rel="icon" href="/favicon.ico" />
             </Head>
             <Theme>
                 <Toaster position="bottom-center" />
