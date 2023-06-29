@@ -1,28 +1,54 @@
 import Box from "@mui/material/Box";
-import MUIRating from "@mui/material/Rating";
-import { useState } from "react";
-import StarIcon from "@mui/icons-material/Star";
+import MUIRating, { type IconContainerProps } from "@mui/material/Rating";
+import { type ReactElement } from "react";
 import { type Control, Controller } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
 import { FormControl, FormHelperText } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
-const labels: { [index: string]: string } = {
-    0.5: "🤮",
-    1: "🤢",
-    1.5: "😩",
-    2: "😕",
-    2.5: "😐",
-    3: "🙂",
-    3.5: "😃",
-    4: "😄",
-    4.5: "😆",
-    5: "😍",
+import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
+import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+
+const StyledRating = styled(MUIRating)(({ theme }) => ({
+    "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
+        color: theme.palette.action.disabled,
+    },
+}));
+
+const customIcons: {
+    [index: string]: {
+        icon: ReactElement;
+        label: string;
+    };
+} = {
+    1: {
+        icon: <SentimentVeryDissatisfiedIcon color="error" />,
+        label: "Very Dissatisfied",
+    },
+    2: {
+        icon: <SentimentDissatisfiedIcon color="error" />,
+        label: "Dissatisfied",
+    },
+    3: {
+        icon: <SentimentSatisfiedIcon color="warning" />,
+        label: "Neutral",
+    },
+    4: {
+        icon: <SentimentSatisfiedAltIcon color="success" />,
+        label: "Satisfied",
+    },
+    5: {
+        icon: <SentimentVerySatisfiedIcon color="success" />,
+        label: "Very Satisfied",
+    },
 };
 
-function getLabelText(value: number) {
-    return `${value} Star${value !== 1 ? "s" : ""}, ${
-        labels[value] ?? "unknown"
-    }`;
+function IconContainer(props: IconContainerProps) {
+    const { value, ...other } = props;
+    return <span {...other}>{customIcons[value]?.icon}</span>;
 }
 
 interface Props {
@@ -30,8 +56,6 @@ interface Props {
 }
 
 export const Rating = (props: Props) => {
-    const [hover, setHover] = useState(-1);
-
     return (
         <Controller
             name="rating"
@@ -40,27 +64,17 @@ export const Rating = (props: Props) => {
             render={({ field, fieldState }) => (
                 <FormControl error={fieldState.invalid}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <MUIRating
+                        <StyledRating
                             {...field}
-                            name="hover-feedback"
-                            precision={0.5}
+                            name="highlight-selected-only"
+                            defaultValue={2}
                             value={Number(field.value)}
-                            getLabelText={getLabelText}
-                            onChangeActive={(event, newHover) => {
-                                setHover(newHover);
-                            }}
-                            emptyIcon={
-                                <StarIcon
-                                    style={{ opacity: 0.55 }}
-                                    fontSize="inherit"
-                                />
+                            IconContainerComponent={IconContainer}
+                            getLabelText={(value: number) =>
+                                customIcons[value]!.label
                             }
+                            highlightSelectedOnly
                         />
-                        {field.value !== null && (
-                            <Box sx={{ ml: 2 }}>
-                                {labels[hover !== -1 ? hover : field.value]}
-                            </Box>
-                        )}
                     </Box>
 
                     <FormHelperText>{fieldState.error?.message}</FormHelperText>

@@ -18,7 +18,7 @@ const commonSchema = {
         })
         .min(0)
         .max(5)
-        .step(0.5),
+        .step(1),
     content: z
         .string({ required_error: REQUIRED_ERROR_TEXT })
         .min(1, { message: "入力は1文字以上25文字以内にしてください。" })
