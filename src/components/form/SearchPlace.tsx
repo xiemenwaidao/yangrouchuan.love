@@ -36,8 +36,7 @@ import {
 import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { debounce } from "@mui/material/utils";
-import { useThemeStore } from "~/store/useThemeStore";
-import { Stack } from "@mui/material";
+import { Stack, useColorScheme } from "@mui/material";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
     default: [],
@@ -411,7 +410,7 @@ const Map = (props: SearchPlaceMapProps) => {
 
     const [map, setMap] = useState<google.maps.Map | null>(null);
 
-    const theme = useThemeStore((state) => state.theme);
+    const { mode } = useColorScheme();
 
     const onLoad = useCallback((map: google.maps.Map) => {
         setMap(map);
@@ -442,7 +441,7 @@ const Map = (props: SearchPlaceMapProps) => {
                 onUnmount={onUnmount}
                 options={{
                     styles:
-                        theme === "dark" ? styles["night"] : styles["default"],
+                        mode === "dark" ? styles["night"] : styles["default"],
                 }}
             >
                 {selected && (
