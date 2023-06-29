@@ -5,19 +5,21 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Head from "next/head";
 import { SITE } from "~/config";
 import { Toaster } from "react-hot-toast";
-import Theme from "~/components/Theme";
 import { jaJP } from "@clerk/localizations";
+import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
     return (
         <ClerkProvider {...pageProps} localization={jaJP}>
-            <Head>
-                <title>{`${SITE.title}`}</title>
-            </Head>
-            <Theme>
+            <CssVarsProvider defaultMode="system">
+                <Head>
+                    <title>{`${SITE.title}`}</title>
+                </Head>
+                <CssBaseline />
                 <Toaster position="bottom-center" />
                 <Component {...pageProps} />
-            </Theme>
+            </CssVarsProvider>
         </ClerkProvider>
     );
 };
