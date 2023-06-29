@@ -1,4 +1,10 @@
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import {
+    SignInButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+    useUser,
+} from "@clerk/nextjs";
 import { SITE } from "~/config";
 
 import AppBar from "@mui/material/AppBar";
@@ -13,8 +19,9 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useState } from "react";
-import Link from "@mui/material/Link";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { MyLink } from "./MyLink";
+import NextLink from "next/link";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
 interface MenuItemProps {
@@ -26,9 +33,12 @@ const MobileMenuItem = (props: MenuItemProps) => {
     return (
         <MenuItem onClick={props.onClick}>
             <Typography textAlign="center">
-                <Link href={props.href} underline="hover">
+                <MyLink
+                    nextProps={{ href: props.href }}
+                    muiProps={{ underline: "hover" }}
+                >
                     {props.title}
-                </Link>
+                </MyLink>
             </Typography>
         </MenuItem>
     );
@@ -40,9 +50,12 @@ const DesktopMenuItem = (props: MenuItemProps) => {
             onClick={props.onClick}
             sx={{ my: 2, color: "white", display: "block" }}
         >
-            <Link href={props.href} underline="hover" color="white">
+            <MyLink
+                nextProps={{ href: props.href }}
+                muiProps={{ underline: "hover", color: "white" }}
+            >
                 {props.title}
-            </Link>
+            </MyLink>
         </Button>
     );
 };
@@ -64,14 +77,15 @@ function Header() {
         <AppBar position="static">
             <Container maxWidth="md">
                 <Toolbar disableGutters>
-                    <AdbIcon
+                    <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
+                        🐑
+                    </Box>
+                    {/* <AdbIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-                    />
+                    /> */}
                     <Typography
                         variant="h6"
                         noWrap
-                        component="a"
-                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: "none", md: "flex" },
@@ -82,7 +96,9 @@ function Header() {
                             textDecoration: "none",
                         }}
                     >
-                        {SITE.title}
+                        <NextLink href={`/`}>
+                            <span>{SITE.title}</span>
+                        </NextLink>
                     </Typography>
 
                     <Box
@@ -141,8 +157,6 @@ function Header() {
                     <Typography
                         variant="h5"
                         noWrap
-                        component="a"
-                        href=""
                         sx={{
                             mr: 2,
                             display: { xs: "flex", md: "none" },
@@ -154,7 +168,9 @@ function Header() {
                             textDecoration: "none",
                         }}
                     >
-                        {SITE.title}
+                        <NextLink href={`/`}>
+                            <span>{SITE.title}</span>
+                        </NextLink>
                     </Typography>
 
                     {/* desktop */}
@@ -181,15 +197,16 @@ function Header() {
                     <ThemeSwitch />
 
                     <Box sx={{ flexGrow: 0 }}>
-                        {user ? (
+                        <SignedIn>
                             <UserButton afterSignOutUrl={`localhost:300`} />
-                        ) : (
+                        </SignedIn>
+                        <SignedOut>
                             <SignInButton
                             //  mode="modal"
                             >
                                 <Button variant="contained">Sign in</Button>
                             </SignInButton>
-                        )}
+                        </SignedOut>
                     </Box>
                 </Toolbar>
             </Container>
