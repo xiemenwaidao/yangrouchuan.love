@@ -19,6 +19,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
@@ -27,6 +28,8 @@ const CreatePostWizard = () => {
     const { user } = useUser();
 
     const router = useRouter();
+
+    const [isPosting, setIsPosting] = useState(false);
 
     // form state
     const { handleSubmit, control, setValue, resetField, getValues } =
@@ -51,24 +54,26 @@ const CreatePostWizard = () => {
             },
         });
 
-    const { mutate: storeMutate, isLoading: isPosting } =
-        api.post.store.useMutation({
-            onSuccess: (res) => {
-                console.log("success");
+    const { mutate: storeMutate } = api.post.store.useMutation({
+        onSuccess: (res) => {
+            console.log("success");
+            setIsPosting(false);
 
-                toast.success("投稿に成功しました。");
+            toast.success("投稿に成功しました。");
 
-                // 投稿ページに遷移させる
-                void router.push(`/show/${res.id}/`);
-            },
-            onError: (error) => {
-                // 画像を削除する
+            // 投稿ページに遷移させる
+            void router.push(`/show/${res.id}/`);
+        },
+        onError: (error) => {
+            // 画像を削除する
 
-                toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
-            },
-        });
+            setIsPosting(false);
 
-    const { mutate: getManyUploadImageURLMutate, isLoading: isLoadingGetURL } =
+            toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
+        },
+    });
+
+    const { mutate: getManyUploadImageURLMutate } =
         api.cloudflareImages.getManyUploadImageURL.useMutation({
             onSuccess: (results) => {
                 console.log("success", { results });
@@ -123,16 +128,24 @@ const CreatePostWizard = () => {
                         });
                     })
                     .catch((error) => {
+                        setIsPosting(false);
+
                         if (error instanceof Error) {
-                            throw new Error(error.message);
+                            toast.error(
+                                error.message ?? UPDATE_IMAGE_FAILED_MESSAGE
+                            );
+                            // throw new Error(error.message);
                         } else if (typeof error === "string") {
-                            throw new Error(error);
+                            toast.error(error ?? UPDATE_IMAGE_FAILED_MESSAGE);
+                            // throw new Error(error);
                         } else {
-                            throw new Error("unexpected error");
+                            toast.error(UPDATE_IMAGE_FAILED_MESSAGE);
+                            // throw new Error("unexpected error");
                         }
                     });
             },
             onError: (error) => {
+                setIsPosting(false);
                 toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
             },
         });
@@ -145,6 +158,7 @@ const CreatePostWizard = () => {
             component={`form`}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSubmit={handleSubmit((data) => {
+                setIsPosting(true);
                 getManyUploadImageURLMutate({
                     count: data.images.length,
                 });
@@ -170,7 +184,7 @@ const CreatePostWizard = () => {
             <Box>
                 <LoadingButton
                     endIcon={<SendIcon />}
-                    loading={isLoadingGetURL || isPosting}
+                    loading={isPosting}
                     loadingPosition="end"
                     variant="contained"
                     type="submit"
