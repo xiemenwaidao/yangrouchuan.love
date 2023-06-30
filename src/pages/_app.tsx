@@ -1,13 +1,15 @@
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import Head from "next/head";
 import { SITE } from "~/config";
-import { Toaster } from "react-hot-toast";
 import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Clerk from "~/components/Clerk";
 import { Layout } from "~/components/Layout";
+import ToastSetting from "~/components/ToastSetting";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
     return (
@@ -18,7 +20,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
                     <title>{`${SITE.title}`}</title>
                 </Head>
                 <CssBaseline />
-                <Toaster position="bottom-center" />
+                <ToastSetting />
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>

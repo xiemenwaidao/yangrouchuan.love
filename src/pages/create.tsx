@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type FrontPostSchema, frontPostSchema } from "~/utils/schema";
 import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
 import { Rating } from "~/components/form/Rating";
 import { TextInpupt } from "~/components/form/TextInput";
 import { NumberInput } from "~/components/form/NumberInput";
@@ -19,6 +18,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
