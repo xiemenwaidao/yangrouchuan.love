@@ -9,11 +9,7 @@ import {
 } from "~/server/api/trpc";
 import { filterUserForClient } from "~/server/helpers/filterUserForClient";
 import { backPostSchema } from "~/utils/schema";
-
-interface PostWithPlaceAndImages extends Post {
-    place: Place;
-    images: Image[];
-}
+import { type PostWithPlaceAndImages } from "~/utils/types";
 
 const addUserDataToPosts = async (posts: PostWithPlaceAndImages[]) => {
     const users = (
@@ -43,6 +39,23 @@ const addUserDataToPosts = async (posts: PostWithPlaceAndImages[]) => {
 };
 
 export const postRouter = createTRPCRouter({
+    getAll: publicProcedure.query(async ({ ctx }) => {
+        const posts = await ctx.prisma.post.findMany({
+            take: 100,
+            include: {
+                place: true,
+                images: true,
+            },
+            orderBy: [
+                {
+                    createdAt: "desc",
+                },
+            ],
+        });
+
+        return addUserDataToPosts(posts);
+    }),
+
     getById: publicProcedure
         .input(
             z.object({
@@ -68,6 +81,29 @@ export const postRouter = createTRPCRouter({
 
             return (await addUserDataToPosts([post]))[0];
         }),
+
+    getPostByUserId: publicProcedure
+        .input(
+            z.object({
+                userId: z.string(),
+            })
+        )
+        .query(({ ctx, input }) =>
+            ctx.prisma.post
+                .findMany({
+                    where: {
+                        authorId: input.userId,
+                    },
+                    include: {
+                        place: true,
+                        images: true,
+                    },
+                    take: 100,
+                    orderBy: [{ createdAt: "desc" }],
+                })
+                .then(addUserDataToPosts)
+        ),
+
     store: privateProcedure
         .input(backPostSchema)
         .mutation(async ({ ctx, input }) => {
@@ -113,6 +149,7 @@ export const postRouter = createTRPCRouter({
 
             return postWithImages.post;
         }),
+
     // update: privateProcedure.input(backPostSchema).mutation(),
     // delete: privateProcedure.input(z.object({
     //     id: string()

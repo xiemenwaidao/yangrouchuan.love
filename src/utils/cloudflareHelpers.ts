@@ -1,4 +1,5 @@
 import { IMAGE_PREFIX } from "~/config";
+import { env } from "~/env.mjs";
 
 interface ImageResponse {
     result: {
@@ -44,4 +45,10 @@ export const uploadImage = async (file: File, url: string, id: string) => {
     const json = (await res.json()) as ImageResponse;
 
     return json;
+};
+
+export const imageUrl = (imageId: string, variantName = "public") => {
+    return `https://imagedelivery.net/${
+        env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH
+    }/${imageId}/${variantName ?? ""}`;
 };
