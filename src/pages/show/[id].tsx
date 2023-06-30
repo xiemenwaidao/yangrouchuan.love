@@ -4,7 +4,6 @@ import {
     type NextPage,
 } from "next";
 import Head from "next/head";
-import { Layout } from "~/components/Layout";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
@@ -25,7 +24,6 @@ const SinglePostPage: NextPage<PageProps> = ({ id }) => {
                 {/* TODO:文字数多い場合のためにトリミング */}
                 <title>{`${data.post.content} | ${data.post.place.title} |  ${SITE.title}`}</title>
             </Head>
-            <Layout></Layout>
         </>
     );
 };

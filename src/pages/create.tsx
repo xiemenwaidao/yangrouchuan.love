@@ -1,7 +1,6 @@
 import { useUser } from "@clerk/nextjs";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { Layout } from "~/components/Layout";
 import { SITE } from "~/config";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -202,12 +201,9 @@ const Create: NextPage = () => {
             <Head>
                 <title>{`新規投稿 | ${SITE.title}`}</title>
             </Head>
-            <Layout>
-                <h2>Create new post</h2>
+            <h2>Create new post</h2>
 
-                <CreatePostWizard />
-                {/* <TestForm /> */}
-            </Layout>
+            <CreatePostWizard />
         </>
     );
 };
