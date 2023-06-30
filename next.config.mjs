@@ -27,5 +27,28 @@ const config = {
         locales: ["en"],
         defaultLocale: "en",
     },
+
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "images.clerk.dev",
+                port: "",
+                pathname: "/oauth_github/**",
+            },
+            {
+                protocol: "https",
+                hostname: "images.clerk.dev",
+                port: "",
+                pathname: "/uploaded/**",
+            },
+            {
+                protocol: "https",
+                hostname: "imagedelivery.net",
+                port: "",
+                pathname: "/**",
+            },
+        ],
+    },
 };
 export default config;
