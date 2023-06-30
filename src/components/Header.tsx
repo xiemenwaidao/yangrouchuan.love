@@ -198,7 +198,12 @@ function Header() {
 
                     <Box sx={{ flexGrow: 0 }}>
                         <SignedIn>
-                            <UserButton afterSignOutUrl={`localhost:300`} />
+                            <UserButton
+                                userProfileMode="navigation"
+                                userProfileUrl="/account"
+                                afterSignOutUrl="/"
+                                afterMultiSessionSingleSignOutUrl="/"
+                            />
                         </SignedIn>
                         <SignedOut>
                             <SignInButton
