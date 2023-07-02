@@ -20,6 +20,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
+// TODO 投稿済みの店舗への投稿を防ぐ
+
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
 
@@ -31,7 +33,7 @@ const CreatePostWizard = () => {
     const [isPosting, setIsPosting] = useState(false);
 
     // form state
-    const { handleSubmit, control, setValue, resetField, getValues } =
+    const { handleSubmit, control, setValue, resetField, getValues, setError } =
         useForm<FrontPostSchema>({
             resolver: zodResolver(frontPostSchema),
         });
@@ -43,25 +45,23 @@ const CreatePostWizard = () => {
         state.address,
     ]);
 
-    const { mutate: deleteImagesMutate } =
-        api.cloudflareImages.deleteImages.useMutation({
-            onSuccess: () => {
-                console.log("success delete images");
-            },
-            onError: (error) => {
-                toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
-            },
-        });
+    // const { mutate: deleteImagesMutate } =
+    //     api.cloudflareImages.deleteImages.useMutation({
+    //         onSuccess: () => {
+    //             console.log("success delete images");
+    //         },
+    //         onError: (error) => {
+    //             toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
+    //         },
+    //     });
 
     const { mutate: storeMutate } = api.post.store.useMutation({
-        onSuccess: (res) => {
-            console.log("success");
+        onSuccess: (post) => {
             setIsPosting(false);
 
-            toast.success("投稿に成功しました。");
-
             // 投稿ページに遷移させる
-            void router.push(`/show/${res.id}/`);
+            void router.push(`/place/${post.placeId}/`);
+            toast.success("投稿に成功しました。");
         },
         onError: (error) => {
             // 画像を削除する
@@ -149,6 +149,15 @@ const CreatePostWizard = () => {
             },
         });
 
+    // handleSubmitはsucsess時に実行される
+    const onSubmit = handleSubmit((data: FrontPostSchema) => {
+        setIsPosting(true);
+        getManyUploadImageURLMutate({
+            count: data.images.length,
+        });
+        console.log({ data });
+    });
+
     if (!user) return null;
 
     return (
@@ -156,18 +165,13 @@ const CreatePostWizard = () => {
             spacing={3}
             component={`form`}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={handleSubmit((data) => {
-                setIsPosting(true);
-                getManyUploadImageURLMutate({
-                    count: data.images.length,
-                });
-                console.log({ data });
-            })}
+            onSubmit={onSubmit}
         >
             {/* google map */}
             <SearchPlaceMap
                 controle={control}
                 setValue={setValue}
+                setError={setError}
                 resetField={resetField}
             />
             {/* images */}

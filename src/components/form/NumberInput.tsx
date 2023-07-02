@@ -27,7 +27,7 @@ export const NumberInput = (props: Props) => {
                         // 数値にキャスト可能時のみ値を更新
                         // ""の場合は0になっってしまうので除外
                         if (newValue !== "" && !isNaN(Number(newValue))) {
-                            console.log("onBlur", Number(newValue));
+                            // console.log("onBlur", Number(newValue));
                         }
                     }}
                     error={fieldState.invalid}

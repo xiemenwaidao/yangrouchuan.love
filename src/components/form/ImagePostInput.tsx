@@ -30,7 +30,7 @@ export const ImagePostInput = (props: Props) => {
             }) => (
                 <>
                     <FormControl error={fieldState.invalid}>
-                        <label>
+                        <label style={{ width: "fit-content" }}>
                             <Button
                                 variant="contained"
                                 component="span"

@@ -32,11 +32,14 @@ import {
     type Control,
     type UseFormSetValue,
     type UseFormResetField,
+    type UseFormSetError,
 } from "react-hook-form";
 import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { debounce } from "@mui/material/utils";
 import { Stack, useColorScheme } from "@mui/material";
+import { api } from "~/utils/api";
+import { useUser } from "@clerk/nextjs";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
     default: [],
@@ -134,6 +137,7 @@ interface PlacesAutocompleteProps {
     setSelected: Dispatch<SetStateAction<SelectedAddressProps | null>>;
     controle: Control<FrontPostSchema>;
     setValue: UseFormSetValue<FrontPostSchema>;
+    setError: UseFormSetError<FrontPostSchema>;
     resetField: UseFormResetField<FrontPostSchema>;
 }
 
@@ -153,6 +157,13 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
     const removePlaceDetails = useGoogleMapStore(
         (state) => state.removePlaceDetails
     );
+
+    // 投稿済みの場所を取得
+    const { user } = useUser();
+    const { data: posted } = api.post.getPostByUserId.useQuery({
+        userId: user?.id ?? "",
+    });
+    const postedPlaceIds = posted?.map((obj) => obj.post.placeId);
 
     const fetch = useMemo(
         () =>
@@ -189,7 +200,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
             newValue: google.maps.places.AutocompletePrediction | null,
             reason: AutocompleteChangeReason
         ) => {
-            console.log("handleChange", { newValue, reason });
+            // console.log("handleChange", { newValue, reason });
             setOptions(newValue ? [newValue, ...options] : options);
             setValue(newValue);
 
@@ -199,7 +210,19 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
             }
 
             if (newValue === null) return;
+
             const { description, place_id, structured_formatting } = newValue;
+
+            // 投稿済みの場所かどうか
+            if (postedPlaceIds?.includes(place_id)) {
+                props.setError("address", {
+                    type: "manual",
+                    message: `あなたは既に「${structured_formatting.main_text}」のレビューを投稿しています。`,
+                });
+
+                setValue(null);
+                return;
+            }
 
             getGeocode({ address: description })
                 .then((results) => {
@@ -227,9 +250,11 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                         address: description,
                     });
                 })
-                .catch((error) => console.error("😱 Error: ", error));
+                .catch((error) => {
+                    console.error("😱 Error: ", error);
+                });
         },
-        [clearValues, options, props, setPlaceDetails]
+        [clearValues, options, postedPlaceIds, props, setPlaceDetails]
     );
 
     const handleInputChange = useCallback(
@@ -238,7 +263,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
             newInputValue: string,
             reason: AutocompleteInputChangeReason
         ) => {
-            console.log("inputChange", reason, { newInputValue });
+            // console.log("inputChange", reason, { newInputValue });
 
             setInputValue(newInputValue);
 
@@ -261,7 +286,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
         }
 
         if (inputValue === "") {
-            console.log('inputValue === ""');
+            // console.log('inputValue === ""');
 
             setOptions(value ? [value] : []);
             // removePlaceDetails(); // store初期化
@@ -323,8 +348,9 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                     renderInput={(params) => (
                         <TextField
                             {...params}
-                            label="住所を入力してください（店名でも検索可）"
+                            label="店舗検索"
                             fullWidth
+                            onChange={(e) => console.log(e.target.value)}
                             error={fieldState.invalid}
                             helperText={fieldState.error?.message}
                         />
@@ -398,6 +424,7 @@ const MAP_DEFAULT_ZOOM = 17;
 interface SearchPlaceMapProps {
     controle: Control<FrontPostSchema>;
     setValue: UseFormSetValue<FrontPostSchema>;
+    setError: UseFormSetError<FrontPostSchema>;
     resetField: UseFormResetField<FrontPostSchema>;
 }
 
@@ -417,7 +444,7 @@ const Map = (props: SearchPlaceMapProps) => {
     }, []);
 
     const onUnmount = useCallback(() => {
-        console.log("onUnmount map");
+        // console.log("onUnmount map");
         setMap(null);
     }, []);
 
@@ -463,6 +490,7 @@ const Map = (props: SearchPlaceMapProps) => {
                 setSelected={setSelected}
                 controle={props.controle}
                 setValue={props.setValue}
+                setError={props.setError}
                 resetField={props.resetField}
             />
         </Stack>
@@ -489,6 +517,7 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
         <Map
             controle={props.controle}
             setValue={props.setValue}
+            setError={props.setError}
             resetField={props.resetField}
         />
     ) : (
