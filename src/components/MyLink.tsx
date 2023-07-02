@@ -1,4 +1,9 @@
-import { Link as MUILink, type TypographyProps } from "@mui/material";
+import {
+    Link as MUILink,
+    type SxProps,
+    type Theme,
+    type TypographyProps,
+} from "@mui/material";
 import NextLink, { type LinkProps } from "next/link";
 import { type ReactNode } from "react";
 
@@ -9,12 +14,15 @@ type Props = {
         color?: TypographyProps["color"];
     };
     children?: ReactNode;
+    sx?: SxProps<Theme>;
 };
 
 export const MyLink = (props: Props) => {
     return (
         <NextLink href={props.nextProps.href} passHref legacyBehavior>
-            <MUILink {...props.muiProps}>{props.children}</MUILink>
+            <MUILink sx={props.sx} {...props.muiProps}>
+                {props.children}
+            </MUILink>
         </NextLink>
     );
 };

@@ -31,32 +31,30 @@ interface MenuItemProps {
 }
 const MobileMenuItem = (props: MenuItemProps) => {
     return (
-        <MenuItem onClick={props.onClick}>
-            <Typography textAlign="center">
-                <MyLink
-                    nextProps={{ href: props.href }}
-                    muiProps={{ underline: "hover" }}
-                >
-                    {props.title}
-                </MyLink>
-            </Typography>
-        </MenuItem>
+        <MyLink
+            nextProps={{ href: props.href }}
+            muiProps={{ underline: "hover" }}
+        >
+            <MenuItem onClick={props.onClick}>
+                <Typography textAlign="center">{props.title}</Typography>
+            </MenuItem>
+        </MyLink>
     );
 };
 
 const DesktopMenuItem = (props: MenuItemProps) => {
     return (
-        <Button
-            onClick={props.onClick}
-            sx={{ my: 2, color: "white", display: "block" }}
+        <MyLink
+            nextProps={{ href: props.href }}
+            muiProps={{ underline: "hover", color: "white" }}
         >
-            <MyLink
-                nextProps={{ href: props.href }}
-                muiProps={{ underline: "hover", color: "white" }}
+            <Button
+                onClick={props.onClick}
+                sx={{ color: "white", display: "block" }}
             >
                 {props.title}
-            </MyLink>
-        </Button>
+            </Button>
+        </MyLink>
     );
 };
 

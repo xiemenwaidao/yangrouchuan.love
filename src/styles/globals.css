@@ -1,6 +1,7 @@
 html {
-    margin-left: calc(100vw - 100%);
-    margin-right: 0;
+    /* margin-right: calc(100vw - 100%);
+    margin-left: 0; */
+
 }
 
 a {
