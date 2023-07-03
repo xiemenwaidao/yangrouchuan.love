@@ -16,9 +16,9 @@ const commonSchema = {
             required_error: REQUIRED_ERROR_TEXT,
             invalid_type_error: "半角数字を入力してください。",
         })
-        .min(0)
+        .min(1)
         .max(5)
-        .step(1),
+        .step(1, { message: "正常な値を入力してください。" }),
     content: z
         .string({ required_error: REQUIRED_ERROR_TEXT })
         .min(1, { message: "入力は1文字以上25文字以内にしてください。" })

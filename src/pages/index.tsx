@@ -65,77 +65,75 @@ const RecipeReviewCard = (props: PostFeedViewProps) => {
             >
                 <MoreVertIcon />
             </IconButton>
-            <CardActionArea
-                onClick={() => console.log("clicked CardActionArea")}
-            >
-                <CardHeader
-                    // avatar={
-                    //     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                    //         R
-                    //     </Avatar>
-                    // }
-                    // action={}
-                    title={place.title}
-                    subheader={`last updated ${dayjs(
-                        place.updatedAt
-                    ).fromNow()}`}
-                />
-                <CardContent sx={{ height: "194px", overflow: "hidden", p: 0 }}>
-                    <NextImage
-                        src={
-                            imageId
-                                ? imageUrl(imageId)
-                                : "https://picsum.photos/200"
-                        }
-                        width={300}
-                        height={300}
-                        alt={`${place.title}`}
-                        style={{
-                            objectFit: "cover",
-                            width: "100%",
-                            height: "100%",
-                        }}
+            <Link href={`/place/${place.id}/`}>
+                <CardActionArea
+                    onClick={() => console.log("clicked CardActionArea")}
+                >
+                    <CardHeader
+                        title={place.title}
+                        subheader={`last updated ${dayjs(
+                            place.updatedAt
+                        ).fromNow()}`}
                     />
-                </CardContent>
-                <CardContent sx={{ display: "grid", gap: "8px" }}>
-                    <Typography variant="body2" color="text.secondary">
-                        {place.address}
-                    </Typography>
-                    <Box>
-                        <StyledRating
-                            name="highlight-selected-only"
-                            value={rateAverage}
-                            IconContainerComponent={IconContainer}
-                            getLabelText={(value: number) =>
-                                customIcons[value]?.label ?? ""
+                    <CardContent
+                        sx={{ height: "194px", overflow: "hidden", p: 0 }}
+                    >
+                        <NextImage
+                            src={
+                                imageId
+                                    ? imageUrl(imageId)
+                                    : "https://picsum.photos/200"
                             }
-                            highlightSelectedOnly
-                            readOnly
+                            width={300}
+                            height={300}
+                            alt={`${place.title}`}
+                            style={{
+                                objectFit: "cover",
+                                width: "100%",
+                                height: "100%",
+                            }}
                         />
-                    </Box>
-                    <AvatarGroup max={3}>
-                        {posts.map((post) => (
-                            <Avatar
-                                key={post.author.id}
-                                // sx={{ bgcolor: red[500] }}
-                                aria-label="recipe"
-                            >
-                                <NextImage
-                                    src={post.author.profilePicture}
-                                    alt={""}
-                                    width={64}
-                                    height={64}
-                                    style={{
-                                        objectFit: "cover",
-                                        width: "100%",
-                                        height: "100%",
-                                    }}
-                                />
-                            </Avatar>
-                        ))}
-                    </AvatarGroup>
-                </CardContent>
-            </CardActionArea>
+                    </CardContent>
+                    <CardContent sx={{ display: "grid", gap: "8px" }}>
+                        <Typography variant="body2" color="text.secondary">
+                            {place.address}
+                        </Typography>
+                        <Box>
+                            <StyledRating
+                                name="highlight-selected-only"
+                                value={rateAverage}
+                                IconContainerComponent={IconContainer}
+                                getLabelText={(value: number) =>
+                                    customIcons[value]?.label ?? ""
+                                }
+                                highlightSelectedOnly
+                                readOnly
+                            />
+                        </Box>
+                        <AvatarGroup max={3}>
+                            {posts.map((post) => (
+                                <Avatar
+                                    key={post.author.id}
+                                    // sx={{ bgcolor: red[500] }}
+                                    aria-label="recipe"
+                                >
+                                    <NextImage
+                                        src={post.author.profilePicture}
+                                        alt={""}
+                                        width={64}
+                                        height={64}
+                                        style={{
+                                            objectFit: "cover",
+                                            width: "100%",
+                                            height: "100%",
+                                        }}
+                                    />
+                                </Avatar>
+                            ))}
+                        </AvatarGroup>
+                    </CardContent>
+                </CardActionArea>
+            </Link>
             {/* <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />

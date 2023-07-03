@@ -17,14 +17,14 @@ export const Rating = (props: Props) => {
         <Controller
             name="rating"
             control={props.controle}
-            defaultValue={2.5}
+            defaultValue={3}
             render={({ field, fieldState }) => (
                 <FormControl error={fieldState.invalid}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                         <StyledRating
                             {...field}
                             name="highlight-selected-only"
-                            defaultValue={2}
+                            // defaultValue={2}
                             value={Number(field.value)}
                             IconContainerComponent={IconContainer}
                             getLabelText={(value: number) =>
