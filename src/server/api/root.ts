@@ -2,6 +2,7 @@ import { postRouter } from "~/server/api/routers/post";
 import { createTRPCRouter } from "~/server/api/trpc";
 import { cloudflareImagesRouter } from "./routers/cloudflareImages";
 import { placeRouter } from "./routers/place";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -11,6 +12,7 @@ import { placeRouter } from "./routers/place";
 export const appRouter = createTRPCRouter({
     post: postRouter,
     place: placeRouter,
+    user: userRouter,
     cloudflareImages: cloudflareImagesRouter,
 });
 
