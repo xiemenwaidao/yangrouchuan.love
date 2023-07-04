@@ -1,3 +1,4 @@
+import { type Image } from "@prisma/client";
 import {
     type InferGetStaticPropsType,
     type GetServerSidePropsContext,
@@ -7,25 +8,112 @@ import Head from "next/head";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
+import NextImage from "next/image";
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import ImageListItemBar from "@mui/material/ImageListItemBar";
+import { imageUrl } from "~/utils/cloudflareHelpers";
+import { CardActionArea } from "@mui/material";
+import { MyLink } from "~/components/MyLink";
+
+interface ImageGalleryProps {
+    imageWithAuthor: {
+        author: {
+            username: string;
+            id: string;
+            profilePicture: string;
+        };
+        id: string;
+        postId: string;
+    }[];
+}
+
+const ImageGallery = ({ imageWithAuthor }: ImageGalleryProps) => {
+    return (
+        <ImageList
+            sx={{ width: "100%", maxHeight: 450, gridTemplateRows: "160px" }}
+            cols={3}
+            gap={8}
+        >
+            {/* <ImageListItem key="Subheader" cols={3}>
+                <ListSubheader component="div">December</ListSubheader>
+            </ImageListItem> */}
+            {imageWithAuthor.map((image) => (
+                <ImageListItem key={image.id}>
+                    <CardActionArea
+                        sx={{
+                            position: "relative",
+                            height: "160px",
+                            width: "100%",
+                        }}
+                    >
+                        <NextImage
+                            src={`${imageUrl(image.id)}`}
+                            alt={``}
+                            loading="lazy"
+                            fill
+                            sizes="100%"
+                            style={{
+                                objectFit: "cover",
+                            }}
+                        />
+                    </CardActionArea>
+                    <ImageListItemBar
+                        // title={`by @${image.author.username}`}
+                        title={
+                            <MyLink
+                                nextProps={{
+                                    href: `/user/@${image.author.username}`,
+                                }}
+                            >
+                                {`by @${image.author.username}`}
+                            </MyLink>
+                        }
+                        // subtitle={``}
+                        // actionIcon={
+                        //     <IconButton
+                        //         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
+                        //         aria-label={`info about ${"title"}`}
+                        //     >
+                        //         <InfoIcon />
+                        //     </IconButton>
+                        // }
+                    />
+                </ImageListItem>
+            ))}
+        </ImageList>
+        // </Box>
+    );
+};
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
-    const { data } = api.place.getById.useQuery({
+    const { data: place, isLoading } = api.place.getById.useQuery({
         id,
     });
 
-    if (!data) return <div>404</div>;
-    if (!data.id) return <div>Something went wrong</div>;
+    if (!place) return <div>404</div>;
+    if (!place.id) return <div>Something went wrong</div>;
+
+    const { posts } = place;
+    const imageWithAuthor = posts
+        .map((post) => {
+            return post.post.images.map((image) => {
+                return { ...image, author: post.author };
+            });
+        })
+        .flat();
 
     return (
         <>
             <Head>
                 {/* TODO:文字数多い場合のためにトリミング */}
-                <title>{`${data.title} |  ${SITE.title}`}</title>
+                <title>{`${place.title} |  ${SITE.title}`}</title>
             </Head>
 
-            <div>{`${data.address}`}</div>
+            <div>{`${place.address}`}</div>
+            <ImageGallery imageWithAuthor={imageWithAuthor} />
         </>
     );
 };
