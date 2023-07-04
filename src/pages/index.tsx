@@ -1,4 +1,3 @@
-import CircularProgress from "@mui/material/CircularProgress";
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 
@@ -10,20 +9,18 @@ import {
     AvatarGroup,
     Box,
     CardActionArea,
-    CardActions,
     CardHeader,
     Grid,
     IconButton,
+    Skeleton,
+    Stack,
 } from "@mui/material";
-import { type PostAndAuthor, type ExtendedPost } from "~/utils/types";
+import { type PostAndAuthor } from "~/utils/types";
 import { imageUrl } from "~/utils/cloudflareHelpers";
 import NextImage from "next/image";
 import Link from "next/link";
-import { type Place, type Image } from "@prisma/client";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
+import { type Place } from "@prisma/client";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { red } from "@mui/material/colors";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -146,62 +143,35 @@ const RecipeReviewCard = (props: PostFeedViewProps) => {
     );
 };
 
-// TODO postじゃなくてplace基準でデータ取得
-const PostFeedView = (props: PostFeedViewProps) => {
-    const { place } = props;
-    const imageId = place.posts[0]?.post?.images[0]?.id;
-
-    return (
-        <Card sx={{ maxWidth: "100%" }}>
-            <Link href={`/place/${place.id}`}>
-                <CardActionArea>
-                    <Box sx={{ height: 140, width: "100%" }}>
-                        <NextImage
-                            src={
-                                imageId
-                                    ? imageUrl(imageId)
-                                    : "https://picsum.photos/200"
-                            }
-                            height={300}
-                            width={300}
-                            // fill
-                            alt={place.title}
-                            style={{
-                                objectFit: "cover",
-                                display: "block",
-                                // width: "100%",
-                                // height: "auto",
-                            }}
-                        />
-                    </Box>
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
-                            {place.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {place.address}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-            </Link>
-        </Card>
-    );
-};
-
 const Feed = () => {
     const { data, isLoading: postLoading } = api.place.getAll.useQuery();
-    if (postLoading) return <CircularProgress />;
-    if (!data) return <div>Something went wrong</div>;
+
+    // if (!data) return <div>Something went wrong</div>;
 
     console.log({ data });
 
-    return (
+    return postLoading ? (
         <Grid
             container
             spacing={{ xs: 2, md: 3 }}
             columns={{ xs: 4, sm: 8, md: 12 }}
         >
-            {data.map((place) => (
+            <Grid item xs={2} sm={4} md={4}>
+                <Skeleton
+                    variant="rectangular"
+                    width={`100%`}
+                    height={441.55}
+                />
+            </Grid>
+        </Grid>
+    ) : (
+        <Grid
+            container
+            item
+            spacing={{ xs: 2, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+        >
+            {data?.map((place) => (
                 <Grid item xs={2} sm={4} md={4} key={place.id}>
                     {/* <PostFeedView place={place} /> */}
                     <RecipeReviewCard place={place} />
@@ -212,7 +182,16 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-    return <Feed />;
+    return (
+        <Grid container direction={`column`} rowGap={4}>
+            <Grid item>
+                <Skeleton variant="rectangular" width={`100%`} height={400} />
+            </Grid>
+            <Grid item>
+                <Feed />
+            </Grid>
+        </Grid>
+    );
 };
 
 export default Home;

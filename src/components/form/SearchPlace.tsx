@@ -26,7 +26,6 @@ import {
     useLoadScript,
 } from "@react-google-maps/api";
 import { env } from "~/env.mjs";
-import CircularProgress from "@mui/material/CircularProgress";
 import {
     Controller,
     type Control,
@@ -37,7 +36,7 @@ import {
 import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { debounce } from "@mui/material/utils";
-import { Stack, useColorScheme } from "@mui/material";
+import { Skeleton, Stack, useColorScheme } from "@mui/material";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 
@@ -521,8 +520,14 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
             resetField={props.resetField}
         />
     ) : (
-        <Box sx={{ display: "flex" }}>
-            <CircularProgress />
+        <Box>
+            <Skeleton variant="rectangular" width={`100%`} height={400} />
+            <Skeleton
+                variant="rectangular"
+                width={`100%`}
+                height={56}
+                sx={{ mt: 1 }}
+            />
         </Box>
     );
 };
