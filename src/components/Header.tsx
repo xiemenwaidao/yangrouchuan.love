@@ -1,4 +1,6 @@
 import {
+    ClerkLoaded,
+    ClerkLoading,
     SignInButton,
     SignedIn,
     SignedOut,
@@ -22,6 +24,7 @@ import { useState } from "react";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { MyLink } from "./MyLink";
 import NextLink from "next/link";
+import Skeleton from "@mui/material/Skeleton";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
 interface MenuItemProps {
@@ -195,13 +198,22 @@ function Header() {
                     <ThemeSwitch />
 
                     <Box sx={{ flexGrow: 0 }}>
-                        <SignedIn>
-                            <UserButton
-                                userProfileMode="navigation"
-                                userProfileUrl="/account"
-                                afterSignOutUrl="/"
-                                afterMultiSessionSingleSignOutUrl="/"
+                        <ClerkLoading>
+                            <Skeleton
+                                variant="circular"
+                                width={`2rem`}
+                                height={`2rem`}
                             />
+                        </ClerkLoading>
+                        <SignedIn>
+                            <ClerkLoaded>
+                                <UserButton
+                                    userProfileMode="navigation"
+                                    userProfileUrl="/account"
+                                    afterSignOutUrl="/"
+                                    afterMultiSessionSingleSignOutUrl="/"
+                                />
+                            </ClerkLoaded>
                         </SignedIn>
                         <SignedOut>
                             <SignInButton
