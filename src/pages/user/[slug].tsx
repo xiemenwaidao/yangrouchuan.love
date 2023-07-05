@@ -1,4 +1,4 @@
-import { Avatar, Box } from "@mui/material";
+import { Avatar, Box, Stack, Typography, useTheme } from "@mui/material";
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { SITE } from "~/config";
@@ -6,11 +6,22 @@ import { api } from "~/utils/api";
 import { stringToColor } from "~/utils/helpers";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
+import type {} from "@mui/material/themeCssVarsAugmentation";
+import PlaceFeed from "~/components/PlaceFeed";
+
+// const Feed = () => {
+
+//     return (
+//         <PlaceFeed />
+//     )
+// }
 
 const UserPage = ({ username }: { username: string }) => {
     const { data, isLoading } = api.user.getUserByUsername.useQuery({
         username,
     });
+
+    const theme = useTheme();
 
     if (!data) return <div>404</div>;
     if (!data.username) return <div>Something went wrong</div>;
@@ -21,16 +32,25 @@ const UserPage = ({ username }: { username: string }) => {
                 <title>{`${data.username} | ${SITE.title}`}</title>
             </Head>
 
-            <Box sx={{ pb: 36 }}>
+            <Stack mt={-3}>
                 <Box
                     sx={{
                         bgcolor: stringToColor(data.username),
                         width: "100%",
-                        height: "288px",
-                        position: "relative",
+                        height: { md: 288, xs: 182 },
                     }}
-                >
-                    <Avatar sx={{ width: { md: 128 }, height: { md: 128 } }}>
+                ></Box>
+                <Box sx={{ position: "relative" }}>
+                    <Avatar
+                        sx={{
+                            width: { md: 128, xs: 100 },
+                            height: { md: 128, xs: 100 },
+                            position: "absolute",
+                            top: { md: -64, xs: -50 },
+                            left: 10,
+                            border: `4px solid ${theme.vars.palette.background.default}`,
+                        }}
+                    >
                         <NextImage
                             src={data.profilePicture}
                             fill
@@ -38,10 +58,14 @@ const UserPage = ({ username }: { username: string }) => {
                             style={{ objectFit: "cover" }}
                         />
                     </Avatar>
+                    <Typography
+                        fontSize={`1.5rem`}
+                        fontWeight={"bold"}
+                        mt={{ md: "64px", xs: "50px" }}
+                        p={{ md: 2, xs: 1 }}
+                    >{`@${data.username}`}</Typography>
                 </Box>
-            </Box>
-
-            <div>{`@${data.username}`}</div>
+            </Stack>
         </>
     );
 };
