@@ -1,23 +1,25 @@
+// MUI
 import Card from "@mui/material/Card";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import AvatarGroup from "@mui/material/AvatarGroup";
+import Avatar from "@mui/material/Avatar";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
+
 import { type Place } from "@prisma/client";
 import Link from "next/link";
 import NextImage from "next/image";
 import { type PostAndAuthor } from "~/utils/types";
 import { imageUrl } from "~/utils/cloudflareHelpers";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
 import { IconContainer, StyledRating, customIcons } from "./parts/StyledRating";
-import AvatarGroup from "@mui/material/AvatarGroup";
-import Avatar from "@mui/material/Avatar";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import Grid from "@mui/material/Grid";
-import Skeleton from "@mui/material/Skeleton";
 
 dayjs.extend(relativeTime);
 

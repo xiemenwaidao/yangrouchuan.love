@@ -1,4 +1,7 @@
-import { Box, Container, Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+
 import Link from "next/link";
 import { SITE } from "~/config";
 

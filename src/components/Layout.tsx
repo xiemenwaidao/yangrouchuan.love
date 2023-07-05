@@ -1,7 +1,8 @@
 import type { PropsWithChildren } from "react";
 import Header from "./Header";
-import { Container, Grid } from "@mui/material";
 import Footer from "./Footer";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
 
 export const Layout = (props: PropsWithChildren) => {
     return (

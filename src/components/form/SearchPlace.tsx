@@ -1,3 +1,4 @@
+// MUI
 import Autocomplete, {
     type AutocompleteChangeReason,
     type AutocompleteInputChangeReason,
@@ -8,6 +9,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { getGeocode, getLatLng } from "use-places-autocomplete";
 import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Skeleton from "@mui/material/Skeleton";
+import { useColorScheme } from "@mui/material/styles";
+import { debounce } from "@mui/material/utils";
+
 import parse from "autosuggest-highlight/parse";
 import {
     useMemo,
@@ -35,8 +41,6 @@ import {
 } from "react-hook-form";
 import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
-import { debounce } from "@mui/material/utils";
-import { Skeleton, Stack, useColorScheme } from "@mui/material";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 

@@ -1,12 +1,14 @@
+// MUI
 import { styled } from "@mui/material/styles";
 import Rating, { type IconContainerProps } from "@mui/material/Rating";
-import { type ReactElement } from "react";
-
+// MUI Icons
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAltOutlined";
 import SentimentVerySatisfiedIcon from "@mui/icons-material/SentimentVerySatisfied";
+
+import { type ReactElement } from "react";
 
 export const StyledRating = styled(Rating)(({ theme }) => ({
     "& .MuiRating-iconEmpty .MuiSvgIcon-root": {

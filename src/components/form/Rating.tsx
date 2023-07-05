@@ -1,7 +1,9 @@
 import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
+
 import { type Control, Controller } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
-import { FormControl, FormHelperText } from "@mui/material";
 import {
     IconContainer,
     StyledRating,

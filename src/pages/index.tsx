@@ -1,7 +1,9 @@
+// MUI
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
+
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
-
-import { Grid, Skeleton } from "@mui/material";
 
 import PlaceFeed from "~/components/PlaceFeed";
 

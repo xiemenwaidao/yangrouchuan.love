@@ -1,5 +1,5 @@
 import { SignIn } from "@clerk/nextjs";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { SITE } from "~/config";

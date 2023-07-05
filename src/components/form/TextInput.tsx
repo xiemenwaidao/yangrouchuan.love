@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import TextField from "@mui/material/TextField";
 import { type Control, Controller } from "react-hook-form";
 import { type FrontPostSchemaKeys, type FrontPostSchema } from "~/utils/schema";
 

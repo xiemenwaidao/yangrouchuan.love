@@ -1,9 +1,6 @@
-import {
-    Link as MUILink,
-    type SxProps,
-    type Theme,
-    type TypographyProps,
-} from "@mui/material";
+import MUILink from "@mui/material/Link";
+import { type TypographyProps } from "@mui/material/Typography";
+import { type SxProps, type Theme } from "@mui/material/styles";
 import NextLink, { type LinkProps } from "next/link";
 import { type ReactNode } from "react";
 

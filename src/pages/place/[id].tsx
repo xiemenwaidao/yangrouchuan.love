@@ -1,3 +1,9 @@
+// MUI
+import ImageList from "@mui/material/ImageList";
+import ImageListItem from "@mui/material/ImageListItem";
+import ImageListItemBar from "@mui/material/ImageListItemBar";
+import CardActionArea from "@mui/material/CardActionArea";
+
 import { type Image } from "@prisma/client";
 import {
     type InferGetStaticPropsType,
@@ -9,12 +15,9 @@ import { SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import ImageListItemBar from "@mui/material/ImageListItemBar";
 import { imageUrl } from "~/utils/cloudflareHelpers";
-import { CardActionArea } from "@mui/material";
 import { MyLink } from "~/components/MyLink";
+import { useState } from "react";
 
 interface ImageGalleryProps {
     imageWithAuthor: {
@@ -29,15 +32,14 @@ interface ImageGalleryProps {
 }
 
 const ImageGallery = ({ imageWithAuthor }: ImageGalleryProps) => {
+    const [open, setOpen] = useState(false);
+
     return (
         <ImageList
             sx={{ width: "100%", maxHeight: 450, gridTemplateRows: "160px" }}
             cols={3}
             gap={8}
         >
-            {/* <ImageListItem key="Subheader" cols={3}>
-                <ListSubheader component="div">December</ListSubheader>
-            </ImageListItem> */}
             {imageWithAuthor.map((image) => (
                 <ImageListItem key={image.id}>
                     <CardActionArea
@@ -59,7 +61,6 @@ const ImageGallery = ({ imageWithAuthor }: ImageGalleryProps) => {
                         />
                     </CardActionArea>
                     <ImageListItemBar
-                        // title={`by @${image.author.username}`}
                         title={
                             <MyLink
                                 nextProps={{
@@ -69,15 +70,6 @@ const ImageGallery = ({ imageWithAuthor }: ImageGalleryProps) => {
                                 {`by @${image.author.username}`}
                             </MyLink>
                         }
-                        // subtitle={``}
-                        // actionIcon={
-                        //     <IconButton
-                        //         sx={{ color: "rgba(255, 255, 255, 0.54)" }}
-                        //         aria-label={`info about ${"title"}`}
-                        //     >
-                        //         <InfoIcon />
-                        //     </IconButton>
-                        // }
                     />
                 </ImageListItem>
             ))}

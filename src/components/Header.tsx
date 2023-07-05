@@ -9,6 +9,7 @@ import {
 } from "@clerk/nextjs";
 import { SITE } from "~/config";
 
+// MUI
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,11 +21,12 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import Skeleton from "@mui/material/Skeleton";
+
 import { useState } from "react";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { MyLink } from "./MyLink";
 import NextLink from "next/link";
-import Skeleton from "@mui/material/Skeleton";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
 interface MenuItemProps {
