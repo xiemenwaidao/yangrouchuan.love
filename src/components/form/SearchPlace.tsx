@@ -159,7 +159,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
 
     // 投稿済みの場所を取得
     const { user } = useUser();
-    const { data: posted } = api.post.getPostByUserId.useQuery({
+    const { data: posted } = api.post.getPostsByUserId.useQuery({
         userId: user?.id ?? "",
     });
     const postedPlaceIds = posted?.map((obj) => obj.post.placeId);

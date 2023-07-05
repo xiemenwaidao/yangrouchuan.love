@@ -52,7 +52,7 @@ export const postRouter = createTRPCRouter({
             return (await addUserDataToPosts([post]))[0];
         }),
 
-    getPostByUserId: publicProcedure
+    getPostsByUserId: publicProcedure
         .input(
             z.object({
                 userId: z.string(),
