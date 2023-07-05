@@ -2,7 +2,7 @@ import MUILink from "@mui/material/Link";
 import { type TypographyProps } from "@mui/material/Typography";
 import { type SxProps, type Theme } from "@mui/material/styles";
 import NextLink, { type LinkProps } from "next/link";
-import { type ReactNode } from "react";
+import { type HTMLAttributeAnchorTarget, type ReactNode } from "react";
 
 type Props = {
     nextProps: LinkProps;
@@ -12,12 +12,13 @@ type Props = {
     };
     children?: ReactNode;
     sx?: SxProps<Theme>;
+    target?: HTMLAttributeAnchorTarget;
 };
 
 export const MyLink = (props: Props) => {
     return (
         <NextLink href={props.nextProps.href} passHref legacyBehavior>
-            <MUILink sx={props.sx} {...props.muiProps}>
+            <MUILink sx={props.sx} {...props.muiProps} target={props.target}>
                 {props.children}
             </MUILink>
         </NextLink>

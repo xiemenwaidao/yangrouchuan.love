@@ -43,6 +43,8 @@ import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
+import { MyLink } from "../MyLink";
+import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
     default: [],
@@ -483,7 +485,18 @@ const Map = (props: SearchPlaceMapProps) => {
                         >
                             <Box sx={{ color: "black" }}>
                                 <strong>{selected.title}</strong>
-                                <div>{selected.address}</div>
+                                <p>{selected.address}</p>
+                                <MyLink
+                                    nextProps={{
+                                        href: getMapHrefByPlaceId(
+                                            selected.title,
+                                            selected.place_id
+                                        ),
+                                    }}
+                                    target="_blank"
+                                >
+                                    Google Mapで開く
+                                </MyLink>
                             </Box>
                         </InfoWindowF>
                     </MarkerF>
