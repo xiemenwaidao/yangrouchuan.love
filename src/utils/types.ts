@@ -1,8 +1,8 @@
-import { type Post, type Image } from "@prisma/client";
+import { type Post, type Image, type Place } from "@prisma/client";
 
 export interface Author {
-    username: string;
     id: string;
+    username: string;
     profilePicture: string;
 }
 
@@ -20,3 +20,5 @@ export type PostAndAuthor = ExtendedPost<
     { images: Image[] },
     { author: Author }
 >;
+
+export type PlaceWithPosts = Place & { posts: PostAndAuthor[] };

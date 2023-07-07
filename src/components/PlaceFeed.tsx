@@ -12,37 +12,22 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Grid from "@mui/material/Grid";
 import Skeleton from "@mui/material/Skeleton";
 
-import { type Place } from "@prisma/client";
 import Link from "next/link";
 import NextImage from "next/image";
-import { type PostAndAuthor } from "~/utils/types";
+import { type PlaceWithPosts } from "~/utils/types";
 import { imageUrl } from "~/utils/cloudflareHelpers";
-import { IconContainer, StyledRating, customIcons } from "./parts/StyledRating";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-dayjs.extend(relativeTime);
-
-type PlaceWithPosts = Place & { posts: PostAndAuthor[] };
+import { RateAverage } from "./RateAverage";
+import dayjs from "./RelativeDayJs";
 
 interface PostFeedViewProps {
     place: PlaceWithPosts;
 }
 
-const RecipeReviewCard = (props: PostFeedViewProps) => {
-    const { place } = props;
+const RecipeReviewCard = ({ place }: PostFeedViewProps) => {
     const { posts } = place;
 
     const imageId = posts[0]?.post?.images[0]?.id;
     // 一応postsが0の場合を考慮
-    const rateAverage =
-        posts.length !== 0
-            ? Math.round(
-                  posts.reduce((acc, cur) => {
-                      return acc + cur.post.rating;
-                  }, 0) / posts.length
-              )
-            : 2;
 
     return (
         <Card sx={{ maxWidth: "100%", position: "relative" }}>
@@ -87,16 +72,7 @@ const RecipeReviewCard = (props: PostFeedViewProps) => {
                             {place.address}
                         </Typography>
                         <Box>
-                            <StyledRating
-                                name="highlight-selected-only"
-                                value={rateAverage}
-                                IconContainerComponent={IconContainer}
-                                getLabelText={(value: number) =>
-                                    customIcons[value]?.label ?? ""
-                                }
-                                highlightSelectedOnly
-                                readOnly
-                            />
+                            <RateAverage posts={posts} />
                         </Box>
                         <AvatarGroup max={3}>
                             {posts.map((post) => (

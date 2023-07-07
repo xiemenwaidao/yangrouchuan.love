@@ -64,6 +64,10 @@ export const postRouter = createTRPCRouter({
                     where: {
                         authorId: input.userId,
                     },
+                    include: {
+                        place: true,
+                        images: true,
+                    },
                     take: 100,
                     orderBy: [{ createdAt: "desc" }],
                 })

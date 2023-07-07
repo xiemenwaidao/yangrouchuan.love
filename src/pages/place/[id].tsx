@@ -1,10 +1,7 @@
 // MUI
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import ImageListItemBar from "@mui/material/ImageListItemBar";
-import CardActionArea from "@mui/material/CardActionArea";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
-import { type Image } from "@prisma/client";
 import {
     type InferGetStaticPropsType,
     type GetServerSidePropsContext,
@@ -14,74 +11,14 @@ import Head from "next/head";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
-import NextImage from "next/image";
-import { imageUrl } from "~/utils/cloudflareHelpers";
-import { MyLink } from "~/components/MyLink";
-import { useState } from "react";
+import { RateAverage } from "~/components/RateAverage";
 
-interface ImageGalleryProps {
-    imageWithAuthor: {
-        author: {
-            username: string;
-            id: string;
-            profilePicture: string;
-        };
-        id: string;
-        postId: string;
-    }[];
-}
-
-const ImageGallery = ({ imageWithAuthor }: ImageGalleryProps) => {
-    const [open, setOpen] = useState(false);
-
-    return (
-        <ImageList
-            sx={{ width: "100%", maxHeight: 450, gridTemplateRows: "160px" }}
-            cols={3}
-            gap={8}
-        >
-            {imageWithAuthor.map((image) => (
-                <ImageListItem key={image.id}>
-                    <CardActionArea
-                        sx={{
-                            position: "relative",
-                            height: "160px",
-                            width: "100%",
-                        }}
-                    >
-                        <NextImage
-                            src={`${imageUrl(image.id)}`}
-                            alt={``}
-                            loading="lazy"
-                            fill
-                            sizes="100%"
-                            style={{
-                                objectFit: "cover",
-                            }}
-                        />
-                    </CardActionArea>
-                    <ImageListItemBar
-                        title={
-                            <MyLink
-                                nextProps={{
-                                    href: `/user/@${image.author.username}`,
-                                }}
-                            >
-                                {`by @${image.author.username}`}
-                            </MyLink>
-                        }
-                    />
-                </ImageListItem>
-            ))}
-        </ImageList>
-        // </Box>
-    );
-};
+import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
-    const { data: place, isLoading } = api.place.getById.useQuery({
+    const { data: place } = api.place.getById.useQuery({
         id,
     });
 
@@ -89,13 +26,13 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
     if (!place.id) return <div>Something went wrong</div>;
 
     const { posts } = place;
-    const imageWithAuthor = posts
-        .map((post) => {
-            return post.post.images.map((image) => {
-                return { ...image, author: post.author };
-            });
-        })
-        .flat();
+    // const imageWithAuthor = posts
+    //     .map((post) => {
+    //         return post.post.images.map((image) => {
+    //             return { ...image, author: post.author };
+    //         });
+    //     })
+    //     .flat();
 
     return (
         <>
@@ -104,8 +41,20 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
                 <title>{`${place.title} |  ${SITE.title}`}</title>
             </Head>
 
-            <div>{`${place.address}`}</div>
-            <ImageGallery imageWithAuthor={imageWithAuthor} />
+            <Stack direction={{ md: "column", xs: "column" }}>
+                <Typography variant="h2">{`${place.title}`}</Typography>
+                <Typography
+                    variant="h3"
+                    fontSize={`1.5rem`}
+                >{`${place.address}`}</Typography>
+                <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
+                {/* price */}
+
+                <ReviewCardWithImageModal posts={posts} />
+            </Stack>
+
+            {/* <ImageGallery imageWithAuthor={imageWithAuthor} />
+            <Reviews place={place} /> */}
         </>
     );
 };
