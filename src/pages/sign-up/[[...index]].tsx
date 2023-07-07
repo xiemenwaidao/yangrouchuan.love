@@ -1,14 +1,14 @@
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 import Grid from "@mui/material/Grid";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { SITE } from "~/config";
 
-const SignInPage: NextPage = () => {
+const SignUpPage: NextPage = () => {
     return (
         <>
             <Head>
-                <title>{`Sign In | ${SITE.title}`}</title>
+                <title>{`Sign Up | ${SITE.title}`}</title>
             </Head>
             <Grid
                 container
@@ -17,11 +17,16 @@ const SignInPage: NextPage = () => {
                 sx={{ height: "100%" }}
             >
                 <Grid item>
-                    <SignIn />
+                    <SignUp
+                        path="/sign-up"
+                        routing="path"
+                        redirectUrl={"/"}
+                        signInUrl="/sign-in"
+                    />
                 </Grid>
             </Grid>
         </>
     );
 };
 
-export default SignInPage;
+export default SignUpPage;

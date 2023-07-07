@@ -7,16 +7,12 @@ import { stringToColor } from "~/utils/helpers";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
 import type {} from "@mui/material/themeCssVarsAugmentation";
-import PlaceFeed from "~/components/PlaceFeed";
 
-// const Feed = () => {
+interface ProfileSectionProps {
+    username: string;
+}
 
-//     return (
-//         <PlaceFeed />
-//     )
-// }
-
-const UserPage = ({ username }: { username: string }) => {
+const ProfileSection = ({ username }: ProfileSectionProps) => {
     const { data, isLoading } = api.user.getUserByUsername.useQuery({
         username,
     });
@@ -29,13 +25,12 @@ const UserPage = ({ username }: { username: string }) => {
     return (
         <>
             <Head>
-                <title>{`${data.username} | ${SITE.title}`}</title>
+                <title>{`@${data.username} | ${SITE.title}`}</title>
             </Head>
-
             <Stack mt={-3}>
                 <Box
                     sx={{
-                        bgcolor: stringToColor(data.username),
+                        bgcolor: stringToColor(data.id),
                         width: "100%",
                         height: { md: 288, xs: 182 },
                     }}
@@ -70,15 +65,23 @@ const UserPage = ({ username }: { username: string }) => {
     );
 };
 
+const UserPage = ({ username }: { username: string }) => {
+    return (
+        <>
+            <ProfileSection username={username} />
+        </>
+    );
+};
+
 export const getStaticProps = async (
-    context: GetServerSidePropsContext<{ slug: string }>
+    context: GetServerSidePropsContext<{ username: string }>
 ) => {
     const helpers = generateSSGHelper();
 
-    const slug = context.params?.slug;
-    if (typeof slug !== "string") throw new Error("no slug");
+    const usernameWithAt = context.params?.username;
+    if (typeof usernameWithAt !== "string") throw new Error("no slug");
 
-    const username = slug.replace("@", "");
+    const username = usernameWithAt.replace("@", "");
 
     /*
      * Prefetching the `post.byId` query.
