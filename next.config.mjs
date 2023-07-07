@@ -30,6 +30,7 @@ const config = {
 
     images: {
         remotePatterns: [
+            // clerk
             {
                 protocol: "https",
                 hostname: "images.clerk.dev",
@@ -41,6 +42,12 @@ const config = {
                 hostname: "images.clerk.dev",
                 port: "",
                 pathname: "/uploaded/**",
+            },
+            {
+                protocol: "https",
+                hostname: "www.gravatar.com",
+                port: "",
+                pathname: "/avatar/**",
             },
             {
                 protocol: "https",
