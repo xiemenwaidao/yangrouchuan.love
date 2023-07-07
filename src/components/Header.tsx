@@ -20,12 +20,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Skeleton from "@mui/material/Skeleton";
 
 import { useState } from "react";
-import { ThemeSwitch } from "./ThemeSwitch";
-import { MyLink } from "./MyLink";
+import { ThemeSwitch } from "./parts/ThemeSwitch";
+import { MyLink } from "./parts/MyLink";
 import NextLink from "next/link";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
@@ -152,11 +151,11 @@ function Header() {
                             })}
                         </Menu>
                     </Box>
-                    <AdbIcon
-                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-                    />
 
                     {/* mobile */}
+                    {/* <AdbIcon
+                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+                    /> */}
                     <Typography
                         variant="h5"
                         noWrap
@@ -166,9 +165,10 @@ function Header() {
                             flexGrow: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            // letterSpacing: ".3rem",
                             color: "inherit",
                             textDecoration: "none",
+                            fontSize: "1.0rem",
                         }}
                     >
                         <NextLink href={`/`}>

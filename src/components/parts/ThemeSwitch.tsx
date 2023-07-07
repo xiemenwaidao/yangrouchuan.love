@@ -1,4 +1,5 @@
 import { styled, useColorScheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import Switch from "@mui/material/Switch";
 import { useEffect, useState } from "react";
 
@@ -52,11 +53,18 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 
 export const ThemeSwitch = () => {
     const { mode, setMode } = useColorScheme();
+    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    useEffect(() => {
+        if (mode === "system" && prefersDarkMode) {
+            setMode("dark");
+        }
+    }, [mode, prefersDarkMode, setMode]);
 
     if (!mounted) {
         // for server-side rendering

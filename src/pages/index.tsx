@@ -6,11 +6,14 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 
 import PlaceFeed from "~/components/PlaceFeed";
+import { toast } from "react-toastify";
 
 const Feed = () => {
     const { data, isLoading: postLoading } = api.place.getAll.useQuery();
 
-    // if (!data) return <div>Something went wrong</div>;
+    if (!data) {
+        // toast.error("データの取得に失敗しました。");
+    }
 
     console.log({ data });
 

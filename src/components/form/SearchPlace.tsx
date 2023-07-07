@@ -43,7 +43,7 @@ import type { FrontPostSchema } from "~/utils/schema";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
-import { MyLink } from "../MyLink";
+import { MyLink } from "../parts/MyLink";
 import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {

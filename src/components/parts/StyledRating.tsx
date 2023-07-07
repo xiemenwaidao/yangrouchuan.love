@@ -12,7 +12,7 @@ import { type ReactElement } from "react";
 
 export const StyledRating = styled(Rating)(({ theme }) => ({
     "& .MuiRating-iconEmpty .MuiSvgIcon-root": {
-        color: theme.palette.action.disabled,
+        color: theme.vars.palette.action.disabled,
     },
 }));
 
@@ -24,23 +24,23 @@ export const customIcons: {
 } = {
     1: {
         icon: <SentimentVeryDissatisfiedIcon color="error" />,
-        label: "Very Dissatisfied",
+        label: "不満",
     },
     2: {
         icon: <SentimentDissatisfiedIcon color="error" />,
-        label: "Dissatisfied",
+        label: "ちょっと不満",
     },
     3: {
         icon: <SentimentSatisfiedIcon color="warning" />,
-        label: "Neutral",
+        label: "普通",
     },
     4: {
         icon: <SentimentSatisfiedAltIcon color="success" />,
-        label: "Satisfied",
+        label: "満足",
     },
     5: {
         icon: <SentimentVerySatisfiedIcon color="success" />,
-        label: "Very Satisfied",
+        label: "大満足",
     },
 };
 
