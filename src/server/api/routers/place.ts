@@ -22,6 +22,7 @@ const addUserDataToPlaces = async (
     );
 };
 
+// imageの取得数が気になる
 export const placeRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
         const places = await ctx.prisma.place.findMany({

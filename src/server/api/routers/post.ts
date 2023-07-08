@@ -1,3 +1,4 @@
+import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
@@ -73,6 +74,39 @@ export const postRouter = createTRPCRouter({
                 })
                 .then(addUserDataToPosts)
         ),
+
+    getPostsByUsername: publicProcedure
+        .input(
+            z.object({
+                username: z.string(),
+            })
+        )
+        .query(async ({ ctx, input }) => {
+            const [user] = await clerkClient.users.getUserList({
+                username: [input.username],
+            });
+
+            if (!user) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "User not found",
+                });
+            }
+
+            return ctx.prisma.post
+                .findMany({
+                    where: {
+                        authorId: user.id,
+                    },
+                    include: {
+                        place: true,
+                        images: true,
+                    },
+                    take: 100,
+                    orderBy: [{ createdAt: "desc" }],
+                })
+                .then(addUserDataToPosts);
+        }),
 
     store: privateProcedure
         .input(backPostSchema)

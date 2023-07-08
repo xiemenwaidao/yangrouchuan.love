@@ -7,6 +7,7 @@ import { stringToColor } from "~/utils/helpers";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
 import type {} from "@mui/material/themeCssVarsAugmentation";
+import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 
 interface ProfileSectionProps {
     username: string;
@@ -24,9 +25,6 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
 
     return (
         <>
-            <Head>
-                <title>{`@${data.username} | ${SITE.title}`}</title>
-            </Head>
             <Stack mt={-3}>
                 <Box
                     sx={{
@@ -65,10 +63,25 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
     );
 };
 
+const Feed = ({ username }: { username: string }) => {
+    const { data, isLoading } = api.post.getPostsByUsername.useQuery({
+        username,
+    });
+
+    if (isLoading) return <div>loading</div>;
+    if (!data) return <div>404</div>;
+
+    return <ReviewCardWithImageModal posts={data} />;
+};
+
 const UserPage = ({ username }: { username: string }) => {
     return (
         <>
+            <Head>
+                <title>{`@${username} | ${SITE.title}`}</title>
+            </Head>
             <ProfileSection username={username} />
+            <Feed username={username} />
         </>
     );
 };

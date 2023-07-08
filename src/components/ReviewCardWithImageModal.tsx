@@ -6,10 +6,10 @@ import Stack from "@mui/material/Stack";
 import NextImage from "next/image";
 import ReviewCard from "./ReviewCard";
 import { useCallback, useState } from "react";
-import { type PostAndAuthor } from "~/utils/types";
+import { type PostWithPlaceAndAuthor, type PostAndAuthor } from "~/utils/types";
 
 interface ReviewCardWithImageModalProps {
-    posts: PostAndAuthor[];
+    posts: PostAndAuthor[] | PostWithPlaceAndAuthor[];
 }
 
 const ReviewCardWithImageModal = ({ posts }: ReviewCardWithImageModalProps) => {

@@ -21,4 +21,9 @@ export type PostAndAuthor = ExtendedPost<
     { author: Author }
 >;
 
+export type PostWithPlaceAndAuthor = ExtendedPost<
+    { place: Place; images: Image[] },
+    { author: Author }
+>;
+
 export type PlaceWithPosts = Place & { posts: PostAndAuthor[] };

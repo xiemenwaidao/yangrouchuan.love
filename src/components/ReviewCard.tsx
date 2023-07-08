@@ -14,20 +14,93 @@ import dayjs from "dayjs";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-import { type PostAndAuthor } from "~/utils/types";
+import { type PostWithPlaceAndAuthor, type PostAndAuthor } from "~/utils/types";
 import { imageUrl } from "~/utils/cloudflareHelpers";
 import NextImage from "next/image";
 import NextLink from "next/link";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
+import { useState } from "react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { useUser } from "@clerk/nextjs";
+import { type Place } from "@prisma/client";
+
+interface MenuButtonProps {
+    postId: string;
+}
+
+const MenuButton = ({ postId }: MenuButtonProps) => {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    return (
+        <>
+            <IconButton
+                aria-label="settings"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+                sx={{
+                    position: "absolute",
+                    top: { xs: "8px", sm: "4px" },
+                    right: { xs: "8px", sm: "4px" },
+                    zIndex: 10,
+                }}
+            >
+                <MoreVertIcon />
+            </IconButton>
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                }}
+            >
+                <MenuItem onClick={handleClose}>
+                    <NextLink href={`/edit/${postId}`}>編集</NextLink>
+                </MenuItem>
+                <MenuItem onClick={handleClose}>削除</MenuItem>
+            </Menu>
+        </>
+    );
+};
+
+interface PlaceDetailProps {
+    place: Place;
+}
+
+const PlaceDetail = ({ place }: PlaceDetailProps) => {
+    return (
+        <Box py={1}>
+            <Typography variant="h5" fontWeight={"bold"}>
+                {place.title}
+            </Typography>
+            <Typography>{place.address}</Typography>
+        </Box>
+    );
+};
 
 interface ReviewCardProps {
-    post: PostAndAuthor;
+    post: PostAndAuthor | PostWithPlaceAndAuthor;
     handleImageClick: (url: string) => void;
 }
 
 const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
+    const { user } = useUser();
+
     const itemPost = post.post;
     const { images } = itemPost;
     const { author } = post;
@@ -38,8 +111,11 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 display: { sm: "grid" },
                 gridTemplateColumns: { sm: "240px 1fr" },
                 height: { sm: "240px" },
+                borderRadius: "8px",
+                position: "relative",
             }}
         >
+            {user?.id === author.id && <MenuButton postId={itemPost.id} />}
             <Box height={{ xs: "200px", sm: "100%" }}>
                 <Swiper
                     slidesPerView={1}
@@ -90,6 +166,9 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 }}
             >
                 <Box>
+                    {"place" in itemPost && (
+                        <PlaceDetail place={itemPost.place} />
+                    )}
                     <StyledRating
                         name="highlight-selected-only"
                         value={itemPost.rating}

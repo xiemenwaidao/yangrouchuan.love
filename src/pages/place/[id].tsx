@@ -26,13 +26,6 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
     if (!place.id) return <div>Something went wrong</div>;
 
     const { posts } = place;
-    // const imageWithAuthor = posts
-    //     .map((post) => {
-    //         return post.post.images.map((image) => {
-    //             return { ...image, author: post.author };
-    //         });
-    //     })
-    //     .flat();
 
     return (
         <>
@@ -52,9 +45,6 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
 
                 <ReviewCardWithImageModal posts={posts} />
             </Stack>
-
-            {/* <ImageGallery imageWithAuthor={imageWithAuthor} />
-            <Reviews place={place} /> */}
         </>
     );
 };
