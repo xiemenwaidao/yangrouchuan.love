@@ -53,7 +53,7 @@ export const cloudflareImagesRouter = createTRPCRouter({
     getManyUploadImageURL: privateProcedure
         .input(
             z.object({
-                count: z.number().int().min(1).max(10),
+                count: z.number().int().min(0).max(10),
             })
         )
         .mutation(async ({ input }) => {

@@ -2,27 +2,30 @@
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import FormHelperText from "@mui/material/FormHelperText";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
 import IconButton from "@mui/material/IconButton";
 import CancelIcon from "@mui/icons-material/Cancel";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import { useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
 import { FORM_MAX_IMAGE_COUNT } from "~/config";
+import NextImage from "next/image";
+import { imageUrl } from "~/utils/cloudflareHelpers";
 
 interface Props {
     controle: Control<FrontPostSchema>;
+    defaultValue?: (File | string)[];
 }
 
-export const ImagePostInput = (props: Props) => {
-    const [images, setImages] = useState<File[]>([]);
+export const ImagePostInput = ({ controle, defaultValue }: Props) => {
+    const [images, setImages] = useState<(File | string)[]>(defaultValue ?? []);
 
     return (
         <Controller
             name="images"
-            control={props.controle}
+            control={controle}
             defaultValue={[]}
             render={({
                 field: { onChange, onBlur, name, ref },
@@ -65,46 +68,83 @@ export const ImagePostInput = (props: Props) => {
                         <FormHelperText>
                             {fieldState.error?.message}
                         </FormHelperText>
-                    </FormControl>
 
-                    {/* images */}
-                    <ImageList
-                        // sx={{ width: "100%", height: 300 }}
-                        cols={3}
-                        // rowHeight={164}
-                        gap={8}
-                        variant="masonry"
-                    >
-                        {images.map((image, index) => (
-                            <ImageListItem
-                                sx={{ position: "relative" }}
-                                key={index}
-                            >
-                                <IconButton
-                                    aria-label="delete image"
-                                    style={{
-                                        position: "absolute",
-                                        top: 10,
-                                        right: 10,
-                                        color: "#aaa",
-                                    }}
-                                    onClick={() => {
-                                        const newImages = [...images];
-                                        newImages.splice(index, 1);
-                                        setImages(newImages);
-                                        onChange(newImages);
-                                    }}
-                                >
-                                    <CancelIcon />
-                                </IconButton>
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                    src={URL.createObjectURL(image)}
-                                    alt={image.name}
-                                />
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
+                        <Grid
+                            container
+                            spacing={{ xs: 2, md: 3 }}
+                            columns={{ xs: 4, sm: 8, md: 12 }}
+                            py={3}
+                        >
+                            {Array.from({ length: FORM_MAX_IMAGE_COUNT }).map(
+                                (_, index) => {
+                                    const image = images[index];
+
+                                    return (
+                                        <Grid xs={2} sm={4} md={4} key={index}>
+                                            <Box
+                                                sx={{
+                                                    bgcolor: "text.disabled",
+                                                    width: "100%",
+                                                    height: "300px",
+                                                    position: "relative",
+                                                }}
+                                            >
+                                                {image && (
+                                                    <>
+                                                        <IconButton
+                                                            aria-label="delete image"
+                                                            style={{
+                                                                position:
+                                                                    "absolute",
+                                                                top: 10,
+                                                                right: 10,
+                                                                color: "#aaa",
+                                                                zIndex: 1,
+                                                            }}
+                                                            onClick={() => {
+                                                                const newImages =
+                                                                    [...images];
+                                                                newImages.splice(
+                                                                    index,
+                                                                    1
+                                                                );
+                                                                setImages(
+                                                                    newImages
+                                                                );
+                                                                onChange(
+                                                                    newImages
+                                                                );
+                                                            }}
+                                                        >
+                                                            <CancelIcon />
+                                                        </IconButton>
+                                                        <NextImage
+                                                            src={
+                                                                typeof image ===
+                                                                "string"
+                                                                    ? imageUrl(
+                                                                          image
+                                                                      )
+                                                                    : URL.createObjectURL(
+                                                                          image
+                                                                      )
+                                                            }
+                                                            alt=""
+                                                            fill
+                                                            style={{
+                                                                objectFit:
+                                                                    "cover",
+                                                            }}
+                                                        />
+                                                    </>
+                                                )}
+                                            </Box>
+                                        </Grid>
+                                    );
+                                }
+                            )}
+                        </Grid>
+                    </FormControl>
                 </>
             )}
         />

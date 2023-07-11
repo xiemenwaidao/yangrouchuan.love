@@ -28,6 +28,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useUser } from "@clerk/nextjs";
 import { type Place } from "@prisma/client";
+import { MyLink } from "./parts/MyLink";
 
 interface MenuButtonProps {
     postId: string;
@@ -84,12 +85,22 @@ interface PlaceDetailProps {
 
 const PlaceDetail = ({ place }: PlaceDetailProps) => {
     return (
-        <Box py={1}>
+        <MyLink
+            nextProps={{
+                href: `/place/${place.id}`,
+            }}
+            muiProps={{ underline: "hover" }}
+            sx={{
+                display: "block",
+                mb: "8px",
+                width: "fit-content",
+            }}
+        >
             <Typography variant="h5" fontWeight={"bold"}>
                 {place.title}
             </Typography>
             <Typography>{place.address}</Typography>
-        </Box>
+        </MyLink>
     );
 };
 
@@ -105,6 +116,8 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
     const { images } = itemPost;
     const { author } = post;
 
+    const isUserPage = user?.id === author.id;
+
     return (
         <Card
             sx={{
@@ -115,7 +128,7 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 position: "relative",
             }}
         >
-            {user?.id === author.id && <MenuButton postId={itemPost.id} />}
+            {isUserPage && <MenuButton postId={itemPost.id} />}
             <Box height={{ xs: "200px", sm: "100%" }}>
                 <Swiper
                     slidesPerView={1}
@@ -189,24 +202,26 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                     </Box>
                     <Typography sx={{ py: 1 }}>{itemPost.content}</Typography>
                 </Box>
-                <Box display={"flex"} gap={1} mr={0} ml={"auto"}>
-                    <Typography alignSelf={"center"}>by</Typography>
-                    <NextLink href={`/user/@${author.username}/`}>
-                        <Avatar aria-label="recipe">
-                            <NextImage
-                                src={author.profilePicture}
-                                alt={`@${author.username}のプロフィール写真`}
-                                width={64}
-                                height={64}
-                                style={{
-                                    objectFit: "cover",
-                                    width: "100%",
-                                    height: "100%",
-                                }}
-                            />
-                        </Avatar>
-                    </NextLink>
-                </Box>
+                {!isUserPage && (
+                    <Box display={"flex"} gap={1} mr={0} ml={"auto"}>
+                        <Typography alignSelf={"center"}>by</Typography>
+                        <NextLink href={`/user/@${author.username}/`}>
+                            <Avatar aria-label="recipe">
+                                <NextImage
+                                    src={author.profilePicture}
+                                    alt={`@${author.username}のプロフィール写真`}
+                                    width={64}
+                                    height={64}
+                                    style={{
+                                        objectFit: "cover",
+                                        width: "100%",
+                                        height: "100%",
+                                    }}
+                                />
+                            </Avatar>
+                        </NextLink>
+                    </Box>
+                )}
             </CardContent>
         </Card>
     );

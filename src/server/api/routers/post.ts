@@ -118,8 +118,41 @@ export const postRouter = createTRPCRouter({
             const postWithImages = await ctx.prisma.$transaction(
                 async (prisma) => {
                     // Create the post first
-                    const post = await prisma.post.create({
-                        data: {
+                    // const post = await prisma.post.create({
+                    //     data: {
+                    //         authorId,
+                    //         rating: input.rating,
+                    //         content: input.content,
+                    //         price: input.price,
+                    //         place: {
+                    //             connectOrCreate: {
+                    //                 create: {
+                    //                     id: input.place.place_id,
+                    //                     title: input.place.title,
+                    //                     address: input.place.address,
+                    //                 },
+                    //                 where: {
+                    //                     id: input.place.place_id,
+                    //                 },
+                    //             },
+                    //         },
+                    //     },
+                    // });
+
+                    const post = await prisma.post.upsert({
+                        where: {
+                            authorId_placeId: {
+                                authorId: authorId,
+                                placeId: input.place.place_id,
+                            },
+                        },
+                        update: {
+                            rating: input.rating,
+                            content: input.content,
+                            price:
+                                input.price !== undefined ? input.price : null,
+                        },
+                        create: {
                             authorId,
                             rating: input.rating,
                             content: input.content,
@@ -139,15 +172,22 @@ export const postRouter = createTRPCRouter({
                         },
                     });
 
-                    // Then create the images with the newly created post id
-                    const images = await prisma.image.createMany({
+                    // Delete all images associated with the post
+                    await prisma.image.deleteMany({
+                        where: {
+                            postId: post.id,
+                        },
+                    });
+
+                    // Create new images
+                    await prisma.image.createMany({
                         data: input.images.map((imageId) => ({
                             id: imageId,
                             postId: post.id,
                         })),
                     });
 
-                    return { post, images };
+                    return { post };
                 }
             );
 

@@ -50,24 +50,36 @@ export const frontPostSchema = z.object({
     }),
     // @see https://developers.cloudflare.com/images/cloudflare-images/upload-images/formats-limitations/
     images: z
-        .custom<File[]>()
-        .refine((files) => files.length !== 0, { message: REQUIRED_ERROR_TEXT })
-        .refine((files) => files.length <= FORM_MAX_IMAGE_COUNT, {
+        .custom<(File | string)[]>()
+        // required
+        .refine((images) => images.length !== 0, {
+            message: REQUIRED_ERROR_TEXT,
+        })
+        .refine((images) => images.length <= FORM_MAX_IMAGE_COUNT, {
             message: "アップロードできる最大枚数は3枚です。",
         })
         .refine(
-            (files) =>
-                files.every((file) =>
-                    ALLOW_IMAGE_MINETYPES.includes(file.type)
-                ),
+            (images) =>
+                images.every((image) => {
+                    if (image instanceof File)
+                        return ALLOW_IMAGE_MINETYPES.includes(image.type);
+                    return true;
+                }),
 
             {
                 message: "アップロード可能な拡張子はjpg/pngです。",
             }
         )
-        .refine((files) => files.every((file) => file.size < 1000000), {
-            message: "10MB以下の画像をアップロードしてください。",
-        }),
+        .refine(
+            (images) =>
+                images.every((image) => {
+                    if (image instanceof File) return image.size < 1000000;
+                    return true;
+                }),
+            {
+                message: "10MB以下の画像をアップロードしてください。",
+            }
+        ),
 });
 
 export type FrontPostSchema = z.infer<typeof frontPostSchema>;

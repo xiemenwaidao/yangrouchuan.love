@@ -27,6 +27,7 @@ model Post {
     updatedAt DateTime @updatedAt
     // published Boolean  @default(false)
 
+    @@unique([authorId, placeId], name: "authorId_placeId")
     @@index([authorId], name: "authorId")
     @@index([placeId])
 }
@@ -35,6 +36,9 @@ model Image {
     id     String @id
     postId String
     post   Post   @relation(fields: [postId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([postId])
 }
