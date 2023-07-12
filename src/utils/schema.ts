@@ -45,6 +45,7 @@ const commonSchema = {
 
 export const frontPostSchema = z.object({
     ...commonSchema,
+    id: z.string().optional(),
     address: z.string({
         required_error: REQUIRED_ERROR_TEXT,
     }),
@@ -84,6 +85,7 @@ export const frontPostSchema = z.object({
 
 export type FrontPostSchema = z.infer<typeof frontPostSchema>;
 export type FrontPostSchemaKeys = keyof FrontPostSchema;
+export type FrontPostSchemaOmitId = Omit<FrontPostSchema, "id">;
 
 const PLACE_REQUIRED_ERROR_TEXT =
     "場所の更新に失敗しました。もう一度、場所を指定してください。";

@@ -117,28 +117,6 @@ export const postRouter = createTRPCRouter({
 
             const postWithImages = await ctx.prisma.$transaction(
                 async (prisma) => {
-                    // Create the post first
-                    // const post = await prisma.post.create({
-                    //     data: {
-                    //         authorId,
-                    //         rating: input.rating,
-                    //         content: input.content,
-                    //         price: input.price,
-                    //         place: {
-                    //             connectOrCreate: {
-                    //                 create: {
-                    //                     id: input.place.place_id,
-                    //                     title: input.place.title,
-                    //                     address: input.place.address,
-                    //                 },
-                    //                 where: {
-                    //                     id: input.place.place_id,
-                    //                 },
-                    //             },
-                    //         },
-                    //     },
-                    // });
-
                     const post = await prisma.post.upsert({
                         where: {
                             authorId_placeId: {
@@ -194,8 +172,48 @@ export const postRouter = createTRPCRouter({
             return postWithImages.post;
         }),
 
-    // update: privateProcedure.input(backPostSchema).mutation(),
-    // delete: privateProcedure.input(z.object({
-    //     id: string()
-    // })).mutation(),
+    delete: privateProcedure
+        .input(
+            z.object({
+                id: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            await ctx.prisma.$transaction(async (prisma) => {
+                const authorId = ctx.userId;
+
+                const post = await prisma.post.findUnique({
+                    where: {
+                        id: input.id,
+                    },
+                });
+
+                if (!post) {
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: "削除する投稿が見つかりませんでした。",
+                    });
+                }
+
+                if (post.authorId !== authorId) {
+                    throw new TRPCError({
+                        code: "UNAUTHORIZED",
+                        message: "投稿主以外は投稿を削除できません。",
+                    });
+                }
+
+                // Firstly, delete images related to this post
+                await prisma.image.deleteMany({
+                    where: {
+                        postId: input.id,
+                    },
+                });
+
+                await prisma.post.delete({
+                    where: {
+                        id: input.id,
+                    },
+                });
+            });
+        }),
 });

@@ -1,4 +1,11 @@
-import { Avatar, Box, Stack, Typography, useTheme } from "@mui/material";
+// MUI
+import { useColorScheme, useTheme } from "@mui/material/styles";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import type {} from "@mui/material/themeCssVarsAugmentation";
+
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { SITE } from "~/config";
@@ -6,8 +13,8 @@ import { api } from "~/utils/api";
 import { stringToColor } from "~/utils/helpers";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
-import type {} from "@mui/material/themeCssVarsAugmentation";
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import { useEffect, useMemo, useState } from "react";
 
 interface ProfileSectionProps {
     username: string;
@@ -18,7 +25,16 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
         username,
     });
 
+    const [bgColor, setBgColor] = useState("");
+
     const theme = useTheme();
+    const { mode } = useColorScheme();
+
+    const userColors = useMemo(() => stringToColor(username), [username]);
+
+    useEffect(() => {
+        setBgColor(mode === "dark" ? userColors.dark : userColors.light);
+    }, [mode, userColors]);
 
     if (!data) return <div>404</div>;
     if (!data.username) return <div>Something went wrong</div>;
@@ -28,11 +44,11 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
             <Stack mt={-3}>
                 <Box
                     sx={{
-                        bgcolor: stringToColor(data.id),
+                        bgcolor: bgColor,
                         width: "100%",
                         height: { md: 288, xs: 182 },
                     }}
-                ></Box>
+                />
                 <Box sx={{ position: "relative" }}>
                     <Avatar
                         sx={{
@@ -68,10 +84,7 @@ const Feed = ({ username }: { username: string }) => {
         username,
     });
 
-    if (isLoading) return <div>loading</div>;
-    if (!data) return <div>404</div>;
-
-    return <ReviewCardWithImageModal posts={data} />;
+    return <ReviewCardWithImageModal posts={data} isLoading={isLoading} />;
 };
 
 const UserPage = ({ username }: { username: string }) => {

@@ -43,7 +43,7 @@ export const userRouter = createTRPCRouter({
 
     deleteUser: privateProcedure
         .input(z.object({ id: z.string() }))
-        .mutation(async ({ ctx, input }) => {
+        .mutation(async ({ input }) => {
             const user = await clerkClient.users.deleteUser(input.id);
 
             if (!user) {

@@ -14,13 +14,16 @@ import { generateSSGHelper } from "~/utils/ssgHelpers";
 import { RateAverage } from "~/components/RateAverage";
 
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import { toast } from "react-toastify";
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
 const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
-    const { data: place } = api.place.getById.useQuery({
+    const { data: place, isLoading } = api.place.getById.useQuery({
         id,
     });
+
+    if (!isLoading && !place) toast.error("データの取得に失敗しました。");
 
     if (!place) return <div>404</div>;
     if (!place.id) return <div>Something went wrong</div>;
@@ -43,7 +46,7 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
                 <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
                 {/* price */}
 
-                <ReviewCardWithImageModal posts={posts} />
+                <ReviewCardWithImageModal posts={posts} isLoading={isLoading} />
             </Stack>
         </>
     );

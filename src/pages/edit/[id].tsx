@@ -3,8 +3,7 @@ import Head from "next/head";
 import PostForm from "~/components/form/PostFrom";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
-import { imageUrl } from "~/utils/cloudflareHelpers";
-import { type FrontPostSchema } from "~/utils/schema";
+import { type FrontPostSchemaOmitId } from "~/utils/schema";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 
 const PostEditPage = ({ id }: { id: string }) => {
@@ -16,11 +15,8 @@ const PostEditPage = ({ id }: { id: string }) => {
 
     const { post } = data;
 
-    const imageObjArray = {
-        urls: post.images.map((image) => imageUrl(image.id)),
-    };
-
-    const formValues: FrontPostSchema = {
+    const formValues: FrontPostSchemaOmitId & { id: string } = {
+        id: post.id,
         rating: post.rating,
         content: post.content,
         images: post.images.map((image) => image.id),

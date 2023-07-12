@@ -29,6 +29,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useUser } from "@clerk/nextjs";
 import { type Place } from "@prisma/client";
 import { MyLink } from "./parts/MyLink";
+import { useRouter } from "next/router";
 
 interface MenuButtonProps {
     postId: string;
@@ -73,7 +74,7 @@ const MenuButton = ({ postId }: MenuButtonProps) => {
                 <MenuItem onClick={handleClose}>
                     <NextLink href={`/edit/${postId}`}>編集</NextLink>
                 </MenuItem>
-                <MenuItem onClick={handleClose}>削除</MenuItem>
+                {/* <MenuItem onClick={handleClose}>削除</MenuItem> */}
             </Menu>
         </>
     );
@@ -112,11 +113,16 @@ interface ReviewCardProps {
 const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
     const { user } = useUser();
 
+    // 現在のURLパスを取得
+    const router = useRouter();
+    const currentPath = router.pathname.split("/")[1];
+
     const itemPost = post.post;
     const { images } = itemPost;
     const { author } = post;
 
-    const isUserPage = user?.id === author.id;
+    const isUserPage = currentPath === "user";
+    const isYourPost = user?.id === author.id;
 
     return (
         <Card
@@ -128,7 +134,7 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 position: "relative",
             }}
         >
-            {isUserPage && <MenuButton postId={itemPost.id} />}
+            {isYourPost && <MenuButton postId={itemPost.id} />}
             <Box height={{ xs: "200px", sm: "100%" }}>
                 <Swiper
                     slidesPerView={1}

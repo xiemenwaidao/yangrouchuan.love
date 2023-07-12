@@ -1,14 +1,19 @@
 // MUI
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useConfirm } from "material-ui-confirm";
+import Backdrop from "@mui/material/Backdrop";
 
 import { useUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type FrontPostSchema, frontPostSchema } from "~/utils/schema";
+import {
+    type FrontPostSchema,
+    frontPostSchema,
+    type FrontPostSchemaOmitId,
+} from "~/utils/schema";
 import { api } from "~/utils/api";
 import { Rating } from "~/components/form/Rating";
 import { TextInpupt } from "~/components/form/TextInput";
@@ -18,8 +23,10 @@ import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { ImagePostInput } from "~/components/form/ImagePostInput";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
+
+import NextImage from "next/image";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
@@ -33,13 +40,17 @@ const isString = (obj: string | File): obj is string => {
 };
 
 interface PostFromProps {
-    defaultValues?: FrontPostSchema;
+    defaultValues?: FrontPostSchemaOmitId & {
+        id: string;
+    };
 }
 
 const PostForm = ({ defaultValues }: PostFromProps) => {
     const { user } = useUser();
 
     const router = useRouter();
+
+    const confirm = useConfirm();
 
     const [isPosting, setIsPosting] = useState(false);
 
@@ -57,16 +68,22 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         state.address,
     ]);
 
-    // const { mutate: deleteImagesMutate } =
-    //     api.cloudflareImages.deleteImages.useMutation({
-    //         onSuccess: () => {
-    //             console.log("success delete images");
-    //         },
-    //         onError: (error) => {
-    //             toast.error(error.message ?? UPDATE_IMAGE_FAILED_MESSAGE);
-    //         },
-    //     });
+    // delete
+    const { mutate: deleteMutate, isLoading: isDeleting } =
+        api.post.delete.useMutation({
+            onSuccess: () => {
+                toast.success("削除に成功しました。");
 
+                // 遷移させる
+                void router.push("/");
+            },
+            onError: (error) => {
+                console.error(error);
+                toast.error(error.message ?? "削除に失敗しました。");
+            },
+        });
+
+    // craete and update
     const { mutate: storeMutate } = api.post.store.useMutation({
         onSuccess: (post) => {
             setIsPosting(false);
@@ -84,6 +101,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         },
     });
 
+    // get image upload url
     const { mutate: getManyUploadImageURLMutate } =
         api.cloudflareImages.getManyUploadImageURL.useMutation({
             onSuccess: (results) => {
@@ -189,61 +207,92 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         console.log({ data });
     });
 
+    const handleDelete = useCallback(() => {
+        if (defaultValues === undefined)
+            return toast.error("削除に失敗しました。");
+
+        void confirm({
+            description: "本当に削除しますか？",
+        })
+            .then(() => {
+                deleteMutate({ id: defaultValues.id });
+            })
+            .catch(() => toast.info("キャンセルしました。"));
+    }, [confirm, defaultValues, deleteMutate]);
+
     if (!user) return null;
 
     return (
-        <Stack
-            spacing={3}
-            component={`form`}
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onSubmit={onSubmit}
-        >
-            {/* google map */}
-            {defaultValues ? null : (
-                <SearchPlaceMap
+        <>
+            <Stack
+                spacing={3}
+                component={`form`}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onSubmit={onSubmit}
+            >
+                {/* google map */}
+                {defaultValues ? null : (
+                    <SearchPlaceMap
+                        controle={control}
+                        setValue={setValue}
+                        setError={setError}
+                        resetField={resetField}
+                    />
+                )}
+                {/* images */}
+                <ImagePostInput
                     controle={control}
-                    setValue={setValue}
-                    setError={setError}
-                    resetField={resetField}
+                    defaultValue={defaultValues?.images}
                 />
-            )}
-            {/* images */}
-            <ImagePostInput
-                controle={control}
-                defaultValue={defaultValues?.images}
-            />
-            {/* rating */}
-            <Rating controle={control} />
-            {/* content */}
-            <TextInpupt controle={control} name="content" />
-            {/* price */}
-            <NumberInput controle={control} name="price" />
+                {/* rating */}
+                <Rating controle={control} />
+                {/* content */}
+                <TextInpupt controle={control} name="content" />
+                {/* price */}
+                <NumberInput controle={control} name="price" />
 
-            {/* submit */}
-            <Stack gap={2} direction={`row`}>
-                <LoadingButton
-                    endIcon={<SendIcon />}
-                    loading={isPosting}
-                    loadingPosition="end"
-                    variant="contained"
-                    type="submit"
-                >
-                    <span>{defaultValues ? "更新する" : "投稿する"}</span>
-                </LoadingButton>
-                {defaultValues && (
+                {/* submit */}
+                <Stack gap={2} direction={`row`}>
                     <LoadingButton
-                        endIcon={<DeleteIcon />}
-                        // loading={isPosting}
+                        endIcon={<SendIcon />}
+                        loading={isPosting}
                         loadingPosition="end"
                         variant="contained"
-                        type="button"
-                        color="error"
+                        type="submit"
                     >
-                        <span>削除する</span>
+                        <span>{defaultValues ? "更新する" : "投稿する"}</span>
                     </LoadingButton>
-                )}
+                    {defaultValues && (
+                        <LoadingButton
+                            endIcon={<DeleteIcon />}
+                            loading={isDeleting}
+                            loadingPosition="end"
+                            variant="contained"
+                            type="button"
+                            color="error"
+                            onClick={handleDelete}
+                        >
+                            <span>削除する</span>
+                        </LoadingButton>
+                    )}
+                </Stack>
             </Stack>
-        </Stack>
+            {/* 全画面ぐるぐる */}
+            <Backdrop
+                sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={isPosting || isDeleting}
+            >
+                <NextImage
+                    src={`/rolling-cat-rainbow.gif`}
+                    alt="Rolling Cat Cat Rolling Sticker"
+                    width={100}
+                    height={100}
+                />
+            </Backdrop>
+        </>
     );
 };
 
