@@ -10,7 +10,7 @@ import { getInitColorSchemeScript } from "@mui/material/styles";
 import createEmotionServer, {
     type EmotionCriticalToChunks,
 } from "@emotion/server/create-instance";
-import createEmotionCache from "~/components/createEmotionCache";
+import createEmotionCache from "~/utils/createEmotionCache";
 import { type AppType } from "next/app";
 import { type MyAppProps } from "./_app";
 

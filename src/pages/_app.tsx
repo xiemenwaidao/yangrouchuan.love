@@ -10,11 +10,11 @@ import {
     experimental_extendTheme as extendTheme,
 } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Clerk from "~/components/Clerk";
-import { Layout } from "~/components/Layout";
-import ToastSetting from "~/components/ToastSetting";
+import Clerk from "~/components/top-level/Clerk";
+import { Layout } from "~/components/leyouts/Layout";
+import ToastSetting from "~/components/top-level/ToastSetting";
 import { ConfirmProvider } from "material-ui-confirm";
-import createEmotionCache from "~/components/createEmotionCache";
+import createEmotionCache from "~/utils/createEmotionCache";
 import { type EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 
@@ -45,6 +45,10 @@ const MyApp = (props: MyAppProps) => {
                             <meta
                                 name="viewport"
                                 content="initial-scale=1, width=device-width"
+                            />
+                            <meta
+                                name="description"
+                                content={SITE.description}
                             />
                         </Head>
                         <CssBaseline />

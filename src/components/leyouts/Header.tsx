@@ -23,8 +23,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Skeleton from "@mui/material/Skeleton";
 
 import { useState } from "react";
-import { ThemeSwitch } from "./parts/ThemeSwitch";
-import { MyLink } from "./parts/MyLink";
+import { ThemeSwitch } from "../parts/ThemeSwitch";
+import { MyLink } from "../parts/MyLink";
 import NextLink from "next/link";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
@@ -79,12 +79,7 @@ function Header() {
         <AppBar position="static">
             <Container maxWidth="md">
                 <Toolbar disableGutters>
-                    <Box sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
-                        🐑
-                    </Box>
-                    {/* <AdbIcon
-                        sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-                    /> */}
+                    {/* desktop */}
                     <Typography
                         variant="h6"
                         noWrap
@@ -93,7 +88,7 @@ function Header() {
                             display: { xs: "none", md: "flex" },
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
+                            // letterSpacing: ".3rem",
                             color: "inherit",
                             textDecoration: "none",
                         }}
