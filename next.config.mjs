@@ -35,7 +35,7 @@ const config = {
                 protocol: "https",
                 hostname: "images.clerk.dev",
                 port: "",
-                pathname: "/oauth_github/**",
+                pathname: "/oauth_google/**",
             },
             {
                 protocol: "https",
