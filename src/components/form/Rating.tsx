@@ -33,6 +33,10 @@ export const Rating = (props: Props) => {
                                 customIcons[value]?.label ?? ""
                             }
                             highlightSelectedOnly
+                            onChange={(_, value) => {
+                                // 選択中の値をクリックすると、value は null になる
+                                if (value) field.onChange(value);
+                            }}
                         />
                     </Box>
 

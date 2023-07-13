@@ -1,5 +1,4 @@
 // MUI
-import Grid from "@mui/material/Unstable_Grid2";
 
 import { type NextPage } from "next";
 import { api } from "~/utils/api";

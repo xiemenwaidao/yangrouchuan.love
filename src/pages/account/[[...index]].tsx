@@ -1,16 +1,14 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import Grid from "@mui/material/Grid";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Box from "@mui/material/Box";
 
 import { UserProfile, useClerk, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { SITE } from "~/config";
-import Box from "@mui/material/Box";
 import { api } from "~/utils/api";
 import { toast } from "react-toastify";
-
-// TODO: ページ遷移時に左上から表示されるのを防ぐ
 
 const ProfilePage: NextPage = () => {
     const { user } = useUser();

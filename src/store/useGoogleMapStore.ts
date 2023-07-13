@@ -15,6 +15,7 @@ interface Actions {
     removePlaceDetails: () => void;
 }
 
+/** 投稿・編集用 */
 export const useGoogleMapStore = create<State & Actions>((set) => ({
     placeId: "",
     title: "",

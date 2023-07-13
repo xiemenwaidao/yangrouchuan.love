@@ -7,10 +7,6 @@ import NextImage from "next/image";
 import ReviewCard from "./ReviewCard";
 import { useCallback, useState } from "react";
 import { type PostWithPlaceAndAuthor, type PostAndAuthor } from "~/utils/types";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Skeleton from "@mui/material/Skeleton";
-import { Avatar } from "@mui/material";
 import ReviewCardSkeleton from "./ReviewCardSkeleton";
 
 interface ReviewCardWithImageModalProps {
