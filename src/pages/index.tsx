@@ -1,11 +1,23 @@
+// MUI
+import Grid from "@mui/material/Unstable_Grid2";
+
 import { type NextPage } from "next";
-import { Layout } from "~/components/Layout";
+import { api } from "~/utils/api";
+
+import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import Stack from "@mui/material/Stack";
+
+const Feed = () => {
+    const { data: posts, isLoading } = api.post.getAll.useQuery();
+
+    return <ReviewCardWithImageModal posts={posts} isLoading={isLoading} />;
+};
 
 const Home: NextPage = () => {
     return (
-        <Layout>
-            <div>Hello World!!</div>
-        </Layout>
+        <Stack direction={`column`} rowGap={4}>
+            <Feed />
+        </Stack>
     );
 };
 

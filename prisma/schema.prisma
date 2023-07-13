@@ -13,39 +13,34 @@ datasource db {
 }
 
 model Post {
-    id        String      @id @default(cuid())
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-    // published Boolean  @default(false)
-    // title     String
-    rating    Int
+    id        String     @id @default(cuid())
+    rating    Float
     content   String
     price     Int?
-    place     Place       @relation(fields: [placeId], references: [id])
+    place     Place      @relation(fields: [placeId], references: [id])
     placeId   String
     authorId  String
-    images    PostImage[]
+    images    Image[]
     bookmarks Bookmark[]
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    // published Boolean  @default(false)
+
+    @@unique([authorId, placeId], name: "authorId_placeId")
     @@index([authorId], name: "authorId")
     @@index([placeId])
 }
 
 model Image {
-    id    String      @id @default(cuid())
-    url   String
-    posts PostImage[]
-}
+    id     String @id
+    postId String
+    post   Post   @relation(fields: [postId], references: [id])
 
-model PostImage {
-    post    Post   @relation(fields: [postId], references: [id])
-    postId  String
-    image   Image  @relation(fields: [imageId], references: [id])
-    imageId String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-    @@id([postId, imageId])
     @@index([postId])
-    @@index([imageId])
 }
 
 model Bookmark {
@@ -53,12 +48,19 @@ model Bookmark {
     post   Post   @relation(fields: [postId], references: [id])
     postId String
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     @@id([userId, postId])
     @@index([postId])
 }
 
 model Place {
-    id    String @id
-    name  String
-    posts Post[]
+    id      String @id
+    title   String
+    address String
+    posts   Post[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

@@ -10,6 +10,8 @@ export const env = createEnv({
     server: {
         DATABASE_URL: z.string().url(),
         NODE_ENV: z.enum(["development", "test", "production"]),
+        NEXT_CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+        NEXT_CLOUDFLARE_IMAGES_API_TOKEN: z.string().min(1),
     },
 
     /**
@@ -21,6 +23,7 @@ export const env = createEnv({
     client: {
         // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
         NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string().min(1),
+        NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH: z.string().min(1),
     },
 
     /**
@@ -34,6 +37,11 @@ export const env = createEnv({
         // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
         NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
             process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        NEXT_CLOUDFLARE_ACCOUNT_ID: process.env.NEXT_CLOUDFLARE_ACCOUNT_ID,
+        NEXT_CLOUDFLARE_IMAGES_API_TOKEN:
+            process.env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN,
+        NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH:
+            process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
