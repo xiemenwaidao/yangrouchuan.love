@@ -23,7 +23,6 @@
         "@mui/icons-material": "^5.14.0",
         "@mui/lab": "5.0.0-alpha.134",
         "@mui/material": "^5.14.0",
-        "@next/font": "^13.4.9",
         "@prisma/client": "^4.16.2",
         "@react-google-maps/api": "^2.18.1",
         "@t3-oss/env-nextjs": "^0.3.1",

@@ -21,7 +21,7 @@ interface ProfileSectionProps {
 }
 
 const ProfileSection = ({ username }: ProfileSectionProps) => {
-    const { data, isLoading } = api.user.getUserByUsername.useQuery({
+    const { data } = api.user.getUserByUsername.useQuery({
         username,
     });
 

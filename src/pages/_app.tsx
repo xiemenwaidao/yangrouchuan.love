@@ -5,10 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Head from "next/head";
 import { SITE } from "~/config";
-import {
-    Experimental_CssVarsProvider as CssVarsProvider,
-    experimental_extendTheme as extendTheme,
-} from "@mui/material/styles";
+import { Experimental_CssVarsProvider as CssVarsProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Clerk from "~/components/top-level/Clerk";
 import { Layout } from "~/components/leyouts/Layout";

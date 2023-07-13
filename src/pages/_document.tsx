@@ -7,36 +7,10 @@ import Document, {
     type DocumentProps,
 } from "next/document";
 import { getInitColorSchemeScript } from "@mui/material/styles";
-import createEmotionServer, {
-    type EmotionCriticalToChunks,
-} from "@emotion/server/create-instance";
+import createEmotionServer from "@emotion/server/create-instance";
 import createEmotionCache from "~/utils/createEmotionCache";
 import { type AppType } from "next/app";
 import { type MyAppProps } from "./_app";
-
-// class MyDocument extends Document {
-//     static async getInitialProps(ctx: DocumentContext) {
-//         const initialProps = await Document.getInitialProps(ctx);
-//         return { ...initialProps };
-//     }
-
-//     render() {
-//         return (
-//             <Html lang="ja">
-//                 <Head>
-//                     <meta name="description" content="羊肉串爱你们" />
-//                     <meta name="emotion-insertion-point" content="" />
-//                     <link rel="icon" href="/favicon.ico" />
-//                 </Head>
-//                 <body>
-//                     {getInitColorSchemeScript()}
-//                     <Main />
-//                     <NextScript />
-//                 </body>
-//             </Html>
-//         );
-//     }
-// }
 
 interface MyDocumentProps extends DocumentProps {
     emotionStyleTags: JSX.Element[];

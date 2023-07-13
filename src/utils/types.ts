@@ -1,5 +1,4 @@
 import { type Post, type Image, type Place } from "@prisma/client";
-import { FrontPostSchema } from "./schema";
 
 export interface Author {
     id: string;
