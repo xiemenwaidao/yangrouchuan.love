@@ -32,7 +32,7 @@ const MyApp = (props: MyAppProps) => {
 
     return (
         <CacheProvider value={emotionCache}>
-            <CssVarsProvider theme={theme} defaultMode="dark">
+            <CssVarsProvider theme={theme} defaultMode="light">
                 {/* clerkのテーマ切替でmuiのmodeを参照しているので、CssVarsProviderの後ろじゃないとエラーでる */}
                 <Clerk pageProps={pageProps}>
                     <ConfirmProvider>
