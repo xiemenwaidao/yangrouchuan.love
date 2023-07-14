@@ -105,7 +105,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
     const { mutate: getManyUploadImageURLMutate } =
         api.cloudflareImages.getManyUploadImageURL.useMutation({
             onSuccess: (results) => {
-                console.log("success", { results });
+                // console.log("success", { results });
 
                 const data = getValues();
 
@@ -150,7 +150,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
                 Promise.all(uploadImagePromises)
                     .then((ids) => {
-                        console.log({ ids });
+                        // console.log({ ids });
 
                         storeMutate({
                             ...data,
@@ -204,7 +204,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         getManyUploadImageURLMutate({
             count: data.images.filter(isFile).length,
         });
-        console.log({ data });
+        // console.log({ data });
     });
 
     const handleDelete = useCallback(() => {

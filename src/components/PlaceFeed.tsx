@@ -17,7 +17,7 @@ import NextImage from "next/image";
 import { type PlaceWithPosts } from "~/utils/types";
 import { imageUrl } from "~/utils/cloudflareHelpers";
 import { RateAverage } from "./RateAverage";
-import dayjs from "./RelativeDayJs";
+import dayjs from "../utils/RelativeDayJs";
 
 interface PostFeedViewProps {
     place: PlaceWithPosts;
@@ -33,14 +33,14 @@ const RecipeReviewCard = ({ place }: PostFeedViewProps) => {
         <Card sx={{ maxWidth: "100%", position: "relative" }}>
             <IconButton
                 aria-label="settings"
-                onClick={() => console.log("clicked MoreVertIcon")}
+                // onClick={() => console.log("clicked MoreVertIcon")}
                 sx={{ position: "absolute", right: 8, top: 8, zIndex: 1 }}
             >
                 <MoreVertIcon />
             </IconButton>
             <Link href={`/place/${place.id}/`}>
                 <CardActionArea
-                    onClick={() => console.log("clicked CardActionArea")}
+                // onClick={() => console.log("clicked CardActionArea")}
                 >
                     <CardHeader
                         title={place.title}

@@ -28,6 +28,9 @@ const theme = extendTheme({
                 secondary: {
                     main: red[700],
                 },
+                error: {
+                    main: "#ff0076",
+                },
             },
         },
     },

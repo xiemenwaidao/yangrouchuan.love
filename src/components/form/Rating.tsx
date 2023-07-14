@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import Typography from "@mui/material/Typography";
 
 import { type Control, Controller } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
@@ -22,9 +23,11 @@ export const Rating = (props: Props) => {
             defaultValue={3}
             render={({ field, fieldState }) => (
                 <FormControl error={fieldState.invalid}>
+                    <Typography component="legend">満足度</Typography>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                         <StyledRating
                             {...field}
+                            aria-labelledby="rating-group-label"
                             name="highlight-selected-only"
                             // defaultValue={2}
                             value={Number(field.value)}

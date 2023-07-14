@@ -65,6 +65,7 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
                             fill
                             alt={`@${data.username}'s profile picture`}
                             style={{ objectFit: "cover" }}
+                            sizes="(max-width: 900px) 100px, 128px"
                         />
                     </Avatar>
                     <Typography
