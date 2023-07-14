@@ -21,13 +21,14 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Skeleton from "@mui/material/Skeleton";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Stack from "@mui/material/Stack";
 
 import { useState } from "react";
 import { ThemeSwitch } from "../parts/ThemeSwitch";
 import { MyLink } from "../parts/MyLink";
 import NextLink from "next/link";
 import NextImage from "next/image";
-import Stack from "@mui/material/Stack";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
 interface MenuItemProps {
@@ -177,8 +178,18 @@ function Header() {
                             fontSize: "1.0rem",
                         }}
                     >
-                        <NextLink href={`/`}>
-                            <span>{SITE.shortTitle}</span>
+                        <NextLink
+                            href={`/`}
+                            style={{ display: "grid", alignItems: "center" }}
+                        >
+                            <NextImage
+                                src={`/assets/hitusji-hasiru.png`}
+                                alt="logo"
+                                width={`32`}
+                                height={`32`}
+                                style={{}}
+                            />
+                            {/* <span>{SITE.shortTitle}</span> */}
                         </NextLink>
                     </Typography>
 
@@ -230,7 +241,15 @@ function Header() {
                             <SignInButton
                             //  mode="modal"
                             >
-                                <Button variant="contained">Sign in</Button>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
                             </SignInButton>
                         </SignedOut>
                     </Box>
