@@ -169,7 +169,7 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                                         cursor: "pointer",
                                         borderRadius: "8px",
                                     }}
-                                    sizes="100%"
+                                    sizes="(max-width: 900px) 100px, 240px"
                                     onClick={() => handleImageClick(url)}
                                 />
                             </SwiperSlide>

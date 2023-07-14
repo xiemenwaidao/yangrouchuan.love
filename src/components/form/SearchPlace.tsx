@@ -45,6 +45,8 @@ import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import { MyLink } from "../parts/MyLink";
 import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
+import { toast } from "react-toastify";
+import Alert from "@mui/material/Alert";
 
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
     default: [],
@@ -256,6 +258,9 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                     });
                 })
                 .catch((error) => {
+                    toast.error(
+                        "エラーが発生しました。しばらくしてから再度お試しください。"
+                    );
                     console.error("😱 Error: ", error);
                 });
         },
@@ -355,7 +360,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                             {...params}
                             label="店舗検索"
                             fullWidth
-                            onChange={(e) => console.log(e.target.value)}
+                            // onChange={(e) => console.log(e.target.value)}
                             error={fieldState.invalid}
                             helperText={fieldState.error?.message}
                         />
@@ -529,22 +534,33 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
 
     if (loadError) return <div>エラーが発生しました。</div>;
 
-    return isLoaded ? (
-        <Map
-            controle={props.controle}
-            setValue={props.setValue}
-            setError={props.setError}
-            resetField={props.resetField}
-        />
-    ) : (
+    return (
         <Box>
-            <Skeleton variant="rectangular" width={`100%`} height={400} />
-            <Skeleton
-                variant="rectangular"
-                width={`100%`}
-                height={56}
-                sx={{ mt: 1 }}
-            />
+            {isLoaded ? (
+                <Map
+                    controle={props.controle}
+                    setValue={props.setValue}
+                    setError={props.setError}
+                    resetField={props.resetField}
+                />
+            ) : (
+                <Box>
+                    <Skeleton
+                        variant="rectangular"
+                        width={`100%`}
+                        height={400}
+                    />
+                    <Skeleton
+                        variant="rectangular"
+                        width={`100%`}
+                        height={56}
+                        sx={{ mt: 1 }}
+                    />
+                </Box>
+            )}
+            <Alert severity="info" sx={{ mt: 1 }}>
+                店名や住所を入力して、店舗を検索してください。マーカーの置かれた場所が正しいか確認してください。
+            </Alert>
         </Box>
     );
 };
