@@ -1,5 +1,6 @@
 export const SITE = {
     title: "羊肉串愛好倶楽部",
+    shortTitle: "羊肉串部",
     description: "羊肉串のレビューサイトです。",
     url: "https://www.yangrouchuan.com",
 } as const;

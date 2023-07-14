@@ -26,6 +26,8 @@ import { useState } from "react";
 import { ThemeSwitch } from "../parts/ThemeSwitch";
 import { MyLink } from "../parts/MyLink";
 import NextLink from "next/link";
+import NextImage from "next/image";
+import Stack from "@mui/material/Stack";
 
 const pages = [{ title: "投稿する", href: "/create", auth: true }];
 interface MenuItemProps {
@@ -94,7 +96,16 @@ function Header() {
                         }}
                     >
                         <NextLink href={`/`}>
-                            <span>{SITE.title}</span>
+                            <Stack direction={`row`}>
+                                <NextImage
+                                    src={`/assets/hitusji-hasiru.png`}
+                                    alt="logo"
+                                    width={`32`}
+                                    height={`32`}
+                                    style={{}}
+                                />
+                                <span>{SITE.title}</span>
+                            </Stack>
                         </NextLink>
                     </Typography>
 
@@ -144,13 +155,13 @@ function Header() {
                                     />
                                 );
                             })}
+                            <Box sx={{ display: { xs: "block", md: "none" } }}>
+                                <ThemeSwitch />
+                            </Box>
                         </Menu>
                     </Box>
 
                     {/* mobile */}
-                    {/* <AdbIcon
-                        sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
-                    /> */}
                     <Typography
                         variant="h5"
                         noWrap
@@ -167,7 +178,7 @@ function Header() {
                         }}
                     >
                         <NextLink href={`/`}>
-                            <span>{SITE.title}</span>
+                            <span>{SITE.shortTitle}</span>
                         </NextLink>
                     </Typography>
 
@@ -192,7 +203,10 @@ function Header() {
                         })}
                     </Box>
 
-                    <ThemeSwitch />
+                    {/* darkmode switch (desktop) */}
+                    <Box sx={{ display: { xs: "none", md: "block" } }}>
+                        <ThemeSwitch />
+                    </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
                         <ClerkLoading>

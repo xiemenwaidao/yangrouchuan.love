@@ -286,7 +286,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                 open={isPosting || isDeleting}
             >
                 <NextImage
-                    src={`/rolling-cat-rainbow.gif`}
+                    src={`/assets/rolling-cat-rainbow.gif`}
                     alt="Rolling Cat Cat Rolling Sticker"
                     width={100}
                     height={100}
