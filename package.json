@@ -8,7 +8,8 @@
         "lint": "next lint",
         "start": "next start",
         "postinstall": "prisma generate",
-        "studio": "prisma studio",
+        "studio:local": "npx dotenv -e .env.local -- npx prisma studio",
+        "studio:prod": "prisma studio",
         "dbpush": "npx prisma db push"
     },
     "dependencies": {
@@ -59,6 +60,7 @@
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
         "autoprefixer": "^10.4.14",
+        "dotenv-cli": "^7.2.1",
         "eslint": "^8.44.0",
         "eslint-config-next": "^13.4.9",
         "postcss": "^8.4.25",
