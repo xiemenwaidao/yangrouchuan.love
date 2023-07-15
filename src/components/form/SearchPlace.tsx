@@ -13,6 +13,7 @@ import Stack from "@mui/material/Stack";
 import Skeleton from "@mui/material/Skeleton";
 import { useColorScheme } from "@mui/material/styles";
 import { debounce } from "@mui/material/utils";
+import Alert from "@mui/material/Alert";
 
 import parse from "autosuggest-highlight/parse";
 import {
@@ -46,91 +47,8 @@ import { useUser } from "@clerk/nextjs";
 import { MyLink } from "../parts/MyLink";
 import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 import { toast } from "react-toastify";
-import Alert from "@mui/material/Alert";
-
-const styles: Record<string, google.maps.MapTypeStyle[]> = {
-    default: [],
-    night: [
-        { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-        { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-        { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-        {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-        },
-        {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [{ color: "#263c3f" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#6b9a76" }],
-        },
-        {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{ color: "#38414e" }],
-        },
-        {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#212a37" }],
-        },
-        {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#9ca5b3" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#746855" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#1f2835" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#f3d19c" }],
-        },
-        {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [{ color: "#2f3948" }],
-        },
-        {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-        },
-        {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [{ color: "#17263c" }],
-        },
-        {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#515c6d" }],
-        },
-        {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#17263c" }],
-        },
-    ],
-};
+import { MAP_DEFAULT_ZOOM } from "~/config";
+import styles from "~/utils/googlemapThemeStyles";
 
 interface SelectedAddressProps {
     lat: number;
@@ -429,8 +347,6 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
     );
 };
 
-const MAP_DEFAULT_ZOOM = 17;
-
 interface SearchPlaceMapProps {
     controle: Control<FrontPostSchema>;
     setValue: UseFormSetValue<FrontPostSchema>;
@@ -532,7 +448,10 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
         libraries: libraries,
     });
 
-    if (loadError) return <div>エラーが発生しました。</div>;
+    if (loadError) {
+        toast.error("Google Mapの読み込みに失敗しました。");
+        return <div>Google Mapの読み込みに失敗しました。</div>;
+    }
 
     return (
         <Box>
@@ -548,7 +467,9 @@ export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
                     <Skeleton
                         variant="rectangular"
                         width={`100%`}
-                        height={400}
+                        sx={{
+                            height: { xs: "250px", sm: "300px", md: "400px" },
+                        }}
                     />
                     <Skeleton
                         variant="rectangular"

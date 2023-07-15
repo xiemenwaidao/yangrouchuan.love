@@ -42,7 +42,7 @@ const UserBackground = ({ username }: { username: string }) => {
             }}
         >
             <Tooltip
-                title="ユーザー名から色を自動生成しています。"
+                title="この色はユーザー名をもとに自動生成しています。"
                 sx={{ position: "absolute", right: 0, bottom: 0 }}
             >
                 <IconButton size="small">
