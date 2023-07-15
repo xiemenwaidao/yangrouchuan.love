@@ -1,6 +1,7 @@
 // MUI
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
 
 import {
     type InferGetStaticPropsType,
@@ -15,6 +16,35 @@ import { RateAverage } from "~/components/RateAverage";
 
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 import { toast } from "react-toastify";
+import { GoogleMap, useLoadScript } from "@react-google-maps/api";
+import { env } from "~/env.mjs";
+
+const PlaceGoogleMap = () => {
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    });
+
+    if (loadError) {
+        toast.error("Google Mapの読み込みに失敗しました。");
+        return <div>Google Mapの読み込みに失敗しました。</div>;
+    }
+
+    return (
+        <>
+            {isLoaded ? (
+                <GoogleMap></GoogleMap>
+            ) : (
+                <Skeleton
+                    variant="rectangular"
+                    width={`100%`}
+                    sx={{
+                        height: { xs: "250px", sm: "300px", md: "400px" },
+                    }}
+                />
+            )}
+        </>
+    );
+};
 
 type PageProps = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -41,6 +71,7 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
                 <Typography
                     variant="h3"
                     color={`primary.main`}
+                    fontSize={`2rem`}
                 >{`${place.title}`}</Typography>
                 <Typography variant="subtitle1">{`${place.address}`}</Typography>
                 <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
