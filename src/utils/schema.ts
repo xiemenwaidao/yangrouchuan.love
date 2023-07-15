@@ -102,6 +102,12 @@ export const backPostSchema = z.object({
         address: z.string({
             required_error: `${PLACE_REQUIRED_ERROR_TEXT}（address）`,
         }),
+        lat: z.number({
+            required_error: `${PLACE_REQUIRED_ERROR_TEXT}（lat）`,
+        }),
+        lng: z.number({
+            required_error: `${PLACE_REQUIRED_ERROR_TEXT}（lng）`,
+        }),
     }),
     images: z.array(z.string({ required_error: "必須項目です" })),
 });

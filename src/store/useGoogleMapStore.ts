@@ -4,6 +4,8 @@ interface State {
     placeId: string;
     title: string;
     address: string;
+    lat: number | null;
+    lng: number | null;
 }
 
 interface Actions {
@@ -11,6 +13,8 @@ interface Actions {
         placeId: State["placeId"];
         title: State["title"];
         address: State["address"];
+        lat: State["lat"];
+        lng: State["lng"];
     }) => void;
     removePlaceDetails: () => void;
 }
@@ -20,7 +24,10 @@ export const useGoogleMapStore = create<State & Actions>((set) => ({
     placeId: "",
     title: "",
     address: "",
-    setPlaceDetails: ({ placeId, title, address }) =>
-        set({ placeId, title, address }),
-    removePlaceDetails: () => set({ placeId: "", title: "", address: "" }),
+    lat: null,
+    lng: null,
+    setPlaceDetails: ({ placeId, title, address, lat, lng }) =>
+        set({ placeId, title, address, lat, lng }),
+    removePlaceDetails: () =>
+        set({ placeId: "", title: "", address: "", lat: null, lng: null }),
 }));

@@ -32,8 +32,12 @@ const ReviewCardWithImageModal = ({
 
     return (
         <Stack gap={2} mt={4}>
-            {isLoading || !posts ? (
-                <ReviewCardSkeleton />
+            {isLoading || posts === undefined || posts.length === 0 ? (
+                isLoading || posts === undefined ? (
+                    <ReviewCardSkeleton />
+                ) : (
+                    <div>まだ投稿がないようです。投稿してくれ〜〜〜！！</div>
+                )
             ) : (
                 <>
                     {posts.map((post) => (

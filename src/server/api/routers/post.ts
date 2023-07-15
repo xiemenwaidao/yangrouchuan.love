@@ -141,6 +141,8 @@ export const postRouter = createTRPCRouter({
                                         id: input.place.place_id,
                                         title: input.place.title,
                                         address: input.place.address,
+                                        lat: input.place.lat,
+                                        lng: input.place.lng,
                                     },
                                     where: {
                                         id: input.place.place_id,
