@@ -47,7 +47,7 @@ const ProfilePage: NextPage = () => {
                             },
                         }}
                     />
-                    <Box sx={{ textAlign: "center", mt: 3 }}>
+                    <Box sx={{ textAlign: "center", mt: { xs: 5, md: 3 } }}>
                         {user && (
                             <LoadingButton
                                 loading={isLoading}

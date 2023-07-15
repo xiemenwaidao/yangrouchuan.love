@@ -38,11 +38,11 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
             </Head>
 
             <Stack direction={{ md: "column", xs: "column" }}>
-                <Typography variant="h2">{`${place.title}`}</Typography>
                 <Typography
                     variant="h3"
-                    fontSize={`1.5rem`}
-                >{`${place.address}`}</Typography>
+                    color={`primary.main`}
+                >{`${place.title}`}</Typography>
+                <Typography variant="subtitle1">{`${place.address}`}</Typography>
                 <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
                 {/* price */}
 

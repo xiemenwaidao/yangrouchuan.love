@@ -86,7 +86,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
     // craete and update
     const { mutate: storeMutate } = api.post.store.useMutation({
         onSuccess: (post) => {
-            setIsPosting(false);
+            // setIsPosting(false);
 
             // 投稿ページに遷移させる
             void router.push(`/place/${post.placeId}/`);
