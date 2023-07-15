@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import type {} from "@mui/material/themeCssVarsAugmentation";
+import HelpIcon from "@mui/icons-material/Help";
 
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
@@ -15,6 +16,42 @@ import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 import { useEffect, useMemo, useState } from "react";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+
+const UserBackground = ({ username }: { username: string }) => {
+    const [bgColor, setBgColor] = useState("");
+
+    const { mode } = useColorScheme();
+
+    const userColors = useMemo(() => stringToColor(username), [username]);
+
+    // server-side対策
+    useEffect(() => {
+        // mode === 'system' は考慮してないよ
+        setBgColor(mode === "dark" ? userColors.dark : userColors.light);
+    }, [mode, userColors]);
+
+    return (
+        <Box
+            sx={{
+                bgcolor: bgColor,
+                width: "100%",
+                height: { md: 288, xs: 182 },
+                position: "relative",
+            }}
+        >
+            <Tooltip
+                title="ユーザー名から色を自動生成しています。"
+                sx={{ position: "absolute", right: 0, bottom: 0 }}
+            >
+                <IconButton size="small">
+                    <HelpIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+        </Box>
+    );
+};
 
 interface ProfileSectionProps {
     username: string;
@@ -25,16 +62,7 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
         username,
     });
 
-    const [bgColor, setBgColor] = useState("");
-
     const theme = useTheme();
-    const { mode } = useColorScheme();
-
-    const userColors = useMemo(() => stringToColor(username), [username]);
-
-    useEffect(() => {
-        setBgColor(mode === "dark" ? userColors.dark : userColors.light);
-    }, [mode, userColors]);
 
     if (!data) return <div>404</div>;
     if (!data.username) return <div>Something went wrong</div>;
@@ -42,13 +70,7 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
     return (
         <>
             <Stack mt={-3}>
-                <Box
-                    sx={{
-                        bgcolor: bgColor,
-                        width: "100%",
-                        height: { md: 288, xs: 182 },
-                    }}
-                />
+                <UserBackground username={username} />
                 <Box sx={{ position: "relative" }}>
                     <Avatar
                         sx={{
