@@ -23,7 +23,7 @@ import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import { ImagePostInput } from "~/components/form/ImagePostInput";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import NextImage from "next/image";
@@ -62,10 +62,12 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         });
 
     // map state
-    const [placeId, title, address] = useGoogleMapStore((state) => [
+    const [placeId, title, address, lat, lng] = useGoogleMapStore((state) => [
         state.placeId,
         state.title,
         state.address,
+        state.lat,
+        state.lng,
     ]);
 
     // delete
@@ -119,6 +121,11 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                     throw new Error(UPDATE_IMAGE_FAILED_MESSAGE);
                 }
 
+                if (lat === null || lng === null)
+                    throw new Error(
+                        "店舗登録に失敗しました。時間をおいて再度お試しください。"
+                    );
+
                 const uploadImagePromises = imageFiles.map(
                     async (image, index) => {
                         const id = results[index]?.id;
@@ -158,6 +165,8 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                                 place_id: placeId,
                                 title: title,
                                 address: address,
+                                lat: lat,
+                                lng: lng,
                             },
                             images: [...imageIds, ...ids],
                         });

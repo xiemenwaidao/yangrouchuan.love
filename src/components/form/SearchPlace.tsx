@@ -173,6 +173,8 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                         placeId: place_id,
                         title: structured_formatting.main_text,
                         address: description,
+                        lat: lat,
+                        lng: lng,
                     });
                 })
                 .catch((error) => {

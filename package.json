@@ -10,7 +10,8 @@
         "postinstall": "prisma generate",
         "studio:local": "npx dotenv -e .env.local -- npx prisma studio",
         "studio:prod": "prisma studio",
-        "dbpush": "npx prisma db push"
+        "dbpush:local": "npx dotenv -e .env.local -- npx prisma db push",
+        "dbpush:prod": "prisma db push"
     },
     "dependencies": {
         "@clerk/localizations": "^1.22.1",
