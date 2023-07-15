@@ -79,7 +79,13 @@ function Header() {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar
+            position="static"
+            sx={{
+                // box-shadowをちゃんとつけるために必要
+                position: "relative",
+            }}
+        >
             <Container maxWidth="md">
                 <Toolbar disableGutters>
                     {/* desktop */}

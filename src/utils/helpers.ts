@@ -10,44 +10,63 @@ export const toHalfWidth = (str: string) => {
 export const getPlaceIdArrayFromPosts = (posts: PostAndAuthor[]) =>
     posts.map((obj) => obj.post.placeId);
 
+/** @see https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/ */
+export class Random {
+    x: number;
+    y: number;
+    z: number;
+    w: number;
+
+    constructor(seed = 88675123) {
+        this.x = 123456789;
+        this.y = 362436069;
+        this.z = 521288629;
+        this.w = seed;
+    }
+
+    // XorShift
+    next() {
+        const t = this.x ^ (this.x << 11);
+        this.x = this.y;
+        this.y = this.z;
+        this.z = this.w;
+        return (this.w = this.w ^ (this.w >>> 19) ^ (t ^ (t >>> 8)));
+    }
+
+    // min以上max以下の乱数を生成する
+    nextInt(min: number, max: number) {
+        const r = Math.abs(this.next());
+        return min + (r % (max + 1 - min));
+    }
+}
+
 interface ModeColors {
     dark: string;
     light: string;
 }
 
 export const stringToColor = (str: string): ModeColors => {
-    // Create a hash from the string
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
+    const hash = [...str].reduce(
+        (hash, char) => char.charCodeAt(0) + ((hash << 5) - hash),
+        0
+    );
 
-    // Convert the calculated hash into an RGB color
-    const rgb: [number, number, number] = [
-        (hash & 0xff0000) >> 16,
-        (hash & 0x00ff00) >> 8,
-        hash & 0x0000ff,
-    ];
+    // console.log(str, { hash });
 
-    const color = tinycolor({ r: rgb[0], g: rgb[1], b: rgb[2] });
+    const h = hash % 360;
+    const s = (hash % 25) + 75;
+    const l = 40;
 
-    // Convert RGB to HSL
-    const hsl = color.toHsl();
+    const hsl = { h, s, l };
+    const darkColor = tinycolor({ ...hsl, l: l - 10 }); // decrease lightness by 10 for dark mode
+    const lightColor = tinycolor({ ...hsl, l: l + 10 }); // increase lightness by 10 for light mode
 
-    // Adjust lightness for dark mode and convert back to RGB
-    const darkColor = tinycolor({ h: hsl.h, s: hsl.s, l: hsl.l * 0.4 });
-    const rgbDark = darkColor.toHexString();
-
-    // Adjust lightness for light mode and convert back to RGB
-    const lightColor = tinycolor({
-        h: hsl.h,
-        s: hsl.s,
-        l: Math.min(1, hsl.l * 1.6),
-    });
-    const rgbLight = lightColor.toHexString();
-
-    return {
-        dark: rgbDark,
-        light: rgbLight,
+    const result: ModeColors = {
+        dark: darkColor.toHexString(),
+        light: lightColor.toHexString(),
     };
+
+    // console.log(result);
+
+    return result;
 };
