@@ -19,7 +19,7 @@ export const postRouter = createTRPCRouter({
             },
             orderBy: [
                 {
-                    createdAt: "desc",
+                    updatedAt: "desc",
                 },
             ],
         });
@@ -70,7 +70,7 @@ export const postRouter = createTRPCRouter({
                         images: true,
                     },
                     take: 100,
-                    orderBy: [{ createdAt: "desc" }],
+                    orderBy: [{ updatedAt: "desc" }],
                 })
                 .then(addUserDataToPosts)
         ),
@@ -103,7 +103,7 @@ export const postRouter = createTRPCRouter({
                         images: true,
                     },
                     take: 100,
-                    orderBy: [{ createdAt: "desc" }],
+                    orderBy: [{ updatedAt: "desc" }],
                 })
                 .then(addUserDataToPosts);
         }),

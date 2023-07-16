@@ -50,7 +50,7 @@ const PlaceGoogleMap = ({ lat, lng, title, place_id }: PlaceGoogleMapProps) => {
     }
 
     return (
-        <Box mt={2}>
+        <Box>
             {isLoaded ? (
                 <GoogleMap
                     center={position}
@@ -116,15 +116,17 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
                 <title>{`${place.title} |  ${SITE.title}`}</title>
             </Head>
 
-            <Stack direction={{ md: "column", xs: "column" }}>
-                <Typography
-                    variant="h3"
-                    color={`primary.main`}
-                    fontSize={`2rem`}
-                >{`${place.title}`}</Typography>
-                <Typography variant="subtitle1">{`${place.address}`}</Typography>
-                <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
-                {/* price */}
+            <Stack direction={{ md: "column", xs: "column" }} gap={2}>
+                <Box>
+                    <Typography
+                        variant="h3"
+                        color={`primary.main`}
+                        fontSize={`2rem`}
+                    >{`${place.title}`}</Typography>
+                    <Typography variant="subtitle1">{`${place.address}`}</Typography>
+                    <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
+                    {/* price */}
+                </Box>
 
                 <PlaceGoogleMap
                     lat={place.lat}

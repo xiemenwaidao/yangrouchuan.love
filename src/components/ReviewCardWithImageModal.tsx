@@ -31,11 +31,14 @@ const ReviewCardWithImageModal = ({
     }, []);
 
     return (
-        <Stack gap={2} mt={4}>
+        <Stack gap={2}>
             {isLoading || posts === undefined || posts.length === 0 ? (
                 isLoading || posts === undefined ? (
-                    <ReviewCardSkeleton />
+                    Array.from({ length: 2 }).map((_, i) => (
+                        <ReviewCardSkeleton key={i} />
+                    ))
                 ) : (
+                    // 投稿が0の場合
                     <div>まだ投稿がないようです。投稿してくれ〜〜〜！！</div>
                 )
             ) : (
