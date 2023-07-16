@@ -285,7 +285,7 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                             helperText={fieldState.error?.message}
                         />
                     )}
-                    renderOption={(props, option) => {
+                    renderOption={(props, option, state) => {
                         const matches =
                             option.structured_formatting
                                 .main_text_matched_substrings || [];
@@ -299,7 +299,8 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                         );
 
                         return (
-                            <li {...props}>
+                            // key注意⚠️
+                            <li {...props} key={state.index}>
                                 <Grid container alignItems="center">
                                     <Grid
                                         item

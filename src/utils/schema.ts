@@ -1,14 +1,12 @@
 import { z } from "zod";
 import { toHalfWidth } from "./helpers";
-import { FORM_MAX_IMAGE_COUNT } from "~/config";
+import {
+    FORM_ALLOW_IMAGE_MINETYPES,
+    FORM_MAX_IMAGE_COUNT,
+    FORM_MAX_IMAGE_SIZE,
+} from "~/config";
 
 const REQUIRED_ERROR_TEXT = "必須項目です。";
-
-const ALLOW_IMAGE_MINETYPES = [
-    "image/jpeg",
-    "image/png",
-    // "image/gif"
-];
 
 const commonSchema = {
     rating: z.coerce
@@ -46,9 +44,13 @@ const commonSchema = {
 export const frontPostSchema = z.object({
     ...commonSchema,
     id: z.string().optional(),
-    address: z.string({
-        required_error: REQUIRED_ERROR_TEXT,
-    }),
+    address: z
+        .string({
+            required_error: REQUIRED_ERROR_TEXT,
+        })
+        .refine((value) => value.startsWith("日本"), {
+            message: "日本の店舗のみ登録可能です。🙇🏻‍♂️",
+        }),
     // @see https://developers.cloudflare.com/images/cloudflare-images/upload-images/formats-limitations/
     images: z
         .custom<(File | string)[]>()
@@ -63,7 +65,7 @@ export const frontPostSchema = z.object({
             (images) =>
                 images.every((image) => {
                     if (image instanceof File)
-                        return ALLOW_IMAGE_MINETYPES.includes(image.type);
+                        return FORM_ALLOW_IMAGE_MINETYPES.includes(image.type);
                     return true;
                 }),
 
@@ -74,11 +76,12 @@ export const frontPostSchema = z.object({
         .refine(
             (images) =>
                 images.every((image) => {
-                    if (image instanceof File) return image.size < 1e+7;
+                    if (image instanceof File)
+                        return image.size < FORM_MAX_IMAGE_SIZE.value;
                     return true;
                 }),
             {
-                message: "10MB以下の画像をアップロードしてください。",
+                message: `${FORM_MAX_IMAGE_SIZE.display}以下の画像をアップロードしてください。`,
             }
         ),
 });
