@@ -74,7 +74,7 @@ export const frontPostSchema = z.object({
         .refine(
             (images) =>
                 images.every((image) => {
-                    if (image instanceof File) return image.size < 1000000;
+                    if (image instanceof File) return image.size < 1e+7;
                     return true;
                 }),
             {
