@@ -19,11 +19,11 @@ import { Rating } from "~/components/form/Rating";
 import { TextInpupt } from "~/components/form/TextInput";
 import { NumberInput } from "~/components/form/NumberInput";
 import { SearchPlaceMap } from "~/components/form/SearchPlace";
-import { useGoogleMapStore } from "~/store/useGoogleMapStore";
+import { useFormPlaceStore } from "~/store/useFormPlaceStore";
 import { ImagePostInput } from "~/components/form/ImagePostInput";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import NextImage from "next/image";
@@ -62,7 +62,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         });
 
     // map state
-    const [placeId, title, address, lat, lng] = useGoogleMapStore((state) => [
+    const [placeId, title, address, lat, lng] = useFormPlaceStore((state) => [
         state.placeId,
         state.title,
         state.address,

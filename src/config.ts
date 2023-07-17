@@ -8,6 +8,13 @@ export const SITE = {
 
 // google map
 export const MAP_DEFAULT_ZOOM = 17;
+export const libraries: (
+    | "drawing"
+    | "geometry"
+    | "localContext"
+    | "places"
+    | "visualization"
+)[] = ["places"];
 
 // images
 export const FORM_MAX_IMAGE_COUNT = 3;

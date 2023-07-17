@@ -16,18 +16,13 @@ import { RateAverage } from "~/components/RateAverage";
 
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 import { toast } from "react-toastify";
-import {
-    GoogleMap,
-    InfoWindowF,
-    MarkerF,
-    useLoadScript,
-} from "@react-google-maps/api";
-import { env } from "~/env.mjs";
+import { GoogleMap, InfoWindowF, MarkerF } from "@react-google-maps/api";
 import { useColorScheme } from "@mui/material/styles";
 import styles from "~/utils/googlemapThemeStyles";
 import { MyLink } from "~/components/parts/MyLink";
 import Box from "@mui/material/Box";
 import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
+import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 
 interface PlaceGoogleMapProps {
     lat: number;
@@ -36,18 +31,11 @@ interface PlaceGoogleMapProps {
     place_id: string;
 }
 const PlaceGoogleMap = ({ lat, lng, title, place_id }: PlaceGoogleMapProps) => {
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    });
+    const isLoaded = useGoogleMapStore((state) => state.isLoaded);
 
     const { mode } = useColorScheme();
 
     const position = { lat, lng };
-
-    if (loadError) {
-        toast.error("Google Mapの読み込みに失敗しました。");
-        return <div>Google Mapの読み込みに失敗しました。</div>;
-    }
 
     return (
         <Box>
