@@ -9,20 +9,40 @@ import {
     type NextPage,
 } from "next";
 import Head from "next/head";
-import { SITE } from "~/config";
+import { MAP_DEFAULT_ZOOM, SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import { RateAverage } from "~/components/RateAverage";
 
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 import { toast } from "react-toastify";
-import { GoogleMap, useLoadScript } from "@react-google-maps/api";
+import {
+    GoogleMap,
+    InfoWindowF,
+    MarkerF,
+    useLoadScript,
+} from "@react-google-maps/api";
 import { env } from "~/env.mjs";
+import { useColorScheme } from "@mui/material/styles";
+import styles from "~/utils/googlemapThemeStyles";
+import { MyLink } from "~/components/parts/MyLink";
+import Box from "@mui/material/Box";
+import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 
-const PlaceGoogleMap = () => {
+interface PlaceGoogleMapProps {
+    lat: number;
+    lng: number;
+    title: string;
+    place_id: string;
+}
+const PlaceGoogleMap = ({ lat, lng, title, place_id }: PlaceGoogleMapProps) => {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     });
+
+    const { mode } = useColorScheme();
+
+    const position = { lat, lng };
 
     if (loadError) {
         toast.error("Google Mapの読み込みに失敗しました。");
@@ -30,9 +50,38 @@ const PlaceGoogleMap = () => {
     }
 
     return (
-        <>
+        <Box>
             {isLoaded ? (
-                <GoogleMap></GoogleMap>
+                <GoogleMap
+                    center={position}
+                    zoom={MAP_DEFAULT_ZOOM}
+                    mapContainerClassName="google-map"
+                    options={{
+                        styles:
+                            mode === "dark"
+                                ? styles["night"]
+                                : styles["default"],
+                    }}
+                >
+                    <MarkerF position={position}>
+                        <InfoWindowF position={position}>
+                            <Box sx={{ color: "black" }}>
+                                <MyLink
+                                    nextProps={{
+                                        href: getMapHrefByPlaceId(
+                                            title,
+                                            place_id
+                                        ),
+                                    }}
+                                    target="_blank"
+                                    sx={{ color: `black` }}
+                                >
+                                    Google Mapで開く
+                                </MyLink>
+                            </Box>
+                        </InfoWindowF>
+                    </MarkerF>
+                </GoogleMap>
             ) : (
                 <Skeleton
                     variant="rectangular"
@@ -42,7 +91,7 @@ const PlaceGoogleMap = () => {
                     }}
                 />
             )}
-        </>
+        </Box>
     );
 };
 
@@ -67,15 +116,24 @@ const SinglePlacePage: NextPage<PageProps> = ({ id }) => {
                 <title>{`${place.title} |  ${SITE.title}`}</title>
             </Head>
 
-            <Stack direction={{ md: "column", xs: "column" }}>
-                <Typography
-                    variant="h3"
-                    color={`primary.main`}
-                    fontSize={`2rem`}
-                >{`${place.title}`}</Typography>
-                <Typography variant="subtitle1">{`${place.address}`}</Typography>
-                <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
-                {/* price */}
+            <Stack direction={{ md: "column", xs: "column" }} gap={2}>
+                <Box>
+                    <Typography
+                        variant="h3"
+                        color={`primary.main`}
+                        fontSize={`2rem`}
+                    >{`${place.title}`}</Typography>
+                    <Typography variant="subtitle1">{`${place.address}`}</Typography>
+                    <RateAverage posts={posts} sx={{ pt: `0.5rem` }} />
+                    {/* price */}
+                </Box>
+
+                <PlaceGoogleMap
+                    lat={place.lat}
+                    lng={place.lng}
+                    title={place.title}
+                    place_id={place.id}
+                />
 
                 <ReviewCardWithImageModal posts={posts} isLoading={isLoading} />
             </Stack>

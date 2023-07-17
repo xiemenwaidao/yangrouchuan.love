@@ -29,7 +29,7 @@ export const placeRouter = createTRPCRouter({
             take: 100,
             orderBy: [
                 {
-                    createdAt: "desc",
+                    updatedAt: "desc",
                 },
             ],
             include: {
@@ -56,6 +56,11 @@ export const placeRouter = createTRPCRouter({
                         include: {
                             images: true,
                         },
+                        orderBy: [
+                            {
+                                updatedAt: "desc",
+                            },
+                        ],
                     },
                 },
             });
