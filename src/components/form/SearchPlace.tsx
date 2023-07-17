@@ -26,13 +26,7 @@ import {
     useCallback,
     useEffect,
 } from "react";
-import {
-    GoogleMap,
-    InfoWindowF,
-    MarkerF,
-    useLoadScript,
-} from "@react-google-maps/api";
-import { env } from "~/env.mjs";
+import { GoogleMap, InfoWindowF, MarkerF } from "@react-google-maps/api";
 import {
     Controller,
     type Control,
@@ -41,7 +35,7 @@ import {
     type UseFormSetError,
 } from "react-hook-form";
 import type { FrontPostSchema } from "~/utils/schema";
-import { useGoogleMapStore } from "~/store/useGoogleMapStore";
+import { useFormPlaceStore } from "~/store/useFormPlaceStore";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import { MyLink } from "../parts/MyLink";
@@ -49,6 +43,7 @@ import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 import { toast } from "react-toastify";
 import { MAP_DEFAULT_ZOOM } from "~/config";
 import styles from "~/utils/googlemapThemeStyles";
+import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 
 interface SelectedAddressProps {
     lat: number;
@@ -78,8 +73,8 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
     >([]);
 
     // store
-    const setPlaceDetails = useGoogleMapStore((state) => state.setPlaceDetails);
-    const removePlaceDetails = useGoogleMapStore(
+    const setPlaceDetails = useFormPlaceStore((state) => state.setPlaceDetails);
+    const removePlaceDetails = useFormPlaceStore(
         (state) => state.removePlaceDetails
     );
 
@@ -437,24 +432,8 @@ const Map = (props: SearchPlaceMapProps) => {
     );
 };
 
-const libraries: (
-    | "drawing"
-    | "geometry"
-    | "localContext"
-    | "places"
-    | "visualization"
-)[] = ["places"];
-
 export const SearchPlaceMap = (props: SearchPlaceMapProps) => {
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-        libraries: libraries,
-    });
-
-    if (loadError) {
-        toast.error("Google Mapの読み込みに失敗しました。");
-        return <div>Google Mapの読み込みに失敗しました。</div>;
-    }
+    const isLoaded = useGoogleMapStore((state) => state.isLoaded);
 
     return (
         <Box>

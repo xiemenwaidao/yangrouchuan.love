@@ -18,9 +18,11 @@ import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
 import { useEffect, useMemo, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const UserBackground = ({ username }: { username: string }) => {
     const [bgColor, setBgColor] = useState("");
+    const [open, setOpen] = useState(false);
 
     const { mode } = useColorScheme();
 
@@ -41,14 +43,24 @@ const UserBackground = ({ username }: { username: string }) => {
                 position: "relative",
             }}
         >
-            <Tooltip
-                title="この色はユーザー名をもとに自動生成しています。"
-                sx={{ position: "absolute", right: 0, bottom: 0 }}
-            >
-                <IconButton size="small">
-                    <HelpIcon fontSize="small" />
-                </IconButton>
-            </Tooltip>
+            <ClickAwayListener onClickAway={() => setOpen(false)}>
+                <Tooltip
+                    PopperProps={{
+                        disablePortal: true,
+                    }}
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    title="この色はユーザー名をもとに自動生成しています。"
+                    sx={{ position: "absolute", right: 0, bottom: 0 }}
+                >
+                    <IconButton onClick={() => setOpen(!open)} size="small">
+                        <HelpIcon fontSize="small" />
+                    </IconButton>
+                </Tooltip>
+            </ClickAwayListener>
         </Box>
     );
 };
