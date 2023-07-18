@@ -24,7 +24,7 @@ import { useFormPlaceStore } from "~/store/useFormPlaceStore";
 import { ImagePostInput } from "~/components/form/ImagePostInput";
 import { uploadImage } from "~/utils/cloudflareHelpers";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import NextImage from "next/image";
@@ -60,7 +60,8 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
     const [isPosting, setIsPosting] = useState(false);
 
-    const isEdit = defaultValues !== undefined;
+    const [isEdit, setIsEdit] = useState(defaultValues !== undefined);
+    useEffect(() => setIsEdit(defaultValues !== undefined), [defaultValues]);
 
     // form state
     const {
@@ -71,10 +72,15 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
         getValues,
         setError,
         watch,
+        reset,
     } = useForm<FrontPostSchema>({
         resolver: zodResolver(frontPostSchema),
         defaultValues: defaultValues,
     });
+    // キャッシュが呼ばれた後に新しいデータが入ってくるので、キャッシュが呼ばれた後にリセットする
+    useEffect(() => {
+        reset(defaultValues);
+    }, [defaultValues, reset]);
 
     const watchPrice = watch("price", undefined);
 
@@ -254,16 +260,16 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
     });
 
     const handleDelete = useCallback(() => {
-        if (!isEdit) return toast.error("削除に失敗しました。");
+        if (!defaultValues) return toast.error("削除に失敗しました。");
 
         void confirm({
             description: "本当に削除しますか？",
         })
             .then(() => {
-                deleteMutate({ id: defaultValues.id });
+                deleteMutate({ id: defaultValues?.id });
             })
             .catch(() => toast.info("キャンセルしました。"));
-    }, [confirm, defaultValues?.id, deleteMutate, isEdit]);
+    }, [confirm, defaultValues, deleteMutate]);
 
     if (!user) return null;
 

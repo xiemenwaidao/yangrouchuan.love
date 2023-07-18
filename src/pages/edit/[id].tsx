@@ -1,6 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import PostForm from "~/components/form/PostFrom";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
@@ -11,27 +11,32 @@ const PostEditPage = ({ id }: { id: string }) => {
     const { data } = api.post.getById.useQuery({
         id,
     });
+    const [formValues, setFormValues] = useState<
+        FrontPostSchemaOmitId & { id: string; placeId: string }
+    >();
 
     useEffect(() => {
-        console.log("edit", { data });
+        if (data) {
+            const { post } = data;
+            const newFormValues: FrontPostSchemaOmitId & {
+                id: string;
+                placeId: string;
+            } = {
+                id: post.id,
+                rating: post.rating,
+                content: post.content,
+                images: post.images.map((image) => image.id),
+                address: post.place.address,
+                placeId: post.place.id,
+                price: post.price === null ? undefined : post.price,
+                skewerCount:
+                    post.skewerCount === null ? undefined : post.skewerCount,
+            };
+            setFormValues(newFormValues);
+        }
     }, [data]);
 
     if (!data) return <div>...loading</div>;
-
-    const { post } = data;
-
-    const formValues: FrontPostSchemaOmitId & { id: string; placeId: string } =
-        {
-            id: post.id,
-            rating: post.rating,
-            content: post.content,
-            images: post.images.map((image) => image.id),
-            address: post.place.address,
-            placeId: post.place.id,
-            price: post.price === null ? undefined : post.price,
-            skewerCount:
-                post.skewerCount === null ? undefined : post.skewerCount,
-        };
 
     return (
         <>
