@@ -7,7 +7,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
 import { FORM_MAX_IMAGE_COUNT } from "~/config";
@@ -22,6 +22,7 @@ interface Props {
 
 export const ImagePostInput = ({ controle, defaultValue }: Props) => {
     const [images, setImages] = useState<(File | string)[]>(defaultValue ?? []);
+    useEffect(() => setImages(defaultValue ?? []), [defaultValue]);
 
     return (
         <Controller
