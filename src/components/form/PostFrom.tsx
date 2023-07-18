@@ -194,7 +194,6 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                                 images: [...imageIds, ...ids],
                             });
                         } else {
-                            console.log({ placeId });
                             storeMutate({
                                 ...data,
                                 place: {
