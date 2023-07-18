@@ -1,5 +1,6 @@
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
+import { useEffect } from "react";
 import PostForm from "~/components/form/PostFrom";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
@@ -10,6 +11,10 @@ const PostEditPage = ({ id }: { id: string }) => {
     const { data } = api.post.getById.useQuery({
         id,
     });
+
+    useEffect(() => {
+        console.log("edit", { data });
+    }, [data]);
 
     if (!data) return <div>...loading</div>;
 
