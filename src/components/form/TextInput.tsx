@@ -18,7 +18,7 @@ export const TextInpupt = (props: Props) => {
                     {...field}
                     id="outlined-required"
                     label="ひとこと"
-                    placeholder="味・見た目・コスパ・本数など"
+                    placeholder="味・見た目・コスパなど"
                     error={fieldState.invalid}
                     helperText={fieldState.error?.message}
                 />

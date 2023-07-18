@@ -203,7 +203,9 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                             {dayjs(itemPost.updatedAt).format("YYYY/MM/DD")}
                         </Typography>
                         <Typography color="text.secondary">
-                            {itemPost.price && `¥${itemPost.price}くらい`}
+                            {itemPost.price &&
+                                itemPost.skewerCount &&
+                                `¥${itemPost.price}/${itemPost.skewerCount}本`}
                         </Typography>
                     </Box>
                     <Typography sx={{ py: 1 }}>{itemPost.content}</Typography>
