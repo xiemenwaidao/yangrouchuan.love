@@ -113,12 +113,13 @@ export const postRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             const authorId = ctx.userId;
 
-            // limitter入れる（upstash）
+            // TODO: limitter入れる（upstash）
 
             const postWithImages = await ctx.prisma.$transaction(
                 async (prisma) => {
                     const post = await prisma.post.upsert({
                         where: {
+                            // ユーザーと場所の組み合わせが一意になるようにする
                             authorId_placeId: {
                                 authorId: authorId,
                                 placeId: input.place.place_id,
@@ -129,12 +130,17 @@ export const postRouter = createTRPCRouter({
                             content: input.content,
                             price:
                                 input.price !== undefined ? input.price : null,
+                            skewerCount:
+                                input.skewerCount !== undefined
+                                    ? input.skewerCount
+                                    : null,
                         },
                         create: {
                             authorId,
                             rating: input.rating,
                             content: input.content,
                             price: input.price,
+                            skewerCount: input.skewerCount,
                             place: {
                                 connectOrCreate: {
                                     create: {
@@ -152,20 +158,50 @@ export const postRouter = createTRPCRouter({
                         },
                     });
 
-                    // Delete all images associated with the post
-                    await prisma.image.deleteMany({
+                    // Get existing images
+                    const existingImages = await ctx.prisma.image.findMany({
                         where: {
                             postId: post.id,
                         },
                     });
 
-                    // Create new images
-                    await prisma.image.createMany({
-                        data: input.images.map((imageId) => ({
-                            id: imageId,
-                            postId: post.id,
-                        })),
-                    });
+                    // Extract image ids from existingImages
+                    const existingImageIds = existingImages.map(
+                        (image) => image.id
+                    );
+                    // Extract image ids from input.images
+                    const inputImageIds = input.images;
+
+                    // Determine images to be deleted (existing in DB but not in the input)
+                    const imagesToDelete = existingImageIds.filter(
+                        (id) => !inputImageIds.includes(id)
+                    );
+
+                    // Determine images to be created (existing in the input but not in the DB)
+                    const imagesToCreate = inputImageIds.filter(
+                        (id) => !existingImageIds.includes(id)
+                    );
+
+                    // Delete images
+                    if (imagesToDelete.length > 0) {
+                        await prisma.image.deleteMany({
+                            where: {
+                                id: {
+                                    in: imagesToDelete,
+                                },
+                            },
+                        });
+                    }
+
+                    if (imagesToCreate.length > 0) {
+                        // Create images
+                        await prisma.image.createMany({
+                            data: imagesToCreate.map((imageId) => ({
+                                id: imageId,
+                                postId: post.id,
+                            })),
+                        });
+                    }
 
                     return { post };
                 }

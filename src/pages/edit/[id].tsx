@@ -15,14 +15,18 @@ const PostEditPage = ({ id }: { id: string }) => {
 
     const { post } = data;
 
-    const formValues: FrontPostSchemaOmitId & { id: string } = {
-        id: post.id,
-        rating: post.rating,
-        content: post.content,
-        images: post.images.map((image) => image.id),
-        address: post.place.address,
-        price: post.price === null ? undefined : post.price,
-    };
+    const formValues: FrontPostSchemaOmitId & { id: string; placeId: string } =
+        {
+            id: post.id,
+            rating: post.rating,
+            content: post.content,
+            images: post.images.map((image) => image.id),
+            address: post.place.address,
+            placeId: post.place.id,
+            price: post.price === null ? undefined : post.price,
+            skewerCount:
+                post.skewerCount === null ? undefined : post.skewerCount,
+        };
 
     return (
         <>

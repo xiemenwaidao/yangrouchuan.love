@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirm } from "material-ui-confirm";
 import Backdrop from "@mui/material/Backdrop";
+import Grid from "@mui/material/Unstable_Grid2";
 
 import { useUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
@@ -27,6 +28,8 @@ import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
 import NextImage from "next/image";
+import SkewerCountSlider from "./SkewerCountSlider";
+import Alert from "@mui/material/Alert";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
@@ -42,6 +45,7 @@ const isString = (obj: string | File): obj is string => {
 interface PostFromProps {
     defaultValues?: FrontPostSchemaOmitId & {
         id: string;
+        placeId: string;
     };
 }
 
@@ -54,12 +58,23 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
     const [isPosting, setIsPosting] = useState(false);
 
+    const isEdit = defaultValues !== undefined;
+
     // form state
-    const { handleSubmit, control, setValue, resetField, getValues, setError } =
-        useForm<FrontPostSchema>({
-            resolver: zodResolver(frontPostSchema),
-            defaultValues: defaultValues,
-        });
+    const {
+        handleSubmit,
+        control,
+        setValue,
+        resetField,
+        getValues,
+        setError,
+        watch,
+    } = useForm<FrontPostSchema>({
+        resolver: zodResolver(frontPostSchema),
+        defaultValues: defaultValues,
+    });
+
+    const watchPrice = watch("price", undefined);
 
     // map state
     const [placeId, title, address, lat, lng] = useFormPlaceStore((state) => [
@@ -92,7 +107,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
             // 投稿ページに遷移させる
             void router.push(`/place/${post.placeId}/`);
-            toast.success("投稿に成功しました。");
+            toast.success(`${isEdit ? "更新" : "投稿"}に成功しました。`);
         },
         onError: (error) => {
             // 画像を削除する
@@ -121,7 +136,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                     throw new Error(UPDATE_IMAGE_FAILED_MESSAGE);
                 }
 
-                if (lat === null || lng === null)
+                if (!isEdit && (lat === null || lng === null))
                     throw new Error(
                         "店舗登録に失敗しました。時間をおいて再度お試しください。"
                     );
@@ -159,17 +174,34 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                     .then((ids) => {
                         // console.log({ ids });
 
-                        storeMutate({
-                            ...data,
-                            place: {
-                                place_id: placeId,
-                                title: title,
-                                address: address,
-                                lat: lat,
-                                lng: lng,
-                            },
-                            images: [...imageIds, ...ids],
-                        });
+                        if (defaultValues === undefined) {
+                            if (lat === null || lng === null)
+                                throw new Error("lat or lng is null");
+                            storeMutate({
+                                ...data,
+                                place: {
+                                    place_id: placeId,
+                                    title: title,
+                                    address: address,
+                                    lat: lat,
+                                    lng: lng,
+                                },
+                                images: [...imageIds, ...ids],
+                            });
+                        } else {
+                            console.log({ placeId });
+                            storeMutate({
+                                ...data,
+                                place: {
+                                    place_id: defaultValues.placeId,
+                                    title: "",
+                                    address: "",
+                                    lat: 0,
+                                    lng: 0,
+                                },
+                                images: [...imageIds, ...ids],
+                            });
+                        }
                     })
                     .catch((error) => {
                         setIsPosting(false);
@@ -206,6 +238,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
     // handleSubmitはsucsess時に実行される
     const onSubmit = handleSubmit((data: FrontPostSchema) => {
+        // return console.log(data);
         // ぐるぐるローディング
         setIsPosting(true);
 
@@ -217,8 +250,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
     });
 
     const handleDelete = useCallback(() => {
-        if (defaultValues === undefined)
-            return toast.error("削除に失敗しました。");
+        if (!isEdit) return toast.error("削除に失敗しました。");
 
         void confirm({
             description: "本当に削除しますか？",
@@ -227,7 +259,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                 deleteMutate({ id: defaultValues.id });
             })
             .catch(() => toast.info("キャンセルしました。"));
-    }, [confirm, defaultValues, deleteMutate]);
+    }, [confirm, defaultValues?.id, deleteMutate, isEdit]);
 
     if (!user) return null;
 
@@ -240,7 +272,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                 onSubmit={onSubmit}
             >
                 {/* google map */}
-                {defaultValues ? null : (
+                {isEdit ? null : (
                     <SearchPlaceMap
                         controle={control}
                         setValue={setValue}
@@ -258,7 +290,20 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                 {/* content */}
                 <TextInpupt controle={control} name="content" />
                 {/* price */}
-                <NumberInput controle={control} name="price" />
+                <Grid container columnGap={4} rowGap={1} alignItems={`center`}>
+                    <Grid xs={6}>
+                        <NumberInput controle={control} name="price" />
+                    </Grid>
+                    <Grid xs={5} display={watchPrice ? "block" : "none"}>
+                        <SkewerCountSlider controle={control} />
+                    </Grid>
+                    <Grid xs={12}>
+                        <Alert severity="info">
+                            【任意】注文時の値段と本数を入力してください。例）値段：380
+                            / 本数：3
+                        </Alert>
+                    </Grid>
+                </Grid>
 
                 {/* submit */}
                 <Stack gap={2} direction={`row`}>
@@ -269,9 +314,9 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                         variant="contained"
                         type="submit"
                     >
-                        <span>{defaultValues ? "更新する" : "投稿する"}</span>
+                        <span>{isEdit ? "更新する" : "投稿する"}</span>
                     </LoadingButton>
-                    {defaultValues && (
+                    {isEdit && (
                         <LoadingButton
                             endIcon={<DeleteIcon />}
                             loading={isDeleting}

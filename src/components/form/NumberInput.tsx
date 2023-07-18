@@ -32,6 +32,10 @@ export const NumberInput = (props: Props) => {
                     }}
                     error={fieldState.invalid}
                     helperText={fieldState.error?.message}
+                    sx={{
+                        width: "100%",
+                        my: 2,
+                    }}
                 />
             )}
         />
