@@ -63,6 +63,7 @@ export const getStaticProps = async (
             trpcState: helpers.dehydrate(),
             id,
         },
+        // revalidate: 60,
     };
 };
 
