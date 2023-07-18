@@ -52,6 +52,8 @@ interface PostFromProps {
 const PostForm = ({ defaultValues }: PostFromProps) => {
     const { user } = useUser();
 
+    const trpcUtils = api.useContext();
+
     const router = useRouter();
 
     const confirm = useConfirm();
@@ -104,6 +106,9 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
     const { mutate: storeMutate } = api.post.store.useMutation({
         onSuccess: (post) => {
             // setIsPosting(false);
+
+            // キャッシュクリア（編集ページで古い情報を参照しないように）
+            void trpcUtils.post.getById.invalidate({ id: post.id });
 
             // 投稿ページに遷移させる
             void router.push(`/place/${post.placeId}/`);
