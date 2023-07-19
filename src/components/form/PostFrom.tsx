@@ -118,7 +118,11 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
             // 投稿ページに遷移させる
             void router.push(`/place/${post.placeId}/`);
-            toast.success(`${isEdit ? "更新" : "投稿"}に成功しました。`);
+            toast.success(
+                `${isEdit ? "更新" : "投稿"}に成功しました。${
+                    isEdit ? "" : "ページを生成中。。。"
+                }`
+            );
         },
         onError: (error) => {
             // 画像を削除する

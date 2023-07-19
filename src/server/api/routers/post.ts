@@ -246,6 +246,9 @@ export const postRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ ctx, input }) => {
+            let imagesToDelete: string[] = [];
+            let isPlaceDelete: string | null = null;
+
             await ctx.prisma.$transaction(async (prisma) => {
                 const authorId = ctx.userId;
 
@@ -272,6 +275,13 @@ export const postRouter = createTRPCRouter({
                     });
                 }
 
+                // delete後にcountを取得したら0になったので、一応事前に取得しておく仕様に変更
+                const count = await prisma.post.count({
+                    where: {
+                        placeId: post.placeId,
+                    },
+                });
+
                 // Firstly, delete images related to this post
                 await prisma.image.deleteMany({
                     where: {
@@ -285,27 +295,40 @@ export const postRouter = createTRPCRouter({
                     },
                 });
 
-                // delete cloudflare images
-                const imagesToDelete = post.images.map((image) => image.id);
-                const promises = imagesToDelete.map(async (id) => {
-                    const { body } = await request(
-                        `https://api.cloudflare.com/client/v4/accounts/${env.NEXT_CLOUDFLARE_ACCOUNT_ID}/images/v1/${id}`,
-                        {
-                            method: "DELETE",
-                            headers: {
-                                authorization: `Bearer ${env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN}`,
-                            },
-                        }
-                    );
+                // cloudflare images data
+                imagesToDelete = post.images.map((image) => image.id);
 
-                    // TODO: エラー吐いてもアレなので、エラーでlogを残すようにしようかな？
-                    // if (statusCode !== 200)
-                    //     throw new Error(await body.text());
-
-                    const json = (await body.json()) as DeleteResponse;
-                    return json;
-                });
-                await Promise.all(promises);
+                // この投稿がその場所の最後の投稿かどうか
+                isPlaceDelete = count === 1 ? post.placeId : null;
             });
+
+            if (isPlaceDelete) {
+                await ctx.prisma.place.delete({
+                    where: {
+                        id: isPlaceDelete,
+                    },
+                });
+            }
+
+            // Delete cludflare images after successful transaction
+            const promises = imagesToDelete.map(async (id) => {
+                const { body } = await request(
+                    `https://api.cloudflare.com/client/v4/accounts/${env.NEXT_CLOUDFLARE_ACCOUNT_ID}/images/v1/${id}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            authorization: `Bearer ${env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN}`,
+                        },
+                    }
+                );
+
+                // TODO: エラー吐いてもアレなので、エラーでlogを残すようにしようかな？
+                // if (statusCode !== 200)
+                //     throw new Error(await body.text());
+
+                const json = (await body.json()) as DeleteResponse;
+                return json;
+            });
+            await Promise.all(promises);
         }),
 });
