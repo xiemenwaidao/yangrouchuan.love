@@ -7,7 +7,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { useEffect, useState } from "react";
 import { Controller, type Control } from "react-hook-form";
 import { type FrontPostSchema } from "~/utils/schema";
 import { FORM_MAX_IMAGE_COUNT } from "~/config";
@@ -17,20 +16,16 @@ import Alert from "@mui/material/Alert";
 
 interface Props {
     controle: Control<FrontPostSchema>;
-    defaultValue?: (File | string)[];
 }
 
-export const ImagePostInput = ({ controle, defaultValue }: Props) => {
-    const [images, setImages] = useState<(File | string)[]>(defaultValue ?? []);
-    useEffect(() => setImages(defaultValue ?? []), [defaultValue]);
-
+export const ImagePostInput = ({ controle }: Props) => {
     return (
         <Controller
             name="images"
             control={controle}
-            defaultValue={[]}
+            // defaultValue={[]}
             render={({
-                field: { onChange, onBlur, name, ref },
+                field: { onChange, onBlur, name, ref, value: images },
                 fieldState,
             }) => (
                 <FormControl error={fieldState.invalid}>
@@ -38,7 +33,9 @@ export const ImagePostInput = ({ controle, defaultValue }: Props) => {
                         <Button
                             variant="contained"
                             component="span"
-                            disabled={images.length >= FORM_MAX_IMAGE_COUNT}
+                            disabled={
+                                images && images.length >= FORM_MAX_IMAGE_COUNT
+                            }
                         >
                             画像追加（3枚まで）
                         </Button>
@@ -49,13 +46,11 @@ export const ImagePostInput = ({ controle, defaultValue }: Props) => {
                                 const files = e.target.files;
                                 if (files === null) return;
 
-                                const newImages = [
-                                    ...images,
-                                    ...Array.from(files),
-                                ];
+                                const newArray = images
+                                    ? [...images, ...Array.from(files)]
+                                    : [...Array.from(files)];
 
-                                onChange(newImages);
-                                setImages(newImages);
+                                onChange(newArray);
                             }}
                             onBlur={onBlur}
                             name={name}
@@ -76,7 +71,7 @@ export const ImagePostInput = ({ controle, defaultValue }: Props) => {
                     >
                         {Array.from({ length: FORM_MAX_IMAGE_COUNT }).map(
                             (_, index) => {
-                                const image = images[index];
+                                const image = images && images[index];
 
                                 return (
                                     <Grid xs={2} sm={4} md={4} key={index}>
@@ -108,9 +103,7 @@ export const ImagePostInput = ({ controle, defaultValue }: Props) => {
                                                                 index,
                                                                 1
                                                             );
-                                                            setImages(
-                                                                newImages
-                                                            );
+
                                                             onChange(newImages);
                                                         }}
                                                     >

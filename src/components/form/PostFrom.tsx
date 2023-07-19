@@ -291,10 +291,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                     />
                 )}
                 {/* images */}
-                <ImagePostInput
-                    controle={control}
-                    defaultValue={defaultValues?.images}
-                />
+                <ImagePostInput controle={control} />
                 {/* rating */}
                 <Rating controle={control} />
                 {/* content */}

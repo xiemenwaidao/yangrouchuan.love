@@ -8,14 +8,24 @@ import { type FrontPostSchemaOmitId } from "~/utils/schema";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 
 const PostEditPage = ({ id }: { id: string }) => {
-    const { data } = api.post.getById.useQuery({
-        id,
-    });
+    const [shouldFetch, setShouldFetch] = useState(true);
+    const { data } = api.post.getById.useQuery(
+        { id },
+        { enabled: shouldFetch }
+    );
+
+    // ページ全体の再レンダリングを防ぐ
+    // TODO: これでいいのか？
+    useEffect(() => {
+        setShouldFetch(false);
+    }, []);
+
     const [formValues, setFormValues] = useState<
         FrontPostSchemaOmitId & { id: string; placeId: string }
     >();
 
     useEffect(() => {
+        // console.log("edit/[id]", { data });
         if (data) {
             const { post } = data;
             const newFormValues: FrontPostSchemaOmitId & {

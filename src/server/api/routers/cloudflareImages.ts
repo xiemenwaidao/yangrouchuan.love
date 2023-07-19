@@ -2,35 +2,10 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import { request } from "undici";
 import { env } from "~/env.mjs";
 import { z } from "zod";
-
-interface DirectCreatorUploadResponse {
-    result: {
-        id: string;
-        uploadURL: string;
-    };
-    errors: {
-        code: number;
-        message: string;
-    }[];
-    messages: {
-        code: number;
-        message: string;
-    }[];
-    success: boolean;
-}
-
-interface DeleteResponse {
-    result: object;
-    errors: {
-        code: number;
-        message: string;
-    }[];
-    messages: {
-        code: number;
-        message: string;
-    }[];
-    success: boolean;
-}
+import {
+    type DeleteResponse,
+    type DirectCreatorUploadResponse,
+} from "~/utils/types";
 
 export const cloudflareImagesRouter = createTRPCRouter({
     getUploadImageURL: privateProcedure.mutation(async () => {

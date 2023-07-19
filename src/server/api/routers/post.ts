@@ -8,6 +8,9 @@ import {
 } from "~/server/api/trpc";
 import { addUserDataToPosts } from "~/server/helpers/addUserDataToPosts";
 import { backPostSchema } from "~/utils/schema";
+import { request } from "undici";
+import { env } from "~/env.mjs";
+import { type DeleteResponse } from "~/utils/types";
 
 export const postRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
@@ -193,6 +196,7 @@ export const postRouter = createTRPCRouter({
                         });
                     }
 
+                    // Create images
                     if (imagesToCreate.length > 0) {
                         // Create images
                         await prisma.image.createMany({
@@ -203,9 +207,34 @@ export const postRouter = createTRPCRouter({
                         });
                     }
 
-                    return { post };
+                    return {
+                        post,
+                        imagesToDelete,
+                    };
                 }
             );
+
+            // Delete cludflare images after successful transaction
+            const promises = postWithImages.imagesToDelete.map(async (id) => {
+                const { body } = await request(
+                    `https://api.cloudflare.com/client/v4/accounts/${env.NEXT_CLOUDFLARE_ACCOUNT_ID}/images/v1/${id}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            authorization: `Bearer ${env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN}`,
+                        },
+                    }
+                );
+
+                // TODO: エラー吐いてもアレなので、エラーでlogを残すようにしようかな？
+                // if (statusCode !== 200)
+                //     throw new Error(await body.text());
+
+                const json = (await body.json()) as DeleteResponse;
+                return json;
+            });
+
+            await Promise.all(promises);
 
             return postWithImages.post;
         }),
@@ -223,6 +252,9 @@ export const postRouter = createTRPCRouter({
                 const post = await prisma.post.findUnique({
                     where: {
                         id: input.id,
+                    },
+                    include: {
+                        images: true,
                     },
                 });
 
@@ -252,6 +284,28 @@ export const postRouter = createTRPCRouter({
                         id: input.id,
                     },
                 });
+
+                // delete cloudflare images
+                const imagesToDelete = post.images.map((image) => image.id);
+                const promises = imagesToDelete.map(async (id) => {
+                    const { body } = await request(
+                        `https://api.cloudflare.com/client/v4/accounts/${env.NEXT_CLOUDFLARE_ACCOUNT_ID}/images/v1/${id}`,
+                        {
+                            method: "DELETE",
+                            headers: {
+                                authorization: `Bearer ${env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN}`,
+                            },
+                        }
+                    );
+
+                    // TODO: エラー吐いてもアレなので、エラーでlogを残すようにしようかな？
+                    // if (statusCode !== 200)
+                    //     throw new Error(await body.text());
+
+                    const json = (await body.json()) as DeleteResponse;
+                    return json;
+                });
+                await Promise.all(promises);
             });
         }),
 });

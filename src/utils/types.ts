@@ -27,3 +27,32 @@ export type PostWithPlaceAndAuthor = ExtendedPost<
 >;
 
 export type PlaceWithPosts = Place & { posts: PostAndAuthor[] };
+
+// cloudflare
+export interface DirectCreatorUploadResponse {
+    result: {
+        id: string;
+        uploadURL: string;
+    };
+    errors: {
+        code: number;
+        message: string;
+    }[];
+    messages: {
+        code: number;
+        message: string;
+    }[];
+    success: boolean;
+}
+export interface DeleteResponse {
+    result: object;
+    errors: {
+        code: number;
+        message: string;
+    }[];
+    messages: {
+        code: number;
+        message: string;
+    }[];
+    success: boolean;
+}
