@@ -25,6 +25,10 @@ import {
     type SyntheticEvent,
     useCallback,
     useEffect,
+    forwardRef,
+    type HTMLAttributes,
+    type ForwardRefRenderFunction,
+    type RefAttributes,
 } from "react";
 import { GoogleMap, InfoWindowF, MarkerF } from "@react-google-maps/api";
 import {
@@ -44,6 +48,7 @@ import { toast } from "react-toastify";
 import { MAP_DEFAULT_ZOOM } from "~/config";
 import styles from "~/utils/googlemapThemeStyles";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
+import NextImage from "next/image";
 
 interface SelectedAddressProps {
     lat: number;
@@ -60,6 +65,38 @@ interface PlacesAutocompleteProps {
     setError: UseFormSetError<FrontPostSchema>;
     resetField: UseFormResetField<FrontPostSchema>;
 }
+
+type ListboxComponentProps = HTMLAttributes<HTMLUListElement> &
+    RefAttributes<HTMLUListElement>;
+
+const ListboxComponentRenderFunction: ForwardRefRenderFunction<
+    HTMLUListElement,
+    ListboxComponentProps
+> = (props, ref) => (
+    <>
+        <ul {...props} ref={ref}></ul>
+        <Box
+            display={`flex`}
+            columnGap={`0.3rem`}
+            alignItems={`center`}
+            justifyContent={`flex-end`}
+            pr={1}
+            pt={0.5}
+            pb={1}
+        >
+            <Box color={`text.secondary`}>powered by </Box>
+            <NextImage
+                src={`/assets/google_on_white_hdpi.png`}
+                alt="google logo"
+                width={59}
+                height={18}
+            />
+        </Box>
+    </>
+);
+
+const ListboxComponent = forwardRef(ListboxComponentRenderFunction);
+ListboxComponent.displayName = "ListboxComponent";
 
 const autocompleteService: {
     current: google.maps.places.AutocompleteService | null;
@@ -280,6 +317,28 @@ const AutocompleteInput: FC<PlacesAutocompleteProps> = (props) => {
                             helperText={fieldState.error?.message}
                         />
                     )}
+                    // ListboxComponent={(props) => (
+                    //     <Box>
+                    //         <ul {...props}></ul>
+                    //         <Box
+                    //             display={`flex`}
+                    //             columnGap={`0.3rem`}
+                    //             alignItems={`center`}
+                    //             justifyContent={`flex-end`}
+                    //             pr={1}
+                    //             py={1}
+                    //         >
+                    //             <span>Powerd by </span>
+                    //             <NextImage
+                    //                 src={`/assets/google_on_white.png`}
+                    //                 alt="google logo"
+                    //                 width={59}
+                    //                 height={18}
+                    //             />
+                    //         </Box>
+                    //     </Box>
+                    // )}
+                    ListboxComponent={ListboxComponent}
                     renderOption={(props, option, state) => {
                         const matches =
                             option.structured_formatting
