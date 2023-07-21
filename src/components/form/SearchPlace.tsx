@@ -45,7 +45,7 @@ import { useUser } from "@clerk/nextjs";
 import { MyLink } from "../parts/MyLink";
 import { getMapHrefByPlaceId } from "~/utils/googlemapHelpers";
 import { toast } from "react-toastify";
-import { MAP_DEFAULT_ZOOM } from "~/config";
+import { MAP_DEFAULT_CENTER, MAP_DEFAULT_ZOOM } from "~/config";
 import styles from "~/utils/googlemapThemeStyles";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 import NextImage from "next/image";
@@ -413,7 +413,7 @@ interface SearchPlaceMapProps {
 
 const Map = (props: SearchPlaceMapProps) => {
     const center = useMemo(() => {
-        return { lat: 34.6937, lng: 135.5021 };
+        return MAP_DEFAULT_CENTER;
     }, []);
 
     const [selected, setSelected] = useState<SelectedAddressProps | null>(null);

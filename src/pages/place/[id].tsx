@@ -54,6 +54,7 @@ const PlaceGoogleMap = ({ lat, lng, title, place_id }: PlaceGoogleMapProps) => {
                     <MarkerF position={position}>
                         <InfoWindowF position={position}>
                             <Box sx={{ color: "black" }}>
+                                <Typography>{title}</Typography>
                                 <MyLink
                                     nextProps={{
                                         href: getMapHrefByPlaceId(

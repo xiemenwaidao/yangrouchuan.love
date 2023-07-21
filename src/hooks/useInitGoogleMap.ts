@@ -1,7 +1,7 @@
 import { useLoadScript } from "@react-google-maps/api";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { libraries } from "~/config";
+import { MAP_LIBRARIES } from "~/config";
 import { env } from "~/env.mjs";
 import { useGoogleMapStore } from "~/store/useGoogleMapStore";
 
@@ -10,7 +10,7 @@ const useInitGoogleMap = () => {
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-        libraries: libraries,
+        libraries: MAP_LIBRARIES,
     });
 
     useEffect(() => {

@@ -7,6 +7,7 @@ import { type NextPage } from "next";
 import { api } from "~/utils/api";
 
 import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import PlacesMap from "~/components/PlacesMap";
 
 const Feed = () => {
     const { data: posts, isLoading } = api.post.getAll.useQuery();
@@ -29,6 +30,7 @@ const Home: NextPage = () => {
                     集え！<strong>羊肉串</strong>愛好家たち！！
                 </Typography>
             </Box>
+            <PlacesMap />
             <Feed />
         </Stack>
     );

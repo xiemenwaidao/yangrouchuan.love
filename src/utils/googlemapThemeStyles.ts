@@ -1,5 +1,161 @@
 const styles: Record<string, google.maps.MapTypeStyle[]> = {
-    default: [],
+    default: [
+        {
+            featureType: "landscape",
+            stylers: [
+                {
+                    color: "#f9ddc5",
+                },
+                {
+                    lightness: -7,
+                },
+            ],
+        },
+        {
+            featureType: "poi.government",
+            stylers: [
+                {
+                    color: "#9e5916",
+                },
+                {
+                    lightness: 46,
+                },
+            ],
+        },
+        {
+            featureType: "poi.medical",
+            elementType: "geometry.fill",
+            stylers: [
+                {
+                    color: "#813033",
+                },
+                {
+                    lightness: 38,
+                },
+                {
+                    visibility: "off",
+                },
+            ],
+        },
+        {
+            featureType: "poi.park",
+            stylers: [
+                {
+                    color: "#645c20",
+                },
+                {
+                    lightness: 39,
+                },
+            ],
+        },
+        {
+            featureType: "poi.school",
+            stylers: [
+                {
+                    color: "#a95521",
+                },
+                {
+                    lightness: 35,
+                },
+            ],
+        },
+        {
+            featureType: "poi.sports_complex",
+            stylers: [
+                {
+                    color: "#9e5916",
+                },
+                {
+                    lightness: 32,
+                },
+            ],
+        },
+        {
+            featureType: "road",
+            stylers: [
+                {
+                    color: "#813033",
+                },
+                {
+                    lightness: 43,
+                },
+            ],
+        },
+        {
+            featureType: "road.local",
+            elementType: "geometry.fill",
+            stylers: [
+                {
+                    color: "#f19f53",
+                },
+                {
+                    lightness: 16,
+                },
+                {
+                    visibility: "on",
+                },
+                {
+                    weight: 1.3,
+                },
+            ],
+        },
+        {
+            featureType: "road.local",
+            elementType: "geometry.stroke",
+            stylers: [
+                {
+                    color: "#f19f53",
+                },
+                {
+                    lightness: -10,
+                },
+            ],
+        },
+        {
+            featureType: "transit",
+            stylers: [
+                {
+                    lightness: 38,
+                },
+            ],
+        },
+        {
+            featureType: "transit.line",
+            stylers: [
+                {
+                    color: "#813033",
+                },
+                {
+                    lightness: 22,
+                },
+            ],
+        },
+        {
+            featureType: "transit.station",
+            stylers: [
+                {
+                    visibility: "off",
+                },
+            ],
+        },
+        {
+            featureType: "water",
+            stylers: [
+                {
+                    color: "#1994bf",
+                },
+                {
+                    saturation: -69,
+                },
+                {
+                    lightness: 43,
+                },
+                {
+                    gamma: 0.99,
+                },
+            ],
+        },
+    ],
     night: [
         { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },

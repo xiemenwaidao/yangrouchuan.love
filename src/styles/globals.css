@@ -8,6 +8,10 @@ a {
     height: 400px;
 }
 
+.info-window {
+    color: #000;
+}
+
 @media screen and (width <= 900px) {
 
     .google-map {
