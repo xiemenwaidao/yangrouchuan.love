@@ -1,8 +1,6 @@
 import { clerkClient } from "@clerk/nextjs";
 import { type PostWithOthers } from "~/utils/types";
 import { filterUserForClient } from "./filterUserForClient";
-import { TRPCError } from "@trpc/server";
-import { User } from "@clerk/nextjs/dist/types/server";
 
 export const addUserDataToPosts = async <T extends PostWithOthers>(
     posts: T[]

@@ -19,6 +19,7 @@ import { useEffect, useMemo, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { toast } from "react-toastify";
 
 const UserBackground = ({ username }: { username: string }) => {
     const [bgColor, setBgColor] = useState("");
@@ -70,14 +71,23 @@ interface ProfileSectionProps {
 }
 
 const ProfileSection = ({ username }: ProfileSectionProps) => {
-    const { data } = api.user.getUserByUsername.useQuery({
+    const { data, error } = api.user.getUserByUsername.useQuery({
         username,
     });
 
+    if (error) {
+        console.error({ error });
+        toast.error(error.message);
+    }
+
     const theme = useTheme();
 
-    if (!data) return <div>404</div>;
-    if (!data.username) return <div>Something went wrong</div>;
+    if (!data)
+        return (
+            <Box p={2} textAlign={`center`}>
+                <Typography>no data</Typography>
+            </Box>
+        );
 
     return (
         <>
@@ -110,6 +120,7 @@ const ProfileSection = ({ username }: ProfileSectionProps) => {
                     >{`@${data.username}`}</Typography>
                 </Box>
             </Stack>
+            <Feed username={username} />
         </>
     );
 };
@@ -129,7 +140,6 @@ const UserPage = ({ username }: { username: string }) => {
                 <title>{`@${username} | ${SITE.title}`}</title>
             </Head>
             <ProfileSection username={username} />
-            <Feed username={username} />
         </>
     );
 };

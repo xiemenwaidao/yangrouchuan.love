@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import Modal from "@mui/material/Modal";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 
 import NextImage from "next/image";
 import ReviewCard from "./ReviewCard";
@@ -39,7 +40,9 @@ const ReviewCardWithImageModal = ({
                     ))
                 ) : (
                     // 投稿が0の場合
-                    <div>まだ投稿がないようです。投稿してくれ〜〜〜！！</div>
+                    <Box textAlign={`center`} p={2}>
+                        <Typography>投稿0🥲</Typography>
+                    </Box>
                 )
             ) : (
                 <>

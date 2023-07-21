@@ -11,6 +11,7 @@ import { backPostSchema } from "~/utils/schema";
 import { request } from "undici";
 import { env } from "~/env.mjs";
 import { type DeleteResponse } from "~/utils/types";
+import { ERROR_USER_NOT_FOUND } from "~/config";
 
 export const postRouter = createTRPCRouter({
     getAll: publicProcedure.query(async ({ ctx }) => {
@@ -92,7 +93,7 @@ export const postRouter = createTRPCRouter({
             if (!user) {
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "User not found",
+                    message: ERROR_USER_NOT_FOUND,
                 });
             }
 
@@ -264,7 +265,7 @@ export const postRouter = createTRPCRouter({
                 if (!post) {
                     throw new TRPCError({
                         code: "NOT_FOUND",
-                        message: "削除する投稿が見つかりませんでした。",
+                        message: "投稿が見つかりませんでした。",
                     });
                 }
 

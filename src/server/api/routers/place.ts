@@ -68,7 +68,7 @@ export const placeRouter = createTRPCRouter({
             if (!place)
                 throw new TRPCError({
                     code: "NOT_FOUND",
-                    message: "Place not found",
+                    message: "店舗が見つかりませんでした",
                 });
 
             return (await addUserDataToPlaces([place]))[0];
