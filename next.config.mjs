@@ -51,6 +51,13 @@ const config = {
             },
             {
                 protocol: "https",
+                hostname: "img.clerk.com",
+                port: "",
+                pathname: "/**",
+            },
+            // cloudflare images
+            {
+                protocol: "https",
                 hostname: "imagedelivery.net",
                 port: "",
                 pathname: "/**",

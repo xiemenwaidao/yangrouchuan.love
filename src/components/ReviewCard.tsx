@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -177,11 +176,12 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                     })}
                 </Swiper>
             </Box>
-            <CardContent
+            <Box
                 sx={{
                     display: "grid",
                     gridTemplateRows: "1fr auto",
                     overflowY: "auto",
+                    p: 2,
                 }}
             >
                 <Box>
@@ -212,25 +212,28 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 </Box>
                 {!isUserPage && (
                     <Box display={"flex"} gap={1} mr={0} ml={"auto"}>
-                        <Typography alignSelf={"center"}>by</Typography>
-                        <NextLink href={`/user/@${author.username}/`}>
-                            <Avatar aria-label="recipe">
-                                <NextImage
-                                    src={author.profilePicture}
-                                    alt={`@${author.username}のプロフィール写真`}
-                                    width={64}
-                                    height={64}
-                                    style={{
-                                        objectFit: "cover",
-                                        width: "100%",
-                                        height: "100%",
-                                    }}
-                                />
-                            </Avatar>
-                        </NextLink>
+                        {/* <Typography alignSelf={"center"}>by</Typography> */}
+                        {author.username !== null &&
+                        author.profilePicture !== null ? (
+                            <NextLink href={`/user/@${author.username}/`}>
+                                <Avatar aria-label="recipe">
+                                    <NextImage
+                                        src={author.profilePicture}
+                                        alt={`@${author.username}のプロフィール写真`}
+                                        fill
+                                        sizes="64px"
+                                        style={{
+                                            objectFit: "cover",
+                                        }}
+                                    />
+                                </Avatar>
+                            </NextLink>
+                        ) : (
+                            <Avatar aria-label="recipe"></Avatar>
+                        )}
                     </Box>
                 )}
-            </CardContent>
+            </Box>
         </Card>
     );
 };
