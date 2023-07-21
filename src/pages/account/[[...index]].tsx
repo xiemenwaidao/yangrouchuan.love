@@ -9,20 +9,37 @@ import Head from "next/head";
 import { SITE } from "~/config";
 import { api } from "~/utils/api";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
+import { useConfirm } from "material-ui-confirm";
 
 const ProfilePage: NextPage = () => {
     const { user } = useUser();
     const { signOut } = useClerk();
+    const router = useRouter();
+    const confirm = useConfirm();
 
     const { mutate, isLoading } = api.user.deleteUser.useMutation({
         onSuccess: () => {
             void signOut();
-            toast.success("ユーザーを削除しました。");
+            toast.success("アカウントを削除しました。");
+            void router.push("/");
         },
         onError: (error) => {
             toast.error(error.message);
         },
     });
+
+    const onDelete = useCallback(() => {
+        if (!user) return;
+        void confirm({
+            description: "アカウントを削除しますか？削除しても投稿は残ります。",
+        })
+            .then(() => {
+                mutate({ id: user?.id });
+            })
+            .catch(() => toast.info("キャンセルしました。"));
+    }, [confirm, mutate, user]);
 
     return (
         <>
@@ -47,19 +64,19 @@ const ProfilePage: NextPage = () => {
                             },
                         }}
                     />
-                    {/* <Box sx={{ textAlign: "center", mt: { xs: 5, md: 3 } }}>
+                    <Box sx={{ textAlign: "center", mt: { xs: 5, md: 3 } }}>
                         {user && (
                             <LoadingButton
                                 loading={isLoading}
                                 loadingPosition="start"
                                 startIcon={<DeleteIcon />}
                                 variant="outlined"
-                                onClick={() => mutate({ id: user?.id })}
+                                onClick={() => onDelete()}
                             >
                                 削除する
                             </LoadingButton>
                         )}
-                    </Box> */}
+                    </Box>
                 </Grid>
             </Grid>
         </>

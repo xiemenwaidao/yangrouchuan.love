@@ -12,6 +12,11 @@ a {
     color: #000;
 }
 
+.info-window a:hover {
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
 @media screen and (width <= 900px) {
 
     .google-map {

@@ -1,10 +1,16 @@
 import { type Post, type Image, type Place } from "@prisma/client";
 
-export interface Author {
-    id: string;
-    username: string;
-    profilePicture: string;
-}
+export type Author =
+    | {
+          id: string;
+          username: string;
+          profilePicture: string;
+      }
+    | {
+          id: null;
+          username: null;
+          profilePicture: null;
+      };
 
 export type PostWithOthers<AdditionalFields = Record<string, unknown>> = Post &
     AdditionalFields;
