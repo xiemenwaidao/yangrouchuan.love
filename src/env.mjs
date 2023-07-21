@@ -24,6 +24,7 @@ export const env = createEnv({
         // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
         NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string().min(1),
         NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH: z.string().min(1),
+        NEXT_PUBLIC_GA_ID: z.string().min(1),
     },
 
     /**
@@ -42,6 +43,7 @@ export const env = createEnv({
             process.env.NEXT_CLOUDFLARE_IMAGES_API_TOKEN,
         NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH:
             process.env.NEXT_PUBLIC_CLOUDFLARE_ACCOUNT_HASH,
+        NEXT_PUBLIC_GA_ID: process.env.NEXT_PUBLIC_GA_ID,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
