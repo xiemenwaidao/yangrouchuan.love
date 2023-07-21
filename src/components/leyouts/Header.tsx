@@ -30,7 +30,11 @@ import { MyLink } from "../parts/MyLink";
 import NextLink from "next/link";
 import NextImage from "next/image";
 
-const pages = [{ title: "投稿する", href: "/create", auth: true }];
+const pages = [
+    { title: "投稿する", href: "/create", auth: true },
+    // { title: "店舗一覧", href: "/place", auth: false },
+];
+
 interface MenuItemProps {
     onClick: () => void;
     href: string;
