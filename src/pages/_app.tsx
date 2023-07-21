@@ -16,6 +16,7 @@ import { type EmotionCache } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import theme from "~/utils/theme";
 import useInitGoogleMap from "~/hooks/useInitGoogleMap";
+import { Analytics } from "~/components/parts/Analytics";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -52,6 +53,7 @@ const MyApp = (props: MyAppProps) => {
                         </Head>
                         <CssBaseline />
                         <ToastSetting />
+                        <Analytics />
                         <Layout>
                             <Component {...pageProps} />
                         </Layout>
