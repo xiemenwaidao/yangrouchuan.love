@@ -113,9 +113,16 @@ function Header() {
                                     alt="logo"
                                     width={`32`}
                                     height={`32`}
-                                    style={{}}
                                 />
-                                <span>{SITE.title}</span>
+                                {/* <span>{SITE.title}</span> */}
+                                <Box width={`10rem`} position={`relative`}>
+                                    <NextImage
+                                        src={`/assets/title.svg`}
+                                        alt={SITE.title}
+                                        fill
+                                        sizes=""
+                                    />
+                                </Box>
                             </Stack>
                         </NextLink>
                     </Typography>

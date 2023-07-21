@@ -1,6 +1,7 @@
 import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { ERROR_USER_NOT_FOUND } from "~/config";
 import {
     createTRPCRouter,
     privateProcedure,
@@ -19,7 +20,7 @@ export const userRouter = createTRPCRouter({
             if (!user) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: "User not found",
+                    message: ERROR_USER_NOT_FOUND,
                 });
             }
 
@@ -34,7 +35,7 @@ export const userRouter = createTRPCRouter({
             if (!user) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: "User not found",
+                    message: ERROR_USER_NOT_FOUND,
                 });
             }
 
@@ -49,7 +50,7 @@ export const userRouter = createTRPCRouter({
             if (!user) {
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: "User not found",
+                    message: ERROR_USER_NOT_FOUND,
                 });
             }
         }),

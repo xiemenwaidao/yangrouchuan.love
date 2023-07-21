@@ -27,9 +27,9 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import NextImage from "next/image";
 import SkewerCountSlider from "./SkewerCountSlider";
 import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
@@ -346,12 +346,13 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
                 }}
                 open={isPosting || isDeleting}
             >
-                <NextImage
+                {/* <NextImage
                     src={`/assets/rolling-cat-rainbow.gif`}
                     alt="Rolling Cat Cat Rolling Sticker"
                     width={100}
                     height={100}
-                />
+                /> */}
+                <CircularProgress />
             </Backdrop>
         </>
     );

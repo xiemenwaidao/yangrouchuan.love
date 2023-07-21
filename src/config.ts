@@ -27,3 +27,6 @@ export const FORM_ALLOW_IMAGE_MINETYPES = [
     // "image/gif"
 ];
 export const IMAGE_PREFIX = process.env.NODE_ENV === "production" ? "p-" : "d-";
+
+// error text
+export const ERROR_USER_NOT_FOUND = "ユーザーが見つかりませんでした";
