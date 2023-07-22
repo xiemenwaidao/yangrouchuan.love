@@ -1,39 +1,66 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
+import NextImage from "next/image";
+import TitleSVG from "../TitleSVG";
+import { MyLink } from "../parts/MyLink";
+import Stack from "@mui/material/Stack";
 
-import Link from "next/link";
-import { SITE } from "~/config";
-
-const Copyright = () => {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center">
-            {"Copyright © "}
-            <Link color="inherit" href={SITE.url}>
-                {SITE.title}
-            </Link>{" "}
-            {new Date().getFullYear()}
-            {"."}
-        </Typography>
-    );
-};
+const links = [
+    {
+        title: "利用規約",
+        href: "/terms",
+        isBrank: false,
+    },
+    {
+        title: "プライバシー",
+        href: "/privacy",
+        isBrank: false,
+    },
+    {
+        title: "お問い合わせ",
+        href: "https://forms.gle/W4qaj9A6fzgVzTtNA",
+        isBrank: true,
+    },
+];
 
 const Footer = () => {
     return (
-        <Box component="footer" sx={{ bgcolor: "background.paper", py: 6 }}>
+        <Box component="footer" sx={{ bgcolor: "background.paper", py: 3 }}>
             <Container maxWidth="lg">
-                {/* <Typography variant="h6" align="center" gutterBottom>
-                    {SITE.title}
-                </Typography>
-                <Typography
-                    variant="subtitle1"
-                    align="center"
-                    color="text.secondary"
-                    component="p"
-                >
-                    {SITE.description}
-                </Typography> */}
-                <Copyright />
+                <Stack gap={1}>
+                    <Box
+                        display={`flex`}
+                        justifyContent={`center`}
+                        sx={{ flexWrap: "wrap" }}
+                    >
+                        <NextImage
+                            src={`/assets/hitusji-hasiru.png`}
+                            alt="logo"
+                            width={`32`}
+                            height={`32`}
+                        />
+                        <Box width={`8rem`}>
+                            <TitleSVG />
+                        </Box>
+                    </Box>
+                    <Box
+                        display={`flex`}
+                        justifyContent={`center`}
+                        columnGap={1}
+                    >
+                        {links.map((link, i) => (
+                            <MyLink
+                                key={i}
+                                nextProps={{
+                                    href: link.href,
+                                }}
+                                target={link.isBrank ? "_blank" : undefined}
+                            >
+                                {link.title}
+                            </MyLink>
+                        ))}
+                    </Box>
+                </Stack>
             </Container>
         </Box>
     );
