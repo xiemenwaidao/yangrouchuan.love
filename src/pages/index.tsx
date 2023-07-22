@@ -18,7 +18,7 @@ const Home: NextPage = () => {
     return (
         <Stack direction={`column`} rowGap={4}>
             <Typography textAlign={`center`}>
-                羊肉串を求める迷える仔羊たちのためのサイト
+                羊肉串を求めて迷える仔羊たちのためのサイト
             </Typography>
             <PlacesMap />
             <Feed />
