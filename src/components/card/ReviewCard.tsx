@@ -27,8 +27,9 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useUser } from "@clerk/nextjs";
 import { type Place } from "@prisma/client";
-import { MyLink } from "./parts/MyLink";
+import { MyLink } from "../parts/MyLink";
 import { useRouter } from "next/router";
+import Tooltip from "@mui/material/Tooltip";
 
 interface MenuButtonProps {
     postId: string;
@@ -212,7 +213,6 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                 </Box>
                 {!isUserPage && (
                     <Box display={"flex"} gap={1} mr={0} ml={"auto"}>
-                        {/* <Typography alignSelf={"center"}>by</Typography> */}
                         {author.username !== null &&
                         author.profilePicture !== null ? (
                             <NextLink href={`/user/@${author.username}/`}>
@@ -229,7 +229,9 @@ const ReviewCard = ({ post, handleImageClick }: ReviewCardProps) => {
                                 </Avatar>
                             </NextLink>
                         ) : (
-                            <Avatar aria-label="recipe"></Avatar>
+                            <Tooltip title="退会したユーザー">
+                                <Avatar aria-label="recipe"></Avatar>
+                            </Tooltip>
                         )}
                     </Box>
                 )}

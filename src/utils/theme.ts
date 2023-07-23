@@ -2,12 +2,6 @@ import { Kaisei_Decol } from "next/font/google";
 import { experimental_extendTheme as extendTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
-// const notoSansJP = Noto_Sans_JP({
-//     weight: ["400"],
-//     subsets: ["latin"],
-//     display: "swap",
-// });
-
 const kaiseiDecol = Kaisei_Decol({
     weight: ["400"],
     subsets: ["latin"],

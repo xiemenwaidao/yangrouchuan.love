@@ -12,9 +12,9 @@ import Head from "next/head";
 import { MAP_DEFAULT_ZOOM, SITE } from "~/config";
 import { api } from "~/utils/api";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
-import { RateAverage } from "~/components/RateAverage";
+import { RateAverage } from "~/components/parts/RateAverage";
 
-import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import ReviewCardWithImageModal from "~/components/card/ReviewCardWithImageModal";
 import { toast } from "react-toastify";
 import { GoogleMap, InfoWindowF, MarkerF } from "@react-google-maps/api";
 import { useColorScheme } from "@mui/material/styles";

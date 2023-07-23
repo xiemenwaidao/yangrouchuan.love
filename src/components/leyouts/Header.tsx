@@ -29,6 +29,7 @@ import { ThemeSwitch } from "../parts/ThemeSwitch";
 import { MyLink } from "../parts/MyLink";
 import NextLink from "next/link";
 import NextImage from "next/image";
+import Tooltip from "@mui/material/Tooltip";
 
 const pages = [
     { title: "投稿する", href: "/create", auth: true },
@@ -255,18 +256,18 @@ function Header() {
                             </ClerkLoaded>
                         </SignedIn>
                         <SignedOut>
-                            <SignInButton
-                            //  mode="modal"
-                            >
-                                <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    color="inherit"
-                                >
-                                    <AccountCircle />
-                                </IconButton>
+                            <SignInButton>
+                                <Tooltip title="Sign in">
+                                    <IconButton
+                                        size="large"
+                                        aria-label="account of current user"
+                                        aria-controls="menu-appbar"
+                                        aria-haspopup="true"
+                                        color="inherit"
+                                    >
+                                        <AccountCircle />
+                                    </IconButton>
+                                </Tooltip>
                             </SignInButton>
                         </SignedOut>
                     </Box>
