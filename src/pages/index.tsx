@@ -17,8 +17,11 @@ const Feed = () => {
 const Home: NextPage = () => {
     return (
         <Stack direction={`column`} rowGap={4}>
-            <Typography textAlign={`center`}>
-                羊肉串を求めて迷える仔羊たちのためのサイト
+            <Typography textAlign={`center`} fontStyle={`italic`}>
+                {/* 羊肉串を求めて迷える仔羊たちのためのサイト */}
+                羊肉串愛好家のための羅針盤
+                <br />
+                あなたの最高の串を見つけるためのサイト
             </Typography>
             <PlacesMap />
             <Feed />

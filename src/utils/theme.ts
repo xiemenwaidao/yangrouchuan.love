@@ -40,6 +40,15 @@ const theme = extendTheme({
             },
         },
     },
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    transition: "all 0.2s linear",
+                },
+            },
+        },
+    },
 });
 
 export default theme;
