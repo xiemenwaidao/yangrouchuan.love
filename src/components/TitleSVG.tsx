@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 const TitleSVG = styled("svg")(({ theme }) => ({
     width: "100%",
     height: "100%",
-    fill: theme.palette.primary.main,
+    fill: theme.vars.palette.primary.main,
 }));
 
 const Title = () => {
