@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { type NextPage } from "next";
 import { api } from "~/utils/api";
 
-import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import ReviewCardWithImageModal from "~/components/card/ReviewCardWithImageModal";
 import PlacesMap from "~/components/PlacesMap";
 
 const Feed = () => {

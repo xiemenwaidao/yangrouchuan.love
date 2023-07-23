@@ -14,7 +14,7 @@ import { api } from "~/utils/api";
 import { stringToColor } from "~/utils/helpers";
 import { generateSSGHelper } from "~/utils/ssgHelpers";
 import NextImage from "next/image";
-import ReviewCardWithImageModal from "~/components/ReviewCardWithImageModal";
+import ReviewCardWithImageModal from "~/components/card/ReviewCardWithImageModal";
 import { useEffect, useMemo, useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";

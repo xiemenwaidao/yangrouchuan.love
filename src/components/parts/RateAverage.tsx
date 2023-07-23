@@ -1,5 +1,5 @@
 import { type PostAndAuthor } from "~/utils/types";
-import { IconContainer, StyledRating, customIcons } from "./parts/StyledRating";
+import { IconContainer, StyledRating, customIcons } from "./StyledRating";
 import { type SxProps, type Theme } from "@mui/material/styles";
 
 interface Props {

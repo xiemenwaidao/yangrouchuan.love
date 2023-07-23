@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import NextImage from "next/image";
-import TitleSVG from "../TitleSVG";
+import TitleSVG from "../parts/TitleSVG";
 import { MyLink } from "../parts/MyLink";
 import Stack from "@mui/material/Stack";
 
