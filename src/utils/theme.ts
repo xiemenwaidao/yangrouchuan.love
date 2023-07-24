@@ -38,7 +38,8 @@ const theme = extendTheme({
         MuiCssBaseline: {
             styleOverrides: {
                 body: {
-                    transition: "all 0.2s linear",
+                    transition:
+                        "background 0.2s linear, color 0.2s linear, border-color 0.2s linear, box-shadow 0.2s linear",
                 },
             },
         },
