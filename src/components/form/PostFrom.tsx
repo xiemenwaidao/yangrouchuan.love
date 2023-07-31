@@ -34,11 +34,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
 
-const isFile = (obj: string | File): obj is File => {
+const isFile = (obj: string | File | undefined): obj is File => {
     return obj instanceof File;
 };
 
-const isString = (obj: string | File): obj is string => {
+const isString = (obj: string | File | undefined): obj is string => {
     return typeof obj === "string";
 };
 
