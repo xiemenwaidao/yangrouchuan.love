@@ -58,17 +58,17 @@ export const frontPostSchema = z
             }),
         // @see https://developers.cloudflare.com/images/cloudflare-images/upload-images/formats-limitations/
         images: z
-            .custom<(File | string)[]>()
+            .custom<(File | string | undefined)[]>()
             // required
-            .refine((images) => images.length !== 0, {
+            .refine((images) => images !== undefined && images?.length !== 0, {
                 message: REQUIRED_ERROR_TEXT,
             })
-            .refine((images) => images.length <= FORM_MAX_IMAGE_COUNT, {
+            .refine((images) => images?.length <= FORM_MAX_IMAGE_COUNT, {
                 message: "アップロードできる最大枚数は3枚です。",
             })
             .refine(
                 (images) =>
-                    images.every((image) => {
+                    images?.every((image) => {
                         if (image instanceof File)
                             return FORM_ALLOW_IMAGE_MINETYPES.includes(
                                 image.type
@@ -82,7 +82,7 @@ export const frontPostSchema = z
             )
             .refine(
                 (images) =>
-                    images.every((image) => {
+                    images?.every((image) => {
                         if (image instanceof File)
                             return image.size < FORM_MAX_IMAGE_SIZE.value;
                         return true;
