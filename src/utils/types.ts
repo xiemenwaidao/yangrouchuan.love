@@ -62,3 +62,5 @@ export interface DeleteResponse {
     }[];
     success: boolean;
 }
+
+export type PostImages = (File | string)[] | undefined;

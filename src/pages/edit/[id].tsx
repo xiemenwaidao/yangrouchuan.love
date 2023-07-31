@@ -1,3 +1,4 @@
+import Alert from "@mui/material/Alert";
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -53,7 +54,10 @@ const PostEditPage = ({ id }: { id: string }) => {
             <Head>
                 <title>{`投稿編集 | ${SITE.title}`}</title>
             </Head>
-            <h2>編集</h2>
+            <h2>編集：{data.post.place.title}</h2>
+            <Alert severity="info" sx={{ mb: 3 }}>
+                編集画面では店舗情報の編集はできません。別店舗への投稿は新規投稿からお願いします。
+            </Alert>
 
             <PostForm defaultValues={formValues} />
         </>

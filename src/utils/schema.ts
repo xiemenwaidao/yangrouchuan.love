@@ -5,6 +5,7 @@ import {
     FORM_MAX_IMAGE_COUNT,
     FORM_MAX_IMAGE_SIZE,
 } from "~/config";
+import { type PostImages } from "./types";
 
 const REQUIRED_ERROR_TEXT = "必須項目です。";
 
@@ -58,14 +59,19 @@ export const frontPostSchema = z
             }),
         // @see https://developers.cloudflare.com/images/cloudflare-images/upload-images/formats-limitations/
         images: z
-            .custom<(File | string | undefined)[]>()
+            .custom<PostImages>()
             // required
             .refine((images) => images !== undefined && images?.length !== 0, {
                 message: REQUIRED_ERROR_TEXT,
             })
-            .refine((images) => images?.length <= FORM_MAX_IMAGE_COUNT, {
-                message: "アップロードできる最大枚数は3枚です。",
-            })
+            .refine(
+                (images) =>
+                    images !== undefined &&
+                    images?.length <= FORM_MAX_IMAGE_COUNT,
+                {
+                    message: "アップロードできる最大枚数は3枚です。",
+                }
+            )
             .refine(
                 (images) =>
                     images?.every((image) => {
