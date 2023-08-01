@@ -1,6 +1,8 @@
+import { useUser } from "@clerk/nextjs";
 import Alert from "@mui/material/Alert";
 import { type GetServerSidePropsContext } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import PostForm from "~/components/form/PostFrom";
 import { SITE } from "~/config";
@@ -10,7 +12,9 @@ import { generateSSGHelper } from "~/utils/ssgHelpers";
 
 const PostEditPage = ({ id }: { id: string }) => {
     const [shouldFetch, setShouldFetch] = useState(true);
-    const { data } = api.post.getById.useQuery(
+    const { user, isLoaded: isLoadedClerk } = useUser();
+    const router = useRouter();
+    const { data, isLoading: isLoadingData } = api.post.getById.useQuery(
         { id },
         { enabled: shouldFetch }
     );
@@ -46,6 +50,11 @@ const PostEditPage = ({ id }: { id: string }) => {
             setFormValues(newFormValues);
         }
     }, [data]);
+
+    if (isLoadedClerk && !isLoadingData && user?.id !== data?.post.authorId) {
+        // return router.push("/404");
+        return <div>あなたの投稿ではありません。</div>;
+    }
 
     if (!data) return <div>...loading</div>;
 
