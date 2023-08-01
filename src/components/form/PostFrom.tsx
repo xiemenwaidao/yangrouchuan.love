@@ -34,11 +34,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 const UPDATE_IMAGE_FAILED_MESSAGE =
     "画像更新に失敗しました。時間をおいて再度お試しください。";
 
-const isFile = (obj: string | File | undefined): obj is File => {
+const isFile = (obj: string | File): obj is File => {
     return obj instanceof File;
 };
 
-const isString = (obj: string | File | undefined): obj is string => {
+const isString = (obj: string | File): obj is string => {
     return typeof obj === "string";
 };
 
@@ -137,13 +137,17 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
                 const data = getValues();
 
-                // ファイルのみを抽出
-                const imageFiles = data.images.filter(isFile);
+                // Cloudflare Imagesに未保存のファイルのみを抽出
+                const imageFiles =
+                    data.images !== undefined ? data.images.filter(isFile) : [];
 
-                //
-                const imageIds = data.images.filter(isString);
+                // すでにCloudflare Imagesに保存済み画像のidのみを抽出
+                const imageIds =
+                    data.images !== undefined
+                        ? data.images.filter(isString)
+                        : [];
 
-                if (imageFiles.length !== results.length) {
+                if (imageFiles?.length !== results.length) {
                     throw new Error(UPDATE_IMAGE_FAILED_MESSAGE);
                 }
 
@@ -254,7 +258,7 @@ const PostForm = ({ defaultValues }: PostFromProps) => {
 
         // まずは画像アップロード用のURLを取得する
         getManyUploadImageURLMutate({
-            count: data.images.filter(isFile).length,
+            count: data.images?.filter(isFile).length ?? 0,
         });
         // console.log({ data });
     });

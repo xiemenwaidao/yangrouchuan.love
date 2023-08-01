@@ -13,6 +13,39 @@ import { FORM_MAX_IMAGE_COUNT } from "~/config";
 import NextImage from "next/image";
 import { imageUrl } from "~/utils/cloudflareHelpers";
 import Alert from "@mui/material/Alert";
+import { type PostImages } from "~/utils/types";
+import { type ChangeEvent } from "react";
+
+interface CloseBtnProps {
+    images: (string | File)[];
+    index: number;
+    onChange: (event: PostImages | ChangeEvent<Element>) => void;
+}
+
+const CloseBtn = ({ images, index, onChange }: CloseBtnProps) => {
+    return (
+        <IconButton
+            aria-label="delete image"
+            style={{
+                position: "absolute",
+                top: 10,
+                right: 10,
+                color: "#aaa",
+                zIndex: 1,
+            }}
+            onClick={() => {
+                const newImages = [...images];
+                newImages.splice(index, 1);
+
+                console.log({ newImages });
+
+                onChange(newImages);
+            }}
+        >
+            <CancelIcon />
+        </IconButton>
+    );
+};
 
 interface Props {
     controle: Control<FrontPostSchema>;
@@ -51,6 +84,8 @@ export const ImagePostInput = ({ controle }: Props) => {
                                     : [...Array.from(files)];
 
                                 onChange(newArray);
+
+                                e.target.value = "";
                             }}
                             onBlur={onBlur}
                             name={name}
@@ -85,30 +120,11 @@ export const ImagePostInput = ({ controle }: Props) => {
                                         >
                                             {image && (
                                                 <>
-                                                    <IconButton
-                                                        aria-label="delete image"
-                                                        style={{
-                                                            position:
-                                                                "absolute",
-                                                            top: 10,
-                                                            right: 10,
-                                                            color: "#aaa",
-                                                            zIndex: 1,
-                                                        }}
-                                                        onClick={() => {
-                                                            const newImages = [
-                                                                ...images,
-                                                            ];
-                                                            newImages.splice(
-                                                                index,
-                                                                1
-                                                            );
-
-                                                            onChange(newImages);
-                                                        }}
-                                                    >
-                                                        <CancelIcon />
-                                                    </IconButton>
+                                                    <CloseBtn
+                                                        images={images}
+                                                        index={index}
+                                                        onChange={onChange}
+                                                    />
                                                     <NextImage
                                                         src={
                                                             typeof image ===

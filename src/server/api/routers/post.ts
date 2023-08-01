@@ -235,7 +235,9 @@ export const postRouter = createTRPCRouter({
                 return json;
             });
 
-            await Promise.all(promises);
+            await Promise.all(promises).catch(() => {
+                // TODO:Cloudflare imagesに保存した画像を削除
+            });
 
             return postWithImages.post;
         }),
