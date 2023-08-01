@@ -39,7 +39,11 @@ const theme = extendTheme({
             styleOverrides: {
                 body: {
                     transition:
-                        "background 0.2s linear, color 0.2s linear, border-color 0.2s linear, box-shadow 0.2s linear",
+                        "background-color 0.2s linear, color 0.2s linear, border-color 0.2s linear, box-shadow 0.2s linear",
+                },
+                footer: {
+                    transition:
+                        "background-color 0.2s linear, color 0.2s linear, border-color 0.2s linear, box-shadow 0.2s linear",
                 },
             },
         },
